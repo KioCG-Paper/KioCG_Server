@@ -1,0 +1,39 @@
+--- a/net/minecraft/server/level/ServerLevel.java
++++ b/net/minecraft/server/level/ServerLevel.java
+@@ -683,7 +_,7 @@
+         this.chunkSource.getGeneratorState().ensureStructuresGenerated();
+         this.portalForcer = new PortalForcer(this);
+         if (this.canHaveWeather()) {
+-            this.prepareWeather(this.weatherData); // Paper - per-level WeatherData
++            this.prepareWeather(this.paperConfig().kioCG.perWorldWeather ? this.weatherData : server.getWeatherData()); // Paper - per-level WeatherData // KioCG - per world weather config
+         }
+ 
+         this.raids = this.getDataStorage().computeIfAbsent(Raids.TYPE);
+@@ -1193,6 +_,10 @@
+         if (this.canHaveWeather()) {
+             WeatherData weatherData = this.getWeatherData();
+             if (this.getGameRules().get(GameRules.ADVANCE_WEATHER)) {
++                // KioCG start - per world weather config: 全局天气每游戏刻只计算一次
++                if (weatherData != server.getWeatherData() || server.weatherTick != server.getTickCount()) {
++                    if (weatherData == server.getWeatherData()) server.weatherTick = server.getTickCount();
++                    // KioCG end - per world weather config: 全局天气每游戏刻只计算一次
+                 int clearWeatherTime = weatherData.getClearWeatherTime();
+                 int thunderTime = weatherData.getThunderTime();
+                 int rainTime = weatherData.getRainTime();
+@@ -1231,6 +_,7 @@
+                 weatherData.setClearWeatherTime(clearWeatherTime);
+                 weatherData.setThundering(thundering, org.bukkit.event.weather.ThunderChangeEvent.Cause.NATURAL); // Paper - Add cause to Weather/ThunderChangeEvents
+                 weatherData.setRaining(raining, org.bukkit.event.weather.WeatherChangeEvent.Cause.NATURAL); // Paper - Add cause to Weather/ThunderChangeEvents
++                } // KioCG - per world weather config: 全局天气每游戏刻只计算一次
+             }
+ 
+             this.oThunderLevel = this.thunderLevel;
+@@ -2542,7 +_,7 @@
+     }
+ 
+     public WeatherData getWeatherData() {
+-        return this.weatherData; // Paper - per-level WeatherData
++        return this.paperConfig().kioCG.perWorldWeather ? this.weatherData : this.server.getWeatherData(); // Paper - per-level WeatherData // KioCG - per world weather config
+     }
+ 
+     @Override

@@ -1,0 +1,42 @@
+--- a/net/minecraft/server/MinecraftServer.java
++++ b/net/minecraft/server/MinecraftServer.java
+@@ -275,7 +_,8 @@
+     private @Nullable CommandStorage commandStorage;
+     private final CustomBossEvents customBossEvents;
+     private final RandomSequences randomSequences;
+-    // Paper - per-level WeatherData
++    private final WeatherData weatherData; // Paper - per-level WeatherData // KioCG - per world weather config
++    public int weatherTick; // KioCG - per world weather config: 全局天气每游戏刻只计算一次
+     private final ServerFunctionManager functionManager;
+     private boolean enforceWhitelist;
+     private boolean usingWhitelist;
+@@ -549,7 +_,7 @@
+             this.storageSource = storageSource;
+             this.playerDataStorage = storageSource.createPlayerStorage();
+             this.randomSequences = this.savedDataStorage.computeIfAbsent(RandomSequences.TYPE);
+-            // Paper - per-level WeatherData
++            this.weatherData = this.getDataStorage().computeIfAbsent(WeatherData.TYPE); // Paper - per-level WeatherData // KioCG - per world weather config
+             // Paper - per-level GameRules
+             this.fixerUpper = fixerUpper;
+             this.functionManager = new ServerFunctionManager(this, this.resources.managers.getFunctionLibrary());
+@@ -2575,7 +_,7 @@
+ 
+     // Paper start - per-level WeatherData
+     public void setWeatherParameters(final ServerLevel level, final int clearTime, final int rainTime, final boolean raining, final boolean thundering) {
+-        WeatherData weatherData = level.getWeatherData();
++        WeatherData weatherData = level.paperConfig().kioCG.perWorldWeather ? level.getWeatherData() : this.getWeatherData(); // KioCG - per world weather config
+         // Paper end - per-level WeatherData
+         weatherData.setClearWeatherTime(clearTime);
+         weatherData.setRainTime(rainTime);
+@@ -2584,9 +_,9 @@
+         weatherData.setThundering(thundering, org.bukkit.event.weather.ThunderChangeEvent.Cause.COMMAND); // Paper - per-level WeatherData
+     }
+ 
+-    @Deprecated(forRemoval = true) @io.papermc.paper.annotation.DoNotUse // Paper
++    // @Deprecated(forRemoval = true) @io.papermc.paper.annotation.DoNotUse // Paper // KioCG - per world weather config
+     public WeatherData getWeatherData() {
+-        throw new UnsupportedOperationException("Use ServerLevel.getWeatherData() instead"); // Paper
++        return this.weatherData; // Paper // KioCG - per world weather config
+     }
+ 
+     public boolean isEnforceWhitelist() {
