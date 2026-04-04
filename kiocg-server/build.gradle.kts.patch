@@ -4,11 +4,11 @@
      minecraftVersion = providers.gradleProperty("mcVersion")
      gitFilePatches = false
  
-+    val fork = forks.register("fork") {
++    val fork = forks.register("kiocg") {
 +        upstream.patchDir("paperServer") {
 +            upstreamPath = "paper-server"
 +            excludes = setOf("src/minecraft", "patches", "build.gradle.kts")
-+            patchesDir = rootDirectory.dir("fork-server/paper-patches")
++            patchesDir = rootDirectory.dir("kiocg-server/paper-patches")
 +            outputDir = rootDirectory.dir("paper-server")
 +        }
 +    }
@@ -45,10 +45,30 @@
  
  dependencies {
 -    implementation(project(":paper-api"))
-+    implementation(project(":fork-api"))
++    implementation(project(":kiocg-api"))
      implementation("ca.spottedleaf:concurrentutil:0.0.8")
      implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
      implementation("org.jline:jline-terminal-jni:3.27.1") // fall back to jni on java 21
+@@ -198,14 +_,14 @@
+         val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()
+         attributes(
+             "Main-Class" to "org.bukkit.craftbukkit.Main",
+-            "Implementation-Title" to "Paper",
++            "Implementation-Title" to "KioCG",
+             "Implementation-Version" to implementationVersion,
+             "Implementation-Vendor" to date,
+-            "Specification-Title" to "Paper",
++            "Specification-Title" to "KioCG",
+             "Specification-Version" to project.version,
+-            "Specification-Vendor" to "Paper Team",
+-            "Brand-Id" to "papermc:paper",
+-            "Brand-Name" to "Paper",
++            "Specification-Vendor" to "KioCG Team",
++            "Brand-Id" to "kiocgmc:kiocg",
++            "Brand-Name" to "KioCG",
+             "Build-Number" to (build ?: ""),
+             "Build-Time" to buildTime.toString(),
+             "Git-Branch" to gitBranch,
 @@ -264,7 +_,7 @@
      jvmArgumentProviders.add(provider)
  }
