@@ -1,0 +1,70 @@
+--- a/net/minecraft/world/inventory/EnchantmentMenu.java
++++ b/net/minecraft/world/inventory/EnchantmentMenu.java
+@@ -93,19 +_,40 @@
+             }
+         });
+         this.addStandardInventorySlots(inventory, 8, 84);
+-        this.addDataSlot(DataSlot.shared(this.costs, 0));
+-        this.addDataSlot(DataSlot.shared(this.costs, 1));
+-        this.addDataSlot(DataSlot.shared(this.costs, 2));
++        // KioCG start - EXP is money: 附魔等级显示实际扣除的等级
++        this.addDataSlot(sharedCostsData(this.costs, 0));
++        this.addDataSlot(sharedCostsData(this.costs, 1));
++        this.addDataSlot(sharedCostsData(this.costs, 2));
++        // KioCG end - EXP is money: 附魔等级显示实际扣除的等级
+         this.addDataSlot(this.enchantmentSeed).set(inventory.player.getEnchantmentSeed());
+-        this.addDataSlot(DataSlot.shared(this.enchantClue, 0));
+-        this.addDataSlot(DataSlot.shared(this.enchantClue, 1));
+-        this.addDataSlot(DataSlot.shared(this.enchantClue, 2));
+-        this.addDataSlot(DataSlot.shared(this.levelClue, 0));
+-        this.addDataSlot(DataSlot.shared(this.levelClue, 1));
+-        this.addDataSlot(DataSlot.shared(this.levelClue, 2));
++        // KioCG start - EXP is money: 不要显示附魔线索(因为包含误导性提示)
++        final int[] cluesData = {-1, -1, -1};
++        this.addDataSlot(DataSlot.shared(cluesData, 0));
++        this.addDataSlot(DataSlot.shared(cluesData, 1));
++        this.addDataSlot(DataSlot.shared(cluesData, 2));
++        this.addDataSlot(DataSlot.shared(cluesData, 0));
++        this.addDataSlot(DataSlot.shared(cluesData, 1));
++        this.addDataSlot(DataSlot.shared(cluesData, 2));
++        // KioCG end - EXP is money: 不要显示附魔线索(因为包含误导性提示)
+         this.player = (org.bukkit.entity.Player) inventory.player.getBukkitEntity(); // CraftBukkit
+     }
+ 
++    // KioCG start - EXP is money: 附魔等级显示实际扣除的等级
++    private static DataSlot sharedCostsData(final int[] storage, final int index) {
++        return new DataSlot() {
++            @Override
++            public int get() {
++                return storage[index] * 100; // 扣除100倍附魔等级
++            }
++
++            @Override
++            public void set(final int value) {
++                throw new UnsupportedOperationException();
++            }
++        };
++    }
++    // KioCG end - EXP is money: 附魔等级显示实际扣除的等级
++
+     @Override
+     public void slotsChanged(final Container container) {
+         if (container == this.enchantSlots) {
+@@ -201,7 +_,7 @@
+                 return false;
+             } else if (this.costs[buttonId] <= 0
+                 || itemStack.isEmpty()
+-                || (player.experienceLevel < enchantmentCost || player.experienceLevel < this.costs[buttonId]) && !player.hasInfiniteMaterials()) {
++                || (player.experienceLevel < enchantmentCost || player.experienceLevel < this.costs[buttonId] * 100) && !player.hasInfiniteMaterials()) { // KioCG - EXP is money: 扣除100倍附魔等级
+                 return false;
+             } else {
+                 this.access.execute((level, pos) -> {
+@@ -248,7 +_,7 @@
+                             enchantmentItem.enchant(enchantment, entry.getValue());
+                         }
+                         // CraftBukkit end
+-                        player.onEnchantmentPerformed(itemStack, enchantmentCost);
++                        player.onEnchantmentPerformed(itemStack, this.costs[buttonId] * 100); // KioCG - EXP is money: 扣除100倍附魔等级
+ 
+                         // CraftBukkit - TODO: let plugins change this
+                         currency.consume(enchantmentCost, player);

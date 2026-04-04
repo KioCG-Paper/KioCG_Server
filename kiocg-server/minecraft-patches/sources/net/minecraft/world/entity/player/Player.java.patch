@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/player/Player.java
++++ b/net/minecraft/world/entity/player/Player.java
+@@ -1667,7 +_,7 @@
+             this.totalExperience = 0;
+         }
+ 
+-        if (amount > 0 && this.experienceLevel % 5 == 0 && this.lastLevelUpTime < this.tickCount - 100.0F) {
++        if (amount > 0 && this.experienceLevel % 10000 == 0 && this.lastLevelUpTime < this.tickCount - 100.0F) { // KioCG - EXP is money
+             float vol = this.experienceLevel > 30 ? 1.0F : this.experienceLevel / 30.0F;
+             Player.sendSoundEffect(this, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_LEVELUP, this.getSoundSource(), vol * 0.75F, 1.0F); // Paper - send while respecting visibility
+             this.lastLevelUpTime = this.tickCount;
+@@ -1675,6 +_,8 @@
+     }
+ 
+     public int getXpNeededForNextLevel() {
++        if (true) return 1; // KioCG - EXP is money
++
+         if (this.experienceLevel >= 30) {
+             return 112 + (this.experienceLevel - 30) * 9;
+         } else { // Paper - diff on change; calculateTotalExperiencePoints

@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/protocol/game/ClientboundSetExperiencePacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundSetExperiencePacket.java
+@@ -27,7 +_,7 @@
+ 
+     private void write(final FriendlyByteBuf output) {
+         output.writeFloat(this.experienceProgress);
+-        output.writeVarInt(this.experienceLevel);
++        output.writeVarInt(Math.min(this.experienceLevel, 200000000)); // KioCG - EXP is money: 等级过大会导致客户端不显示经验条
+         output.writeVarInt(this.totalExperience);
+     }
+ 
