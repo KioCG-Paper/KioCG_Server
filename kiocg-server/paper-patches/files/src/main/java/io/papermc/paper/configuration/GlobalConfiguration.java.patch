@@ -1,0 +1,15 @@
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -403,4 +_,12 @@
+     public class UpdateChecker extends ConfigurationPart {
+         public boolean enabled = true;
+     }
++
++    // KioCG start - kiocg config
++    public KioCG kioCG;
++
++    public class KioCG extends ConfigurationPart {
++
++    }
++    // KioCG end - kiocg config
+ }
