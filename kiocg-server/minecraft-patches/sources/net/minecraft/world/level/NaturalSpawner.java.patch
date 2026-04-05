@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/level/NaturalSpawner.java
++++ b/net/minecraft/world/level/NaturalSpawner.java
+@@ -149,9 +_,11 @@
+         profiler.push("spawner");
+ 
+         for (MobCategory mobCategory : spawningCategories) {
++            if (mobCategory.isFriendly() || !level.reachMobLimit(chunk.getPos())) { // KioCG - mob farm restrictor
+             if (state.canSpawnForCategoryLocal(mobCategory, chunk.getPos())) {
+                 spawnCategoryForChunk(mobCategory, level, chunk, state::canSpawn, state::afterSpawn);
+             }
++            } // KioCG - mob farm restrictor
+         }
+ 
+         profiler.pop();
+@@ -216,6 +_,9 @@
+                     pos.set(x, yStart, z);
+                     double xx = x + 0.5;
+                     double zz = z + 0.5;
++
++                    if (!mobCategory.isFriendly() && level.reachMobLimit(ChunkPos.containing(pos))) continue; // KioCG - mob farm restrictor
++
+                     Player nearestPlayer = level.getNearestPlayer(xx, yStart, zz, -1.0, false);
+                     if (nearestPlayer != null) {
+                         double nearestPlayerDistanceSqr = nearestPlayer.distanceToSqr(xx, yStart, zz);

@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
+@@ -221,6 +_,8 @@
+     private final boolean tickTime;
+     private final LevelDebugSynchronizers debugSynchronizers = new LevelDebugSynchronizers(this);
+ 
++    private final Object2IntOpenHashMap<ChunkPos> mobFarmRestrictor = new Object2IntOpenHashMap<>(); // KioCG - mob farm restrictor
++
+     // CraftBukkit start
+     private final ResourceKey<LevelStem> typeKey;
+     public final String bukkitName;
 @@ -683,7 +_,7 @@
          this.chunkSource.getGeneratorState().ensureStructuresGenerated();
          this.portalForcer = new PortalForcer(this);
@@ -9,6 +18,20 @@
          }
  
          this.raids = this.getDataStorage().computeIfAbsent(Raids.TYPE);
+@@ -817,6 +_,13 @@
+             this.tickTime();
+         }
+ 
++        // KioCG start - mob farm restrictor
++        long time = this.getOverworldClockTime() % net.minecraft.SharedConstants.TICKS_PER_GAME_DAY;
++        if (time == 18000) {
++            this.resetMobLimit();
++        }
++        // KioCG end - mob farm restrictor
++
+         profiler.push("tickPending");
+         if (!this.isDebug() && runs) {
+             long tick = this.getGameTime();
 @@ -1193,6 +_,10 @@
          if (this.canHaveWeather()) {
              WeatherData weatherData = this.getWeatherData();
@@ -28,6 +51,40 @@
              }
  
              this.oThunderLevel = this.thunderLevel;
+@@ -2523,6 +_,33 @@
+         return this.getEntities().getAll();
+     }
+ 
++    // KioCG start - mob farm restrictor
++    public void logMobLimit(final Entity entity) {
++        if (entity.origin == null || entity.originWorld == null) {
++            return;
++        }
++
++        ChunkPos chunkPos = ChunkPos.containing(BlockPos.containing(entity.origin));
++        if (entity.originWorld.equals(this.uuid)) {
++            this.mobFarmRestrictor.addTo(chunkPos, 1);
++        } else {
++            for (ServerLevel serverLevel : this.getServer().getAllLevels()) {
++                if (serverLevel.uuid.equals(entity.originWorld)) {
++                    serverLevel.mobFarmRestrictor.addTo(chunkPos, 1);
++                }
++            }
++        }
++    }
++
++    public boolean reachMobLimit(final ChunkPos chunkPos) {
++        return this.mobFarmRestrictor.getInt(chunkPos) >= 16;
++    }
++
++    public void resetMobLimit() {
++        this.mobFarmRestrictor.clear();
++    }
++    // KioCG end - mob farm restrictor
++
+     @Override
+     public String toString() {
+         return "ServerLevel[" + this.serverLevelData.getLevelName() + "]";
 @@ -2542,7 +_,7 @@
      }
  

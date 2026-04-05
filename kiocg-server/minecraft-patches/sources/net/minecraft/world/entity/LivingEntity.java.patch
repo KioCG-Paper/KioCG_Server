@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/LivingEntity.java
++++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -1866,6 +_,7 @@
+                         sourceEntity.killedEntity((ServerLevel)this.level(), this, source);
+                     }
+                     this.gameEvent(GameEvent.ENTITY_DIE);
++                    if (!this.getType().getCategory().isFriendly()) serverLevel.logMobLimit(this); // KioCG - mob farm restrictor
+                 } else {
+                     this.dead = false;
+                     this.setHealth((float) deathEvent.getReviveHealth());
