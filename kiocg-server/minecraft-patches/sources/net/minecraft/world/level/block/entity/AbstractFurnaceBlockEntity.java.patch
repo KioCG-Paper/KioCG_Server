@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+@@ -419,7 +_,14 @@
+     public void setRecipeUsed(final @Nullable RecipeHolder<?> recipeUsed) {
+         if (recipeUsed != null) {
+             ResourceKey<Recipe<?>> id = recipeUsed.id();
+-            this.recipesUsed.addTo(id, 1);
++            // KioCG start - EXP is money: 每个配方最多保留64次
++            this.recipesUsed.mergeInt(id, 1, (value, incr) -> {
++                if (value >= 64) {
++                    return value;
++                }
++                return value + incr;
++            });
++            // KioCG end - EXP is money: 每个配方最多保留64次
+         }
+     }
+ 
+@@ -455,7 +_,7 @@
+             level.recipeAccess().byKey(entry.getKey()).ifPresent(recipe -> {
+                 if (!(recipe.value() instanceof AbstractCookingRecipe)) return; // Paper - don't process non-cooking recipes
+                 recipesToAward.add((RecipeHolder<?>)recipe);
+-                createExperience(level, position, entry.getIntValue(), ((AbstractCookingRecipe)recipe.value()).experience(), blockPos, serverPlayer, itemStack, amount); // Paper - don't process non-cooking recipes
++                createExperience(level, position, entry.getIntValue(), ((AbstractCookingRecipe)recipe.value()).experience() * 10, blockPos, serverPlayer, itemStack, amount); // Paper - don't process non-cooking recipes // KioCG - EXP is money: 烧炼经验提升为10倍
+             });
+         }
+ 
