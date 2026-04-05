@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/effect/OozingMobEffect.java
++++ b/net/minecraft/world/effect/OozingMobEffect.java
+@@ -33,6 +_,7 @@
+ 
+     @Override
+     public void onMobRemoved(final ServerLevel level, final LivingEntity mob, final int amplifier, final Entity.RemovalReason reason) {
++        if (mob.spawnReason == org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.POTION_EFFECT) return; // KioCG - mob farm restrictor
+         if (reason == Entity.RemovalReason.KILLED) {
+             int requestedSlimesToSpawn = this.spawnedCount.applyAsInt(mob.getRandom());
+             int maxEntityCramming = level.getGameRules().get(GameRules.MAX_ENTITY_CRAMMING);

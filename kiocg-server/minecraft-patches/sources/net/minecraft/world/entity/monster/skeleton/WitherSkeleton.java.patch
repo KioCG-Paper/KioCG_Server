@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/entity/monster/skeleton/WitherSkeleton.java
++++ b/net/minecraft/world/entity/monster/skeleton/WitherSkeleton.java
+@@ -86,6 +_,12 @@
+         SpawnGroupData spawnGroupData = super.finalizeSpawn(level, difficulty, spawnReason, groupData);
+         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0);
+         this.reassessWeaponGoal();
++        // KioCG start - mob farm restrictor
++        if (level.getBlockState(this.blockPosition()).is(net.minecraft.world.level.block.Blocks.WITHER_ROSE)) {
++            // level.removeBlock(this.blockPosition(), false);
++            level.getLevel().increaseMobLimit(this); // 自然生成时已被记录，再次记录来重复提升
++        }
++        // KioCG end - mob farm restrictor
+         return spawnGroupData;
+     }
+ 

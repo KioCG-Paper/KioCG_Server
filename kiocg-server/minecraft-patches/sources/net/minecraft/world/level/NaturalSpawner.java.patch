@@ -22,3 +22,11 @@
                      Player nearestPlayer = level.getNearestPlayer(xx, yStart, zz, -1.0, false);
                      if (nearestPlayer != null) {
                          double nearestPlayerDistanceSqr = nearestPlayer.distanceToSqr(xx, yStart, zz);
+@@ -257,6 +_,7 @@
+                                         clusterSize++;
+                                         groupSize++;
+                                         spawnCallback.run(mob, chunk);
++                                        if (!mobCategory.isFriendly()) level.increaseMobLimit(mob); // KioCG - mob farm restrictor
+                                     }
+                                     // CraftBukkit end
+                                     if (clusterSize >= mob.getMaxSpawnClusterSize()) {

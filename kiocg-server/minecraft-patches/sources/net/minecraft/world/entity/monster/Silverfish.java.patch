@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/entity/monster/Silverfish.java
++++ b/net/minecraft/world/entity/monster/Silverfish.java
+@@ -122,6 +_,21 @@
+         }
+     }
+ 
++    // KioCG start - mob farm restrictor
++    @Override
++    protected void dropFromLootTable(final ServerLevel level, final DamageSource source, final boolean playerKilled) {
++        if (this.spawnReason == org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.POTION_EFFECT) {
++            return;
++        }
++        super.dropFromLootTable(level, source, playerKilled);
++    }
++
++    @Override
++    public boolean shouldDropExperience() {
++        return this.spawnReason != org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.POTION_EFFECT && super.shouldDropExperience();
++    }
++    // KioCG end - mob farm restrictor
++
+     private static class SilverfishMergeWithStoneGoal extends RandomStrollGoal {
+         private @Nullable Direction selectedDirection;
+         private boolean doMerge;

@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/NetherPortalBlock.java
++++ b/net/minecraft/world/level/block/NetherPortalBlock.java
+@@ -68,6 +_,7 @@
+     protected void randomTick(final BlockState state, final ServerLevel level, BlockPos pos, final RandomSource random) {
+         if (level.spigotConfig.enableZombiePigmenPortalSpawns && level.isSpawningMonsters() // Spigot
+             && level.environmentAttributes().getValue(EnvironmentAttributes.NETHER_PORTAL_SPAWNS_PIGLINS, pos)
++            && !level.reachMobLimit(net.minecraft.world.level.ChunkPos.containing(pos)) // KioCG - mob farm restrictor
+             && random.nextInt(2000) < level.getDifficulty().getId()
+             && level.anyPlayerCloseEnoughForSpawning(pos)) {
+             while (level.getBlockState(pos).is(this)) {
+@@ -86,6 +_,7 @@
+                     if (vehicle != null) {
+                         vehicle.setPortalCooldown();
+                     }
++                    level.increaseMobLimit(entity); // KioCG - mob farm restrictor
+                 }
+             }
+         }

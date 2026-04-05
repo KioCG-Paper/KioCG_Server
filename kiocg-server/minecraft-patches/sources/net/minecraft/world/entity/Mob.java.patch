@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/entity/Mob.java
++++ b/net/minecraft/world/entity/Mob.java
+@@ -762,6 +_,7 @@
+     public void checkDespawn() {
+         if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) { // Paper - allow changing despawnInPeaceful
+             this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++            if (!this.getType().getCategory().isFriendly()) this.level().getMinecraftWorld().decreaseMobLimit(this); // KioCG - mob farm restrictor
+         } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
+             Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
+             if (player != null) {
+@@ -776,11 +_,13 @@
+                 // Despawn if hard/soft limit is exceeded
+                 if (despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) {
+                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                    if (!this.getType().getCategory().isFriendly()) this.level().getMinecraftWorld().decreaseMobLimit(this); // KioCG - mob farm restrictor
+                 }
+ 
+                 if (despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
+                     if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
+                         this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                        if (!this.getType().getCategory().isFriendly()) this.level().getMinecraftWorld().decreaseMobLimit(this); // KioCG - mob farm restrictor
+                     }
+                 } else {
+                     // Paper end - Configurable despawn distances

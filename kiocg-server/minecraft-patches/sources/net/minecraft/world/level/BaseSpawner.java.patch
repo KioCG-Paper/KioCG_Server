@@ -1,0 +1,57 @@
+--- a/net/minecraft/world/level/BaseSpawner.java
++++ b/net/minecraft/world/level/BaseSpawner.java
+@@ -53,6 +_,10 @@
+     public int requiredPlayerRange = 16;
+     public int spawnRange = 4;
+     private int tickDelay = 0; // Paper - Configurable mob spawner tick rate
++    // KioCG start - mob farm restrictor
++    private int totalMobsSpawned = 0;
++    private long cooldownEndsAt = 0;
++    // KioCG end - mob farm restrictor
+ 
+     public void setEntityId(final EntityType<?> type, final @Nullable Level level, final RandomSource random, final BlockPos pos) {
+         this.getOrCreateNextSpawnData(level, random, pos).getEntityToSpawn().putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+@@ -83,6 +_,7 @@
+     }
+ 
+     public void serverTick(final ServerLevel level, final BlockPos pos) {
++        if (this.cooldownEndsAt > level.getGameTime()) return; // KioCG - mob farm restrictor
+         if (spawnCount <= 0 || maxNearbyEntities <= 0) return; // Paper - Ignore impossible spawn tick
+         // Paper start - Configurable mob spawner tick rate
+         if (spawnDelay > 0 && --tickDelay > 0) return;
+@@ -208,6 +_,13 @@
+                                 ((Mob)entity).spawnAnim();
+                             }
+ 
++                            // KioCG start - mob farm restrictor
++                            if (++this.totalMobsSpawned % (5 * this.spawnCount) == 0) {
++                                this.cooldownEndsAt = level.getGameTime() + 10 * 60 * 20;
++                                break;
++                            }
++                            // KioCG end - mob farm restrictor
++
+                             // delay = true; // Paper - moved up above cancellable event
+                         }
+                     }
+@@ -248,6 +_,10 @@
+         this.requiredPlayerRange = input.getIntOr("RequiredPlayerRange", 16);
+         this.spawnRange = input.getIntOr("SpawnRange", 4);
+         this.displayEntity = null;
++        // KioCG start - mob farm restrictor
++        this.totalMobsSpawned = input.getIntOr("KioCG.TotalMobsSpawned", 0);
++        this.cooldownEndsAt = input.getLongOr("KioCG.CooldownEndsAt", 0);
++        // KioCG end - mob farm restrictor
+     }
+ 
+     public void save(final ValueOutput output) {
+@@ -270,6 +_,10 @@
+         output.putShort("SpawnRange", (short)this.spawnRange);
+         output.storeNullable("SpawnData", SpawnData.CODEC, this.nextSpawnData);
+         output.store("SpawnPotentials", SpawnData.LIST_CODEC, this.spawnPotentials);
++        // KioCG start - mob farm restrictor
++        output.putInt("KioCG.TotalMobsSpawned", this.totalMobsSpawned);
++        output.putLong("KioCG.CooldownEndsAt", this.cooldownEndsAt);
++        // KioCG end - mob farm restrictor
+     }
+ 
+     public @Nullable Entity getOrCreateDisplayEntity(final Level level, final BlockPos pos) {

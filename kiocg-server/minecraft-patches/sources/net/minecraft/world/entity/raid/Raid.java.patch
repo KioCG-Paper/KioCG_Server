@@ -1,0 +1,143 @@
+--- a/net/minecraft/world/entity/raid/Raid.java
++++ b/net/minecraft/world/entity/raid/Raid.java
+@@ -130,7 +_,7 @@
+     public int numGroups;
+     private Raid.RaidStatus status;
+     private int celebrationTicks;
+-    private Optional<BlockPos> waveSpawnPos = Optional.empty();
++    private Set<BlockPos> waveSpawnPos = new it.unimi.dsi.fastutil.objects.ObjectOpenHashSet<>(); // KioCG - mob farm restrictor
+ 
+     public Raid(final BlockPos center, final Difficulty difficulty) {
+         this.active = true;
+@@ -162,7 +_,7 @@
+         this.ticksActive = ticksActive;
+         this.raidOmenLevel = raidOmenLevel;
+         this.groupsSpawned = groupsSpawned;
+-        this.raidCooldownTicks = raidCooldownTicks;
++        this.raidCooldownTicks = raidCooldownTicks > 0 ? DEFAULT_PRE_RAID_TICKS : raidCooldownTicks; // KioCG - mob farm restrictor: 重新计算袭击可用位置
+         this.postRaidTicks = postRaidTicks;
+         this.totalHealth = totalHealth;
+         this.center = center;
+@@ -331,11 +_,13 @@
+                             return;
+                         }
+                     } else {
+-                        boolean hasCachedWaveSpawnPos = this.waveSpawnPos.isPresent();
+-                        boolean shouldTryToFindSpawnPos = !hasCachedWaveSpawnPos && this.raidCooldownTicks % 5 == 0;
+-                        if (hasCachedWaveSpawnPos && !level.isPositionEntityTicking(this.waveSpawnPos.get())) {
+-                            shouldTryToFindSpawnPos = true;
+-                        }
++                        // KioCG start - mob farm restrictor
++                        // boolean hasCachedWaveSpawnPos = this.waveSpawnPos.isPresent();
++                        boolean shouldTryToFindSpawnPos = this.waveSpawnPos.size() < 100 && this.raidCooldownTicks % 5 == 0;
++                        // if (hasCachedWaveSpawnPos && !level.isPositionEntityTicking(this.waveSpawnPos.get())) {
++                        //     shouldTryToFindSpawnPos = true;
++                        // }
++                        // KioCG end - mob farm restrictor
+ 
+                         if (shouldTryToFindSpawnPos) {
+                             this.waveSpawnPos = this.getValidSpawnPos(level);
+@@ -393,7 +_,26 @@
+                 int attempt = 0;
+ 
+                 while (this.shouldSpawnGroup()) {
+-                    BlockPos spawnPos = this.waveSpawnPos.orElseGet(() -> this.findRandomSpawnPos(level, 20));
++                    // KioCG start - mob farm restrictor
++                    BlockPos spawnPos = null;
++                    if (this.waveSpawnPos.size() >= 100) {
++                        // 随机取出一个符合的生成位置
++                        List<BlockPos> list = new java.util.ArrayList<>(this.waveSpawnPos);
++                        for (int i = list.size(); i > 0; i--) {
++                            int index = this.random.nextInt(i);
++                            spawnPos = list.get(index);
++                            if (!level.isPositionEntityTicking(spawnPos)) {
++                                if (index != i - 1) {
++                                    list.set(index, list.get(i - 1));
++                                }
++                                spawnPos = null;
++                                continue;
++                            }
++                            break;
++                        }
++                    }
++                    // KioCG end - mob farm restrictor
++
+                     if (spawnPos != null) {
+                         this.started = true;
+                         this.spawnGroup(level, spawnPos);
+@@ -402,10 +_,7 @@
+                             soundPlayed = true;
+                         }
+                     } else {
+-                        attempt++;
+-                    }
+-
+-                    if (attempt > 5) {
++                        // KioCG - mob farm restrictor: 只需尝试一次获取生成位置
+                         org.bukkit.craftbukkit.event.CraftEventFactory.callRaidStopEvent(level, this, org.bukkit.event.raid.RaidStopEvent.Reason.UNSPAWNABLE); // CraftBukkit
+                         this.stop();
+                         break;
+@@ -465,10 +_,11 @@
+             .ifPresent(this::setCenter);
+     }
+ 
+-    private Optional<BlockPos> getValidSpawnPos(final ServerLevel level) {
+-        BlockPos spawnPos = this.findRandomSpawnPos(level, 8);
+-        return spawnPos != null ? Optional.of(spawnPos) : Optional.empty();
++    // KioCG start - mob farm restrictor
++    private <T extends Collection<BlockPos>> T getValidSpawnPos(final ServerLevel level) {
++        return (T) this.findRandomSpawnPos(level, 8, this.waveSpawnPos);
+     }
++    // KioCG end - mob farm restrictor
+ 
+     private boolean hasMoreWaves() {
+         return this.hasBonusWave() ? !this.hasSpawnedBonusWave() : !this.isFinalWave();
+@@ -590,7 +_,7 @@
+             }
+         }
+ 
+-        this.waveSpawnPos = Optional.empty();
++        this.waveSpawnPos.clear(); // KioCG - mob farm restrictor
+         this.groupsSpawned++;
+         this.updateBossbar();
+         this.setDirty(level);
+@@ -689,7 +_,7 @@
+         return this.groupToLeaderMap.get(wave);
+     }
+ 
+-    private @Nullable BlockPos findRandomSpawnPos(final ServerLevel level, final int maxTries) {
++    private <T extends Collection<BlockPos>> T findRandomSpawnPos(final ServerLevel level, final int maxTries, final T waveSpawnPos) { // KioCG - mob farm restrictor
+         int secondsRemaining = this.raidCooldownTicks / 20;
+         float howFar = 0.22F * secondsRemaining - 0.24F;
+         BlockPos.MutableBlockPos spawnPos = new BlockPos.MutableBlockPos();
+@@ -699,7 +_,7 @@
+             float angle = startAngle + (float) Math.PI * i / 8.0F;
+             int spawnX = this.center.getX() + Mth.floor(Mth.cos(angle) * 32.0F * howFar) + this.random.nextInt(3) * Mth.floor(howFar);
+             int spawnZ = this.center.getZ() + Mth.floor(Mth.sin(angle) * 32.0F * howFar) + this.random.nextInt(3) * Mth.floor(howFar);
+-            int spawnY = level.getHeight(Heightmap.Types.WORLD_SURFACE, spawnX, spawnZ);
++            int spawnY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, spawnX, spawnZ); // KioCG - mob farm restrictor: 更合理的生成位置
+             if (Mth.abs(spawnY - this.center.getY()) <= 96) {
+                 spawnPos.set(spawnX, spawnY, spawnZ);
+                 if (!level.isVillage(spawnPos) || secondsRemaining <= 7) {
+@@ -710,13 +_,19 @@
+                             RAVAGER_SPAWN_PLACEMENT_TYPE.isSpawnPositionOk(level, spawnPos, EntityType.RAVAGER)
+                                 || level.getBlockState(spawnPos.below()).is(Blocks.SNOW) && level.getBlockState(spawnPos).isAir()
+                         )) {
+-                        return spawnPos;
++
++                        // KioCG start - mob farm restrictor
++                        waveSpawnPos.add(spawnPos.immutable());
++                        if (waveSpawnPos.size() >= 100) {
++                            return waveSpawnPos;
++                        }
++                        // KioCG end - mob farm restrictor
+                     }
+                 }
+             }
+         }
+ 
+-        return null;
++        return waveSpawnPos; // KioCG - mob farm restrictor
+     }
+ 
+     private boolean addWaveMob(final ServerLevel level, final int wave, final Raider raider) {

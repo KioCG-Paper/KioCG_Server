@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/effect/WeavingMobEffect.java
++++ b/net/minecraft/world/effect/WeavingMobEffect.java
+@@ -26,6 +_,7 @@
+ 
+     @Override
+     public void onMobRemoved(final ServerLevel level, final LivingEntity mob, final int amplifier, final Entity.RemovalReason reason) {
++        if (mob.spawnReason == org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.POTION_EFFECT) return; // KioCG - mob farm restrictor
+         if (reason == Entity.RemovalReason.KILLED && (mob instanceof Player || level.getGameRules().get(GameRules.MOB_GRIEFING))) {
+             this.spawnCobwebsRandomlyAround(level, mob.getRandom(), mob.blockPosition(), mob); // Paper - Fire EntityChangeBlockEvent in more places
+         }

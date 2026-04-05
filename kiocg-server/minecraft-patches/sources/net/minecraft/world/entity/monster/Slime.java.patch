@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/entity/monster/Slime.java
++++ b/net/minecraft/world/entity/monster/Slime.java
+@@ -199,7 +_,7 @@
+     @Override
+     public void remove(final Entity.RemovalReason reason, org.bukkit.event.entity.EntityRemoveEvent.@Nullable Cause eventCause) { // CraftBukkit - add Bukkit remove cause
+         int size = this.getSize();
+-        if (!this.level().isClientSide() && size > 1 && this.isDeadOrDying()) {
++        if (!this.level().isClientSide() && size > 1 && this.isDeadOrDying() && this.spawnReason != org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.POTION_EFFECT) { // KioCG - mob farm restrictor
+             float width = this.getDimensions(this.getPose()).width();
+             float xzSlimeSpawnOffset = width / 2.0F;
+             int halfSize = size / 2;
+@@ -391,6 +_,21 @@
+         this.canWander = canWander;
+     }
+     // Paper end - Slime pathfinder events
++
++    // KioCG start - mob farm restrictor
++    @Override
++    protected void dropFromLootTable(final ServerLevel level, final DamageSource source, final boolean playerKilled) {
++        if (this.spawnReason == org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.POTION_EFFECT) {
++            return;
++        }
++        super.dropFromLootTable(level, source, playerKilled);
++    }
++
++    @Override
++    public boolean shouldDropExperience() {
++        return this.spawnReason != org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.POTION_EFFECT && super.shouldDropExperience();
++    }
++    // KioCG end - mob farm restrictor
+ 
+     private static class SlimeAttackGoal extends Goal {
+         private final Slime slime;

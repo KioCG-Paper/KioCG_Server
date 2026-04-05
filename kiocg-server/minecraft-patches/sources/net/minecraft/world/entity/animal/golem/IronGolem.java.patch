@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/entity/animal/golem/IronGolem.java
++++ b/net/minecraft/world/entity/animal/golem/IronGolem.java
+@@ -299,6 +_,16 @@
+         super.die(source);
+     }
+ 
++    // KioCG start - mob farm restrictor
++    @Override
++    public boolean checkSpawnRules(final net.minecraft.world.level.LevelAccessor level, final net.minecraft.world.entity.EntitySpawnReason spawnReason) {
++        if (level instanceof ServerLevel serverLevel && spawnReason == net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED) {
++            return !serverLevel.reachMobLimit(this.chunkPosition());
++        }
++        return super.checkSpawnRules(level, spawnReason);
++    }
++    // KioCG end - mob farm restrictor
++
+     @Override
+     public boolean checkSpawnObstruction(final LevelReader level) {
+         BlockPos pos = this.blockPosition();

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/effect/InfestedMobEffect.java
++++ b/net/minecraft/world/effect/InfestedMobEffect.java
+@@ -26,6 +_,7 @@
+ 
+     @Override
+     public void onMobHurt(final ServerLevel level, final LivingEntity mob, final int amplifier, final DamageSource source, final float damage) {
++        if (mob.spawnReason == org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.POTION_EFFECT) return; // KioCG - mob farm restrictor
+         if (mob.getRandom().nextFloat() <= this.chanceToSpawn) {
+             int count = this.spawnedCount.applyAsInt(mob.getRandom());
+ 
