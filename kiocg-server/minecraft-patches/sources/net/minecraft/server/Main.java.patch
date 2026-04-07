@@ -1,0 +1,20 @@
+--- a/net/minecraft/server/Main.java
++++ b/net/minecraft/server/Main.java
+@@ -288,6 +_,17 @@
+                 return;
+             }
+ 
++            // KioCG start - biome modification
++            RegistryAccess.Frozen registryHolder = worldStem.registries().compositeAccess();
++            try {
++                final com.kiocg.world.level.levelgen.BiomeModification biomeModification = new com.kiocg.world.level.levelgen.BiomeModification(registryHolder);
++                biomeModification.applyModifications();
++            } catch (Exception ex) {
++                LOGGER.warn("Failed to modify biomes, can't proceed with server load.", ex);
++                return;
++            }
++            // KioCG end - biome modification
++
+             /*
+             RegistryAccess.Frozen registryHolder = worldStem.registries().compositeAccess();
+             WorldData data = worldStem.worldDataAndGenSettings().data();

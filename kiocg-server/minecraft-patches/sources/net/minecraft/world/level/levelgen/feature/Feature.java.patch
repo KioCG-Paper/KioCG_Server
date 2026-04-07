@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/level/levelgen/feature/Feature.java
++++ b/net/minecraft/world/level/levelgen/feature/Feature.java
+@@ -215,4 +_,6 @@
+             level.getChunk(pos).markPosForPostprocessing(pos);
+         }
+     }
++
++    public static final Feature<com.kiocg.world.level.levelgen.feature.configurations.MixedOreConfiguration> KIOCG_MIXED_ORE = register("kiocg_mixed_ore", new com.kiocg.world.level.levelgen.feature.MixedOreFeature(com.kiocg.world.level.levelgen.feature.configurations.MixedOreConfiguration.CODEC)); // KioCG - biome modification
+ }
