@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/levelgen/OreVeinifier.java
++++ b/net/minecraft/world/level/levelgen/OreVeinifier.java
+@@ -30,7 +_,7 @@
+         return context -> {
+             double oreVeininessNoiseValue = veinToggle.compute(context);
+             int posY = context.blockY();
+-            OreVeinifier.VeinType veinType = oreVeininessNoiseValue > 0.0 ? OreVeinifier.VeinType.COPPER : OreVeinifier.VeinType.IRON;
++            OreVeinifier.VeinType veinType = oreVeininessNoiseValue > 0.0 ? OreVeinifier.VeinType.COPPER : OreVeinifier.VeinType.COAL; // KioCG - coal ore veins
+             double veininessRidged = Math.abs(oreVeininessNoiseValue);
+             int distanceFromTop = veinType.maxY - posY;
+             int distanceFromBottom = posY - veinType.minY;
+@@ -62,7 +_,7 @@
+ 
+     protected static enum VeinType {
+         COPPER(Blocks.COPPER_ORE.defaultBlockState(), Blocks.RAW_COPPER_BLOCK.defaultBlockState(), Blocks.GRANITE.defaultBlockState(), 0, 50),
+-        IRON(Blocks.DEEPSLATE_IRON_ORE.defaultBlockState(), Blocks.RAW_IRON_BLOCK.defaultBlockState(), Blocks.TUFF.defaultBlockState(), -60, -8);
++        COAL(Blocks.DEEPSLATE_COAL_ORE.defaultBlockState(), Blocks.COAL_BLOCK.defaultBlockState(), Blocks.TUFF.defaultBlockState(), -60, -8); // KioCG - coal ore veins
+ 
+         private final BlockState ore;
+         private final BlockState rawOreBlock;
