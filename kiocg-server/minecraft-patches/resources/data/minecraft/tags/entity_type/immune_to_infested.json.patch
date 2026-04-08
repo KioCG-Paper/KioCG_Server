@@ -1,0 +1,10 @@
+--- a/data/minecraft/tags/entity_type/immune_to_infested.json
++++ b/data/minecraft/tags/entity_type/immune_to_infested.json
+@@ -1,5 +_,6 @@
+ {
+   "values": [
+-    "minecraft:silverfish"
++    "minecraft:silverfish",
++    "minecraft:allay"
+   ]
+ }
