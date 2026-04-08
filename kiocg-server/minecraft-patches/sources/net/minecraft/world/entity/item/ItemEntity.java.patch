@@ -1,0 +1,50 @@
+--- a/net/minecraft/world/entity/item/ItemEntity.java
++++ b/net/minecraft/world/entity/item/ItemEntity.java
+@@ -50,6 +_,7 @@
+     public int health = 5;
+     public @Nullable EntityReference<Entity> thrower;
+     public @Nullable UUID target;
++    public int releaseTargetTick = -1; // KioCG - death drop protection
+     public final float bobOffs = this.random.nextFloat() * (float) Math.PI * 2.0F;
+     public boolean canMobPickup = true; // Paper - Item#canEntityPickup
+     private int despawnRate = -1; // Paper - Alternative item-despawn-rate
+@@ -134,6 +_,7 @@
+         if (this.age != -32768) {
+             this.age++;
+         }
++        if (--this.releaseTargetTick == 0) this.setTarget(null); // KioCG start - death drop protection
+ 
+         if (!this.level().isClientSide() && this.age >= this.despawnRate) {// Paper - Alternative item-despawn-rate
+             // CraftBukkit start - fire ItemDespawnEvent
+@@ -212,6 +_,7 @@
+             if (this.age != -32768) {
+                 this.age++;
+             }
++            if (--this.releaseTargetTick == 0) this.setTarget(null); // KioCG start - death drop protection
+ 
+             this.needsSync = this.needsSync | this.updateFluidInteraction();
+             if (!this.level().isClientSide()) {
+@@ -317,6 +_,7 @@
+         merge(toItem, toStack, fromStack);
+         toItem.pickupDelay = Math.max(toItem.pickupDelay, fromItem.pickupDelay);
+         toItem.age = Math.min(toItem.age, fromItem.age);
++        toItem.releaseTargetTick = Math.max(toItem.releaseTargetTick, fromItem.releaseTargetTick); // KioCG - death drop protection
+         if (fromStack.isEmpty()) {
+             fromItem.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.MERGE); // CraftBukkit - add Bukkit remove cause
+         }
+@@ -383,6 +_,7 @@
+             output.putString("Paper.FrictionState", this.frictionState.toString());
+         }
+         // Paper end - Friction API
++        output.putInt("KioCG.ReleaseTargetTick", this.releaseTargetTick); // KioCG - death drop protection
+     }
+ 
+     @Override
+@@ -405,6 +_,7 @@
+         if (this.getItem().isEmpty()) {
+             this.discard(null); // CraftBukkit - add Bukkit remove cause
+         }
++        this.releaseTargetTick = input.getIntOr("KioCG.ReleaseTargetTick", -1); // KioCG - death drop protection
+     }
+ 
+     @Override
