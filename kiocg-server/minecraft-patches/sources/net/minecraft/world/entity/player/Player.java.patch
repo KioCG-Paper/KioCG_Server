@@ -18,3 +18,12 @@
          if (this.experienceLevel >= 30) {
              return 112 + (this.experienceLevel - 30) * 9;
          } else { // Paper - diff on change; calculateTotalExperiencePoints
+@@ -1746,7 +_,7 @@
+ 
+     @Override
+     protected int getBaseExperienceReward(final ServerLevel level) {
+-        return !level.getGameRules().get(GameRules.KEEP_INVENTORY) && !this.isSpectator() ? Math.min(this.experienceLevel * 7, 100) : 0;
++        return /*!level.getGameRules().get(GameRules.KEEP_INVENTORY) && !this.isSpectator() ? Math.min(this.experienceLevel * 7, 100) :*/ 0; // KioCG - EXP is money: 玩家死亡不要掉落经验
+     }
+ 
+     @Override

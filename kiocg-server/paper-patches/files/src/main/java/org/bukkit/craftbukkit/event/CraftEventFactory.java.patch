@@ -1,0 +1,16 @@
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -991,11 +_,12 @@
+         return event;
+     }
+ 
+-    public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, net.kyori.adventure.text.Component deathMessage, boolean showDeathMessages, boolean keepInventory) {
++    public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayer victim, DamageSource damageSource, List<Entity.DefaultDrop> drops, List<org.bukkit.inventory.ItemStack> itemsToKeep, net.kyori.adventure.text.Component deathMessage, boolean showDeathMessages, boolean keepInventory) { // KioCG - death drop protection
+         CraftPlayer entity = victim.getBukkitEntity();
+         CraftDamageSource bukkitDamageSource = new CraftDamageSource(damageSource);
+         PlayerDeathEvent event = new PlayerDeathEvent(entity, bukkitDamageSource, new io.papermc.paper.util.TransformingRandomAccessList<>(drops, Entity.DefaultDrop::stack, FROM_FUNCTION), victim.getExpReward(victim.level(), damageSource.getEntity()), 0, deathMessage, showDeathMessages);
+         event.setKeepInventory(keepInventory);
++        event.getItemsToKeep().addAll(itemsToKeep); // KioCG - death drop protection
+         event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel
+         populateFields(victim, event); // Paper - make cancellable
+         Bukkit.getServer().getPluginManager().callEvent(event);
