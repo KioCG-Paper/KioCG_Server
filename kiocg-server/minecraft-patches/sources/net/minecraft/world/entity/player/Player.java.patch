@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -1667,7 +_,7 @@
+@@ -1661,7 +_,7 @@
              this.totalExperience = 0;
          }
  
@@ -9,7 +9,7 @@
              float vol = this.experienceLevel > 30 ? 1.0F : this.experienceLevel / 30.0F;
              Player.sendSoundEffect(this, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_LEVELUP, this.getSoundSource(), vol * 0.75F, 1.0F); // Paper - send while respecting visibility
              this.lastLevelUpTime = this.tickCount;
-@@ -1675,6 +_,8 @@
+@@ -1669,6 +_,8 @@
      }
  
      public int getXpNeededForNextLevel() {
@@ -18,7 +18,7 @@
          if (this.experienceLevel >= 30) {
              return 112 + (this.experienceLevel - 30) * 9;
          } else { // Paper - diff on change; calculateTotalExperiencePoints
-@@ -1746,7 +_,7 @@
+@@ -1740,7 +_,7 @@
  
      @Override
      protected int getBaseExperienceReward(final ServerLevel level) {

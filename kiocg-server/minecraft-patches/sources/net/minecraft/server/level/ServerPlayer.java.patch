@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -1153,11 +_,30 @@
+@@ -1158,11 +_,30 @@
              return;
          }
          List<DefaultDrop> loot = new java.util.ArrayList<>(this.getInventory().getContainerSize()); // Paper - Restore vanilla drops behavior
@@ -33,7 +33,7 @@
                  }
              }
          }
-@@ -1171,8 +_,8 @@
+@@ -1176,8 +_,8 @@
  
          Component defaultMessage = this.getCombatTracker().getDeathMessage();
  
