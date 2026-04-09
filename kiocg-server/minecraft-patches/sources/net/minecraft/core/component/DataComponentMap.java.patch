@@ -1,0 +1,35 @@
+--- a/net/minecraft/core/component/DataComponentMap.java
++++ b/net/minecraft/core/component/DataComponentMap.java
+@@ -88,6 +_,12 @@
+         return this.get(type) != null;
+     }
+ 
++    // KioCG start - customize default components
++    default void override(final DataComponentPatch dataComponentPatch) {
++        throw new UnsupportedOperationException("");
++    }
++    // KioCG end - customize default components
++
+     @Override
+     default Iterator<TypedDataComponent<?>> iterator() {
+         return Iterators.transform(this.keySet().iterator(), type -> Objects.requireNonNull(this.getTyped((DataComponentType<?>)type)));
+@@ -180,6 +_,19 @@
+             public <T> @Nullable T get(final DataComponentType<? extends T> type) {
+                 return (T)this.map.get(type);
+             }
++
++            // KioCG start - customize default components
++            @Override
++            public void override(final DataComponentPatch dataComponentPatch) {
++                for (Map.Entry<DataComponentType<?>, java.util.Optional<?>> entry : dataComponentPatch.entrySet()) {
++                    if (entry.getValue().isPresent()) {
++                        this.map.put(entry.getKey(), entry.getValue().get());
++                    } else {
++                        this.map.remove(entry.getKey());
++                    }
++                }
++            }
++            // KioCG end - customize default components
+ 
+             @Override
+             public boolean has(final DataComponentType<?> type) {

@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/item/ItemStack.java
++++ b/net/minecraft/world/item/ItemStack.java
+@@ -196,7 +_,7 @@
+                     boolean prev = net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.get();
+                     try (final io.papermc.paper.util.SafeAutoClosable ignored = io.papermc.paper.util.sanitizer.ItemObfuscationSession.withContext(c -> c.itemStack(itemStack))) { // pass the itemstack as context to the obfuscation session
+                         net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.set(true);
+-                    patchCodec.encode(output, itemStack.components.asPatch());
++                    patchCodec.encode(output, itemStack.getComponentsPatchRemote()); // KioCG - customize default components
+                     } finally {
+                         net.minecraft.network.chat.ComponentSerialization.DONT_RENDER_TRANSLATABLES.set(prev);
+                     }
+@@ -242,6 +_,19 @@
+     public DataComponentPatch getComponentsPatch() {
+         return !this.isEmpty() ? this.components.asPatch() : DataComponentPatch.EMPTY;
+     }
++
++    // KioCG start - customize default components
++    public DataComponentPatch getComponentsPatchRemote() {
++        if (this.isEmpty()) return DataComponentPatch.EMPTY;
++        final DataComponentPatch componentsPatchRemote = this.getItem().componentsPatchRemote();
++        if (componentsPatchRemote == DataComponentPatch.EMPTY) return this.components.asPatch();
++
++        final DataComponentPatch.Builder builder = DataComponentPatch.builder();
++        builder.copy(componentsPatchRemote);
++        builder.copy(this.components.asPatch());
++        return builder.build();
++    }
++    // KioCG end - customize default components
+ 
+     public DataComponentMap immutableComponents() {
+         return !this.isEmpty() ? this.components.toImmutableMap() : DataComponentMap.EMPTY;

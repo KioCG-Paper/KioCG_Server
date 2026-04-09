@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/item/Items.java
++++ b/net/minecraft/world/item/Items.java
+@@ -60,6 +_,11 @@
+ import net.minecraft.world.level.material.Fluids;
+ import net.minecraft.world.waypoints.Waypoint;
+ 
++// KioCG start - customize default components
++import net.minecraft.world.item.component.*;
++import net.minecraft.core.component.DataComponentPatch;
++// KioCG end - customize default components
++
+ public class Items {
+     public static final Item AIR = registerBlock(Blocks.AIR, AirItem::new);
+     public static final Item STONE = registerBlock(Blocks.STONE);
+@@ -2407,4 +_,12 @@
+ 
+         return Registry.register(BuiltInRegistries.ITEM, key, item);
+     }
++
++    // KioCG start - customize default components
++    public static void modifyItems() {
++        POTION.overrideComponents(DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 16).build());
++        SPLASH_POTION.overrideComponents(DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 16).build());
++        LINGERING_POTION.overrideComponents(DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 16).build());
++    }
++    // KioCG end - customize default components
+ }

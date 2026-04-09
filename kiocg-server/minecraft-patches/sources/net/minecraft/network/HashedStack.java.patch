@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/HashedStack.java
++++ b/net/minecraft/network/HashedStack.java
+@@ -50,7 +_,7 @@
+         public boolean matches(final ItemStack itemStack, final HashedPatchMap.HashGenerator hasher) {
+             return this.count == itemStack.getCount()
+                 && this.item.equals(itemStack.typeHolder())
+-                && this.components.matches(itemStack.getComponentsPatch(), hasher);
++                && this.components.matches(itemStack.getComponentsPatchRemote(), hasher); // KioCG - customize default components
+         }
+     }
+ }

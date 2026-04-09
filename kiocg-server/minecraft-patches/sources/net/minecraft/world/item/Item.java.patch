@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/item/Item.java
++++ b/net/minecraft/world/item/Item.java
+@@ -114,6 +_,7 @@
+     public static final int MAX_BAR_WIDTH = 13;
+     protected static final int APPROXIMATELY_INFINITE_USE_DURATION = 72000;
+     private final Holder.Reference<Item> builtInRegistryHolder = BuiltInRegistries.ITEM.createIntrusiveHolder(this);
++    private net.minecraft.core.component.DataComponentPatch componentsPatchRemote = net.minecraft.core.component.DataComponentPatch.EMPTY; // KioCG - customize default components
+     private final @Nullable ItemStackTemplate craftingRemainingItem;
+     protected final String descriptionId;
+     private final FeatureFlagSet requiredFeatures;
+@@ -155,6 +_,17 @@
+     public DataComponentMap components() {
+         return this.builtInRegistryHolder.components();
+     }
++
++    // KioCG start - customize default components
++    public void overrideComponents(final net.minecraft.core.component.DataComponentPatch dataComponentPatch) {
++        this.components().override(dataComponentPatch);
++        this.componentsPatchRemote = dataComponentPatch;
++    }
++
++    public net.minecraft.core.component.DataComponentPatch componentsPatchRemote() {
++        return this.componentsPatchRemote;
++    }
++    // KioCG end - customize default components
+ 
+     public int getDefaultMaxStackSize() {
+         return this.components().getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
