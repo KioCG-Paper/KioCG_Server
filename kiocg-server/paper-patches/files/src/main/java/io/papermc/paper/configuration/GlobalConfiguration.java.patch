@@ -1,15 +1,17 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -403,4 +_,12 @@
+@@ -403,4 +_,14 @@
      public class UpdateChecker extends ConfigurationPart {
          public boolean enabled = true;
      }
 +
 +    // KioCG start - kiocg config
-+    public KioCG kioCG;
++    public Kiocg kiocg;
 +
-+    public class KioCG extends ConfigurationPart {
-+
++    public class Kiocg extends ConfigurationPart {
++        public Component permadeath = Component.text("因电荷消耗殆尽被系统抹除数据", NamedTextColor.RED);
++        public Component permadeathWarningTitle = Component.text("电荷已消耗殆尽", NamedTextColor.GRAY);
++        public Component permadeathWarningSubtitle = Component.text("你的下一次死亡将是永久的", NamedTextColor.RED);
 +    }
 +    // KioCG end - kiocg config
  }

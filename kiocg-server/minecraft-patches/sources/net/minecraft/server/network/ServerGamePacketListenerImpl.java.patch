@@ -1,0 +1,17 @@
+--- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -3019,6 +_,14 @@
+                         return;
+                     }
+ 
++                    // KioCG start - EXP is life
++                    if (this.player.experienceLevel <= 0) {
++                        this.connection.send(new net.minecraft.network.protocol.game.ClientboundRespawnPacket(this.player.createCommonSpawnInfo(this.player.level()), net.minecraft.network.protocol.game.ClientboundRespawnPacket.KEEP_ALL_DATA));
++                        this.connection.send(new net.minecraft.network.protocol.game.ClientboundPlayerCombatKillPacket(this.player.getId(), io.papermc.paper.adventure.PaperAdventure.asVanilla(io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.permadeath)));
++                        return;
++                    }
++                    // KioCG end - EXP is life
++
+                     this.player = this.server.getPlayerList().respawn(this.player, false, Entity.RemovalReason.KILLED, RespawnReason.DEATH); // CraftBukkit
+                     this.resetPosition();
+                     this.restartClientLoadTimerAfterRespawn();

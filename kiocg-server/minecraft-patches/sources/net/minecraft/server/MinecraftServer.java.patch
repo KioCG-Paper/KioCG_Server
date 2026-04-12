@@ -24,7 +24,7 @@
      // Paper start - per-level WeatherData
      public void setWeatherParameters(final ServerLevel level, final int clearTime, final int rainTime, final boolean raining, final boolean thundering) {
 -        WeatherData weatherData = level.getWeatherData();
-+        WeatherData weatherData = level.paperConfig().kioCG.perWorldWeather ? level.getWeatherData() : this.getWeatherData(); // KioCG - per world weather config
++        WeatherData weatherData = level.paperConfig().kiocg.perWorldWeather ? level.getWeatherData() : this.getWeatherData(); // KioCG - per world weather config
          // Paper end - per-level WeatherData
          weatherData.setClearWeatherTime(clearTime);
          weatherData.setRainTime(rainTime);

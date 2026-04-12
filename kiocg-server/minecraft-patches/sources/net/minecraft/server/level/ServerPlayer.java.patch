@@ -1,5 +1,23 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -840,6 +_,17 @@
+                 if (!this.isSleeping()) {
+                     this.awardStat(Stats.TIME_SINCE_REST);
+                 }
++
++                // KioCG start - EXP is life
++                if (this.tickCount % 20 == 0 && !this.getAbilities().invulnerable && !this.getBukkitEntity().hasPermission("kiocg.lifecountdown.bypass")) {
++                    final int prevLevel = this.experienceLevel;
++                    this.giveExperienceLevels(-1);
++                    if (prevLevel > 0 && this.experienceLevel <= 0) {
++                        this.level().playSound(null, this, this.getDeathSound(), net.minecraft.sounds.SoundSource.PLAYERS, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
++                        this.getBukkitEntity().showTitle(net.kyori.adventure.title.Title.title(io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.permadeathWarningTitle, io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.permadeathWarningSubtitle));
++                    }
++                }
++                // KioCG end - EXP is life
+             }
+ 
+             for (int i = 0; i < this.getInventory().getContainerSize(); i++) {
 @@ -1158,11 +_,30 @@
              return;
          }

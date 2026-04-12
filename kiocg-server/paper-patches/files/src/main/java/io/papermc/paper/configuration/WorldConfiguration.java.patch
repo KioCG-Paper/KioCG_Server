@@ -6,9 +6,9 @@
      }
 +
 +    // KioCG start - kiocg config
-+    public KioCG kioCG;
++    public Kiocg kiocg;
 +
-+    public class KioCG extends ConfigurationPart {
++    public class Kiocg extends ConfigurationPart {
 +        public boolean perWorldTime = false; // TODO - Paper尚未实现独立世界时间
 +        public boolean perWorldWeather = false;
 +    }

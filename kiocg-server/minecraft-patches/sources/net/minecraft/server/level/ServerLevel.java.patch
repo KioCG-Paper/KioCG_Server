@@ -14,7 +14,7 @@
          this.portalForcer = new PortalForcer(this);
          if (this.canHaveWeather()) {
 -            this.prepareWeather(this.weatherData); // Paper - per-level WeatherData
-+            this.prepareWeather(this.paperConfig().kioCG.perWorldWeather ? this.weatherData : server.getWeatherData()); // Paper - per-level WeatherData // KioCG - per world weather config
++            this.prepareWeather(this.paperConfig().kiocg.perWorldWeather ? this.weatherData : server.getWeatherData()); // Paper - per-level WeatherData // KioCG - per world weather config
          }
  
          this.raids = this.getDataStorage().computeIfAbsent(Raids.TYPE);
@@ -98,7 +98,7 @@
  
      public WeatherData getWeatherData() {
 -        return this.weatherData; // Paper - per-level WeatherData
-+        return this.paperConfig().kioCG.perWorldWeather ? this.weatherData : this.server.getWeatherData(); // Paper - per-level WeatherData // KioCG - per world weather config
++        return this.paperConfig().kiocg.perWorldWeather ? this.weatherData : this.server.getWeatherData(); // Paper - per-level WeatherData // KioCG - per world weather config
      }
  
      @Override
