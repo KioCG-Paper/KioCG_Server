@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/animal/equine/AbstractHorse.java
++++ b/net/minecraft/world/entity/animal/equine/AbstractHorse.java
+@@ -468,6 +_,15 @@
+             }
+         }
+ 
++        // KioCG start - raising animals
++        if (!itemUsed && heal > 0.0F && this.isTamed() && this.getAge() == 0 && !this.isInLove()) {
++            if (player.getHandWithItem(Items.GOLDEN_DANDELION) == null) {
++                itemUsed = true;
++                this.dropDefaultLootTable(player, itemStack.copy());
++            }
++        }
++        // KioCG end - raising animals
++
+         if (this.getHealth() < this.getMaxHealth() && heal > 0.0F) {
+             this.heal(heal, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
+             itemUsed = true;

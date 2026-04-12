@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
+@@ -123,6 +_,7 @@
+     private static final boolean DEFAULT_LEFT_HANDED = false;
+     private static final boolean DEFAULT_NO_AI = false;
+     protected static final Identifier RANDOM_SPAWN_BONUS_ID = Identifier.withDefaultNamespace("random_spawn_bonus");
++    protected static final Identifier RANDOM_SCALE_ID = Identifier.withDefaultNamespace("random_scale"); // KioCG - mob random scale
+     public static final String TAG_DROP_CHANCES = "drop_chances";
+     public static final String TAG_LEFT_HANDED = "LeftHanded";
+     public static final String TAG_CAN_PICK_UP_LOOT = "CanPickUpLoot";
 @@ -762,6 +_,7 @@
      public void checkDespawn() {
          if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) { // Paper - allow changing despawnInPeaceful
@@ -22,3 +30,18 @@
                      }
                  } else {
                      // Paper end - Configurable despawn distances
+@@ -1254,6 +_,14 @@
+                 new AttributeModifier(RANDOM_SPAWN_BONUS_ID, random.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE)
+             );
+         }
++        // KioCG start - mob random scale
++        AttributeInstance scale = Objects.requireNonNull(this.getAttribute(Attributes.SCALE));
++        if (!scale.hasModifier(RANDOM_SCALE_ID)) {
++            scale.addPermanentModifier(
++                    new AttributeModifier(RANDOM_SCALE_ID, random.triangleLeftHalf(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE)
++            );
++        }
++        // KioCG end - mob random scale
+ 
+         this.setLeftHanded(random.nextFloat() < 0.05F);
+         return groupData;

@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/LivingEntity.java
++++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -2899,6 +_,17 @@
+         }
+     }
+ 
++    // KioCG start - more api
++    public @Nullable InteractionHand getHandWithItem(final Item item) {
++        if (this.getMainHandItem().is(item)) {
++            return InteractionHand.MAIN_HAND;
++        } else if (this.getOffhandItem().is(item)) {
++            return InteractionHand.OFF_HAND;
++        }
++        return null;
++    }
++    // KioCG end - more api
++
+     public void setItemInHand(final InteractionHand hand, final ItemStack itemStack) {
+         if (hand == InteractionHand.MAIN_HAND) {
+             this.setItemSlot(EquipmentSlot.MAINHAND, itemStack);

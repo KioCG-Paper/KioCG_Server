@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/spider/CaveSpider.java
++++ b/net/minecraft/world/entity/monster/spider/CaveSpider.java
+@@ -52,7 +_,7 @@
+     public @Nullable SpawnGroupData finalizeSpawn(
+         final ServerLevelAccessor level, final DifficultyInstance difficulty, final EntitySpawnReason spawnReason, final @Nullable SpawnGroupData groupData
+     ) {
+-        return groupData;
++        return super.finalizeSpawn(level, difficulty, spawnReason, groupData); // KioCG - mob random scale
+     }
+ 
+     @Override

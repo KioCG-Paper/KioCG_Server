@@ -1,0 +1,48 @@
+--- a/net/minecraft/world/entity/animal/Animal.java
++++ b/net/minecraft/world/entity/animal/Animal.java
+@@ -183,6 +_,18 @@
+     }
+ 
+     public void setInLove(final @Nullable Player player, final @Nullable ItemStack breedItemCopy) {
++        // KioCG start - raising animals
++        InteractionHand handWithGoldenDandelion = null;
++        if (player != null) {
++            handWithGoldenDandelion = player.getHandWithItem(net.minecraft.world.item.Items.GOLDEN_DANDELION);
++        }
++
++        if (handWithGoldenDandelion == null) {
++            this.dropDefaultLootTable(player, breedItemCopy != null ? breedItemCopy : ItemStack.EMPTY);
++            return;
++        }
++        // KioCG end - raising animals
++
+         if (breedItemCopy != null) this.breedItem = breedItemCopy;
+         // Paper end - Fix EntityBreedEvent copying
+         // CraftBukkit start
+@@ -197,8 +_,26 @@
+             this.loveCause = EntityReference.of(serverPlayer);
+         }
+ 
++        // KioCG start - raising animals
++        final ItemStack goldenDandelion = player.getItemInHand(handWithGoldenDandelion);
++        if (goldenDandelion.is(net.minecraft.world.item.Items.GOLDEN_DANDELION)) {
++            this.usePlayerItem(player, handWithGoldenDandelion, goldenDandelion);
++        }
++        // KioCG end - raising animals
+         this.level().broadcastEntityEvent(this, EntityEvent.IN_LOVE_HEARTS);
+     }
++
++    // KioCG start - raising animals
++    public void dropDefaultLootTable(final @Nullable Player player, final ItemStack breedItemCopy) {
++        final Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>> lootTable = this.getType().getDefaultLootTable();
++        if (lootTable.isPresent()) {
++            this.forceDrops = true;
++            this.dropFromEntityInteractLootTable((ServerLevel) this.level(), lootTable.get(), player, breedItemCopy, this::spawnAtLocation);
++            this.forceDrops = false;
++            this.setAge(6000);
++        }
++    }
++    // KioCG end - raising animals
+ 
+     public void setInLoveTime(final int time) {
+         this.inLove = time;

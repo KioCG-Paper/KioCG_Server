@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/animal/cow/MushroomCow.java
++++ b/net/minecraft/world/entity/animal/cow/MushroomCow.java
+@@ -112,6 +_,7 @@
+                 milkSound = SoundEvents.MOOSHROOM_MILK;
+             }
+ 
++            this.setBaby(true); // KioCG - raising animals
+             this.playSound(milkSound, 1.0F, 1.0F);
+             return InteractionResult.SUCCESS;
+         } else if (itemStack.is(Items.SHEARS) && this.readyForShearing()) {

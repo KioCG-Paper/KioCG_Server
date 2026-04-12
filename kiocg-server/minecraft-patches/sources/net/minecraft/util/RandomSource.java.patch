@@ -1,0 +1,19 @@
+--- a/net/minecraft/util/RandomSource.java
++++ b/net/minecraft/util/RandomSource.java
+@@ -60,6 +_,16 @@
+         return mean + spread * (this.nextDouble() - this.nextDouble());
+     }
+ 
++    // KioCG start - more api
++    default double triangleLeftHalf(final double mean, final double spread) {
++        return mean - spread * Math.abs(this.nextDouble() - this.nextDouble());
++    }
++
++    default double triangleRightHalf(final double mean, final double spread) {
++        return mean + spread * Math.abs(this.nextDouble() - this.nextDouble());
++    }
++    // KioCG end - more api
++
+     default float triangle(final float mean, final float spread) {
+         return mean + spread * (this.nextFloat() - this.nextFloat());
+     }

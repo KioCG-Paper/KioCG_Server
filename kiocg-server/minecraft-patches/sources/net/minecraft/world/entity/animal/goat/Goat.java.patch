@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/animal/goat/Goat.java
++++ b/net/minecraft/world/entity/animal/goat/Goat.java
+@@ -224,6 +_,7 @@
+             player.playSound(this.getMilkingSound(), 1.0F, 1.0F);
+             ItemStack bucketOrMilkBucket = ItemUtils.createFilledResult(heldItem, player, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
+             player.setItemInHand(hand, bucketOrMilkBucket);
++            this.setBaby(true); // KioCG - raising animals
+             return InteractionResult.SUCCESS;
+         } else {
+             boolean isFood = this.isFood(heldItem); // Paper - track before stack is possibly decreased to 0 (Fixes MC-244739)

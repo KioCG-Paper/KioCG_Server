@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/animal/cow/AbstractCow.java
++++ b/net/minecraft/world/entity/animal/cow/AbstractCow.java
+@@ -99,6 +_,7 @@
+             player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
+             ItemStack bucketOrMilkBucket = ItemUtils.createFilledResult(itemStack, player, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
+             player.setItemInHand(hand, bucketOrMilkBucket);
++            this.setBaby(true); // KioCG - raising animals
+             return InteractionResult.SUCCESS;
+         } else {
+             return super.mobInteract(player, hand);

@@ -1,0 +1,105 @@
+--- a/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
+@@ -87,6 +_,7 @@
+     private List<BeehiveBlockEntity.BeeData> stored = Lists.newArrayList();
+     public @Nullable BlockPos savedFlowerPos;
+     public int maxBees = MAX_OCCUPANTS; // CraftBukkit - allow setting max amount of bees a hive can hold
++    public int honeyTime = -1; // KioCG - raising animals
+ 
+     public BeehiveBlockEntity(final BlockPos worldPosition, final BlockState blockState) {
+         super(BlockEntityType.BEEHIVE, worldPosition, blockState);
+@@ -280,6 +_,11 @@
+ 
+                                     if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, blockPos, newBlockState)) {
+                                         level.setBlockAndUpdate(blockPos, newBlockState);
++                                        // KioCG start - raising animals
++                                        if (level.getBlockEntity(blockPos) instanceof BeehiveBlockEntity beehiveBlockEntity) {
++                                            beehiveBlockEntity.honeyTime = beehiveBlockEntity.pickNextHoneyTime();
++                                        }
++                                        // KioCG end - raising animals
+                                     }
+                                     // Paper end - Fire EntityChangeBlockEvent in more places
+                                 }
+@@ -345,13 +_,64 @@
+ 
+     public static void serverTick(final Level level, final BlockPos blockPos, final BlockState state, final BeehiveBlockEntity entity) {
+         tickOccupants(level, blockPos, state, entity.stored, entity.savedFlowerPos);
+-        if (!entity.stored.isEmpty() && level.getRandom().nextDouble() < 0.005) {
++        if (/*!entity.stored.isEmpty() &&*/ level.getRandom().nextDouble() < 0.005) { // KioCG - raising animals: 不需要蜜蜂来工作
+             double x = blockPos.getX() + 0.5;
+             double y = blockPos.getY();
+             double z = blockPos.getZ() + 0.5;
+             level.playSound(null, x, y, z, SoundEvents.BEEHIVE_WORK, SoundSource.BLOCKS, 1.0F, 1.0F);
+         }
+-    }
++
++        // KioCG start - raising animals
++        if (entity.honeyTime == -1) {
++            entity.honeyTime = entity.pickNextHoneyTime();
++        }
++
++        if (!level.environmentAttributes().getValue(EnvironmentAttributes.BEES_STAY_IN_HIVE, blockPos)) {
++            if (state.is(BlockTags.BEEHIVES, s -> s.hasProperty(BeehiveBlock.HONEY_LEVEL))) {
++                int honeyLevel = getHoneyLevel(state);
++                if (honeyLevel < BeehiveBlock.MAX_HONEY_LEVELS && entity.stored.isEmpty() && --entity.honeyTime <= 0) {
++                    int levelIncrease = level.getRandom().nextInt(100) == 0 ? 2 : 1;
++                    if (honeyLevel + levelIncrease > 5) {
++                        levelIncrease--;
++                    }
++
++                    level.setBlockAndUpdate(blockPos, state.setValue(BeehiveBlock.HONEY_LEVEL, honeyLevel + levelIncrease));
++                    entity.honeyTime = entity.pickNextHoneyTime();
++                }
++            }
++        }
++        // KioCG end - raising animals
++    }
++
++    // KioCG start - raising animals
++    private int pickNextHoneyTime() {
++        final int nearbyFlowerCount = getNearbyFlowerCount(this.level, this.getBlockPos());
++        final int reduceTime = -(20 * 30) * Math.min(nearbyFlowerCount, 5);
++        return (this.level.getRandom().nextInt(6000) + 6000 + reduceTime) / BeehiveBlock.MAX_HONEY_LEVELS;
++    }
++
++    private static int getNearbyFlowerCount(final Level level, final BlockPos pos) {
++        int flowerCount = 0;
++        int xOff = pos.getX();
++        int yOff = pos.getY();
++        int zOff = pos.getZ();
++        for (int dz = -4; dz <= 4; ++dz) {
++            int z = dz + zOff;
++            for (int dx = -4; dx <= 4; ++dx) {
++                int x = xOff + dx;
++                for (int dy = -2; dy <= 0; ++dy) {
++                    int y = dy + yOff;
++                    net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunk(x >> 4, z >> 4);
++                    BlockState blockState = chunk.getBlockStateFinal(x, y, z);
++                    if (Bee.attractsBees(blockState)) {
++                        ++flowerCount;
++                    }
++                }
++            }
++        }
++        return flowerCount;
++    }
++    // KioCG end - raising animals
+ 
+     @Override
+     protected void loadAdditional(final ValueInput input) {
+@@ -360,6 +_,7 @@
+         input.read("bees", BeehiveBlockEntity.Occupant.LIST_CODEC).orElse(List.of()).forEach(this::storeBee);
+         this.savedFlowerPos = input.read("flower_pos", BlockPos.CODEC).orElse(null);
+         this.maxBees = input.getIntOr("Bukkit.MaxEntities", MAX_OCCUPANTS); // Paper - persist max bukkit occupants
++        this.honeyTime = input.getIntOr("KioCG.HoneyTime", -1); // KioCG - raising animals
+     }
+ 
+     @Override
+@@ -368,6 +_,7 @@
+         output.store("bees", BeehiveBlockEntity.Occupant.LIST_CODEC, this.getBees());
+         output.storeNullable("flower_pos", BlockPos.CODEC, this.savedFlowerPos);
+         output.putInt("Bukkit.MaxEntities", this.maxBees); // Paper - persist max bukkit occupants
++        output.putInt("KioCG.HoneyTime", this.honeyTime); // KioCG - raising animals
+     }
+ 
+     @Override

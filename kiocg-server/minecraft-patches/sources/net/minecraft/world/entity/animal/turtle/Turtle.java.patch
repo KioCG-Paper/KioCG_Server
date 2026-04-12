@@ -1,0 +1,98 @@
+--- a/net/minecraft/world/entity/animal/turtle/Turtle.java
++++ b/net/minecraft/world/entity/animal/turtle/Turtle.java
+@@ -77,6 +_,7 @@
+     public BlockPos homePos = BlockPos.ZERO;
+     private @Nullable BlockPos travelPos;
+     public boolean goingHome;
++    private int scuteTime = this.pickNextScuteDropTime(); // KioCG - raising animals
+ 
+     public Turtle(final EntityType<? extends Turtle> type, final Level level) {
+         super(type, level);
+@@ -120,6 +_,7 @@
+         super.addAdditionalSaveData(output);
+         output.store("home_pos", BlockPos.CODEC, this.homePos);
+         output.putBoolean("has_egg", this.hasEgg());
++        output.putInt("KioCG.scute_time", this.scuteTime); // KioCG - raising animals
+     }
+ 
+     @Override
+@@ -127,6 +_,7 @@
+         this.setHomePos(input.read("home_pos", BlockPos.CODEC).orElse(this.blockPosition()));
+         super.readAdditionalSaveData(input);
+         this.setHasEgg(input.getBooleanOr("has_egg", false));
++        input.getInt("KioCG.scute_time").ifPresent(time -> this.scuteTime = time); // KioCG - raising animals
+     }
+ 
+     @Override
+@@ -252,15 +_,65 @@
+         }
+     }
+ 
++    // KioCG start - raising animals
++    // @Override
++    // protected void ageBoundaryReached() {
++    //     super.ageBoundaryReached();
++    //     if (!this.isBaby() && this.level() instanceof ServerLevel level && level.getGameRules().get(GameRules.MOB_DROPS)) {
++    //         this.forceDrops = true; // CraftBukkit
++    //         this.dropFromGiftLootTable(level, BuiltInLootTables.TURTLE_GROW, this::spawnAtLocation);
++    //         this.forceDrops = false; // CraftBukkit
++    //     }
++    // }
++
+     @Override
+-    protected void ageBoundaryReached() {
+-        super.ageBoundaryReached();
+-        if (!this.isBaby() && this.level() instanceof ServerLevel level && level.getGameRules().get(GameRules.MOB_DROPS)) {
++    protected void customServerAiStep(final ServerLevel level) {
++        if (this.isAlive() && --this.scuteTime <= 0 && this.shouldDropLoot(level)) {
+             this.forceDrops = true; // CraftBukkit
+-            this.dropFromGiftLootTable(level, BuiltInLootTables.TURTLE_GROW, this::spawnAtLocation);
++            if (this.dropFromGiftLootTable(level, BuiltInLootTables.TURTLE_GROW, this::spawnAtLocation)) {
++                this.playSound(SoundEvents.ARMADILLO_SCUTE_DROP, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
++                this.gameEvent(GameEvent.ENTITY_PLACE);
++            }
+             this.forceDrops = false; // CraftBukkit
+-        }
+-    }
++
++            this.scuteTime = this.pickNextScuteDropTime();
++        }
++
++        super.customServerAiStep(level);
++    }
++
++    private int pickNextScuteDropTime() {
++        return this.random.nextInt(20 * net.minecraft.util.TimeUtil.SECONDS_PER_MINUTE * 5) + 20 * net.minecraft.util.TimeUtil.SECONDS_PER_MINUTE * 5;
++    }
++
++    @Override
++    public net.minecraft.world.InteractionResult mobInteract(final Player player, final net.minecraft.world.InteractionHand hand) {
++        ItemStack itemStack = player.getItemInHand(hand);
++        if (itemStack.is(net.minecraft.world.item.Items.BRUSH) && this.brushOffScute(player, itemStack)) {
++            itemStack.hurtAndBreak(16, player, hand.asEquipmentSlot());
++            return net.minecraft.world.InteractionResult.SUCCESS_SERVER;
++        } else {
++            return super.mobInteract(player, hand);
++        }
++    }
++
++    public boolean brushOffScute(final net.minecraft.world.entity.@Nullable Entity interactingEntity, final ItemStack tool) {
++        if (this.isBaby()) {
++            return false;
++        } else {
++            if (this.level() instanceof ServerLevel level) {
++                this.forceDrops = true; // CraftBukkit
++                this.dropFromEntityInteractLootTable(level, BuiltInLootTables.TURTLE_GROW, interactingEntity, tool, this::spawnAtLocation);
++                this.forceDrops = false; // CraftBukkit
++                this.playSound(SoundEvents.ARMADILLO_BRUSH);
++                this.gameEvent(GameEvent.ENTITY_INTERACT);
++            }
++
++            this.setBaby(true); // KioCG - raising animals
++            return true;
++        }
++    }
++    // KioCG end - raising animals
+ 
+     @Override
+     protected void travelInWater(final Vec3 input, final double baseGravity, final boolean isFalling, final double oldY) {
