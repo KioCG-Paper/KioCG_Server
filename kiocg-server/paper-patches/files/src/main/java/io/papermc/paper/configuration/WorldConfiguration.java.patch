@@ -1,5 +1,14 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -174,7 +_,7 @@
+             public IntOr.Disabled maxArrowDespawnInvulnerability = new IntOr.Disabled(OptionalInt.of(200));
+             public boolean filterBadTileEntityNbtFromFallingBlocks = true;
+             public List<NbtPathArgument.NbtPath> filteredEntityTagNbtPaths = NbtPathSerializer.fromString(List.of("Pos", "Motion", "sleeping_pos"));
+-            public boolean disableMobSpawnerSpawnEggTransformation = false;
++            // public boolean disableMobSpawnerSpawnEggTransformation = false; // KioCG
+             public boolean perPlayerMobSpawns = true;
+             public boolean scanForLegacyEnderDragon = true;
+             @MergeMap
 @@ -587,4 +_,13 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }

@@ -40,3 +40,11 @@
      }
  
      public boolean isEnforceWhitelist() {
+@@ -2939,6 +_,7 @@
+             byte event = (byte)((Boolean)value ? 22 : 23);
+ 
+             for (ServerPlayer player : level.players()) { // Paper - per-world game rules
++                if (event != net.minecraft.world.entity.EntityEvent.FULL_DEBUG_INFO && player.getBukkitEntity().hasPermission("kiocg.reduced_debug_info.bypass")) event = net.minecraft.world.entity.EntityEvent.FULL_DEBUG_INFO; // KioCG - more permission
+                 player.connection.send(new ClientboundEntityEventPacket(player, event));
+             }
+         } else if (rule == GameRules.LIMITED_CRAFTING || rule == GameRules.IMMEDIATE_RESPAWN) {
