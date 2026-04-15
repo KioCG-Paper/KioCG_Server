@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
++++ b/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
+@@ -40,6 +_,12 @@
+     public void start() {
+         super.start();
+         this.breakTime = 0;
++        // KioCG start - keep block destruction
++        int progress = this.mob.level().destroyingBlocks.get(this.doorPos).getProgress();
++        if (progress > 0) {
++            this.breakTime = (int) (progress / 10.0F * this.getDoorBreakTime());
++        }
++        // KioCG end - keep block destruction
+     }
+ 
+     @Override
+@@ -53,7 +_,7 @@
+     @Override
+     public void stop() {
+         super.stop();
+-        this.mob.level().destroyBlockProgress(this.mob.getId(), this.doorPos, -1);
++        // this.mob.level().destroyBlockProgress(this.mob.getId(), this.doorPos, -1); // KioCG - keep block destruction: 始终保留破坏值
+     }
+ 
+     @Override

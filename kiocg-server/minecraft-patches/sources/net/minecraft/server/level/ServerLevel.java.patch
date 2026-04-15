@@ -18,20 +18,34 @@
          }
  
          this.raids = this.getDataStorage().computeIfAbsent(Raids.TYPE);
-@@ -817,6 +_,13 @@
+@@ -815,6 +_,27 @@
+         this.updateSkyBrightness();
+         if (runs) {
              this.tickTime();
++
++            // KioCG start - mob farm restrictor
++            long time = this.getOverworldClockTime() % net.minecraft.SharedConstants.TICKS_PER_GAME_DAY;
++            if (time == 13000) {
++                this.resetMobLimit();
++            }
++            // KioCG end - mob farm restrictor
++
++            // KioCG start - keep block destruction
++            // 客户端会清理400刻之前的方块破坏纹理
++            if (this.lagCompensationTick % 20 == 0) {
++                java.util.Iterator<BlockDestructionProgress> iterator = this.destroyingBlocks.values().iterator();
++                while (iterator.hasNext()) {
++                    BlockDestructionProgress blockDestructionProgress = iterator.next();
++                    int i = blockDestructionProgress.getUpdatedRenderTick();
++                    if (this.lagCompensationTick - i > 400) {
++                        iterator.remove();
++                    }
++                }
++            }
++            // KioCG end - keep block destruction
          }
  
-+        // KioCG start - mob farm restrictor
-+        long time = this.getOverworldClockTime() % net.minecraft.SharedConstants.TICKS_PER_GAME_DAY;
-+        if (time == 13000) {
-+            this.resetMobLimit();
-+        }
-+        // KioCG end - mob farm restrictor
-+
          profiler.push("tickPending");
-         if (!this.isDebug() && runs) {
-             long tick = this.getGameTime();
 @@ -1193,6 +_,10 @@
          if (this.canHaveWeather()) {
              WeatherData weatherData = this.getWeatherData();
@@ -51,6 +65,53 @@
              }
  
              this.oThunderLevel = this.thunderLevel;
+@@ -1690,8 +_,28 @@
+     }
+     // CraftBukkit end
+ 
++    // KioCG start - keep block destruction
++    public void abortDestroyBlock(final int id, final BlockPos blockPos, final int destroyTick) {
++        if (this.destroyingBlocks.containsKey(blockPos) && destroyTick < 20 * 1.5) {
++            this.destroyBlockProgress(id, blockPos, -1);
++        }
++    }
++    // KioCG end - keep block destruction
++
+     @Override
+     public void destroyBlockProgress(final int id, final BlockPos blockPos, final int progress) {
++        // KioCG start - keep block destruction
++        BlockDestructionProgress blockDestructionProgress;
++        if (progress > -1) {
++            blockDestructionProgress = this.destroyingBlocks.computeIfAbsent(blockPos, _ -> new BlockDestructionProgress(BlockDestructionProgress.getNextBlockDestroyId(), blockPos));
++            blockDestructionProgress.setProgress(progress);
++            blockDestructionProgress.updateTick((int) this.lagCompensationTick);
++        } else {
++            blockDestructionProgress = this.destroyingBlocks.remove(blockPos);
++        }
++        int fakeId = blockDestructionProgress.getId();
++        // KioCG end - keep block destruction
++
+         // CraftBukkit start
+         Player breakerPlayer = null;
+         Entity entity = this.getEntity(id);
+@@ -1709,7 +_,7 @@
+         }
+         // Paper end - Add BlockBreakProgressUpdateEvent
+         for (ServerPlayer player : this.server.getPlayerList().getPlayers()) {
+-            if (player.level() == this && player.getId() != id) {
++            if (player.level() == this /*&& player.getId() != id*/) { // KioCG - keep block destruction
+                 double xd = blockPos.getX() - player.getX();
+                 double yd = blockPos.getY() - player.getY();
+                 double zd = blockPos.getZ() - player.getZ();
+@@ -1719,7 +_,7 @@
+                         continue;
+                     }
+                     // CraftBukkit end
+-                    player.connection.send(new ClientboundBlockDestructionPacket(id, blockPos, progress));
++                    player.connection.send(new ClientboundBlockDestructionPacket(fakeId, blockPos, Math.min(progress, 9))); // KioCG - keep block destruction: 破坏程度为10客户端不显示
+                 }
+             }
+         }
 @@ -2523,6 +_,41 @@
          return this.getEntities().getAll();
      }

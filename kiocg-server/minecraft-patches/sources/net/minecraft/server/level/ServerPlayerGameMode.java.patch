@@ -1,0 +1,88 @@
+--- a/net/minecraft/server/level/ServerPlayerGameMode.java
++++ b/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -41,6 +_,7 @@
+     private boolean isDestroyingBlock;
+     private int destroyProgressStart;
+     private BlockPos destroyPos = BlockPos.ZERO;
++    private BlockPos restoredDestroyPos = BlockPos.ZERO; // KioCG - keep block destruction: 修复连续破坏时速度变快的问题
+     private int gameTicks;
+     private boolean hasDelayedDestroy;
+     private BlockPos delayedDestroyPos = BlockPos.ZERO;
+@@ -136,7 +_,11 @@
+                 float destroyProgress = this.incrementDestroyProgress(blockState, this.delayedDestroyPos, this.delayedTickStart);
+                 if (destroyProgress >= 1.0F) {
+                     this.hasDelayedDestroy = false;
+-                    this.destroyBlock(this.delayedDestroyPos);
++                    // KioCG start - keep block destruction
++                    if (!this.destroyBlock(this.delayedDestroyPos)) {
++                        this.level.destroyBlockProgress(this.player.getId(), this.delayedDestroyPos, -1);
++                    }
++                    // KioCG end - keep block destruction
+                 }
+             }
+         } else if (this.isDestroyingBlock) {
+@@ -151,6 +_,16 @@
+                 this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
+                 this.lastSentState = -1;
+                 this.isDestroyingBlock = false;
++                // KioCG start - keep block destruction
++            } else if (this.restoredDestroyPos == this.destroyPos && this.level.destroyingBlocks.get(this.destroyPos).getProgress() >= 10) {
++                this.lastSentState = -1;
++                this.isDestroyingBlock = false;
++                if (!this.destroyBlock(this.destroyPos)) {
++                    this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
++                } else {
++                    this.player.connection.send(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(net.minecraft.world.level.block.LevelEvent.PARTICLES_DESTROY_BLOCK, this.destroyPos, net.minecraft.world.level.block.Block.getId(blockState), false));
++                }
++                // KioCG end - keep block destruction
+             } else {
+                 this.incrementDestroyProgress(blockState, this.destroyPos, this.destroyProgressStart);
+             }
+@@ -228,7 +_,7 @@
+                     return;
+                 }
+ 
+-                this.destroyProgressStart = this.gameTicks;
++                // this.destroyProgressStart = this.gameTicks; // KioCG - fix block destroy: moved down: 在破坏方块过程中, 又破坏了一个立即破裂的方块, 则不要重置此过程时间
+                 float progress = 1.0F;
+                 BlockState blockState = this.level.getBlockState(pos);
+                 if (event.useInteractedBlock() != org.bukkit.event.Event.Result.DENY && !blockState.isAir()) { // Paper
+@@ -266,6 +_,8 @@
+                 if (!blockState.isAir() && progress >= 1.0F) {
+                     this.destroyAndAck(pos, sequence, "insta mine");
+                 } else {
++                    this.destroyProgressStart = this.gameTicks; // KioCG - fix block destroy: moved down: 在破坏方块过程中, 又破坏了一个立即破裂的方块, 则不要重置此过程时间
++
+                     if (this.isDestroyingBlock) {
+                         this.player.connection.send(new ClientboundBlockUpdatePacket(this.destroyPos, this.level.getBlockState(this.destroyPos)));
+                         this.debugLogging(pos, false, sequence, "abort destroying since another started (client insta mine, server disagreed)");
+@@ -274,6 +_,16 @@
+                     this.isDestroyingBlock = true;
+                     this.destroyPos = pos.immutable();
+                     int state = (int)(progress * 10.0F);
++
++                    // KioCG start - keep block destruction
++                    int progressIncrease = this.level.destroyingBlocks.get(pos).getProgress();
++                    if (progressIncrease > 0) {
++                        this.restoredDestroyPos = this.destroyPos;
++                        this.destroyProgressStart -= (int) (progressIncrease / 10.0F / progress);
++                        state += progressIncrease;
++                    }
++                    // KioCG end - keep block destruction
++
+                     this.level.destroyBlockProgress(this.player.getId(), pos, state);
+                     this.debugLogging(pos, true, sequence, "actual start of destroying");
+                     this.lastSentState = state;
+@@ -312,10 +_,11 @@
+                     this.debugLogging(pos, true, sequence, "aborted mismatched destroying");
+                     }
+                     this.destroyPos = BlockPos.ZERO;
++                    this.restoredDestroyPos = BlockPos.ZERO; // KioCG - keep block destruction
+                     // Paper end - Don't allow digging into unloaded chunks
+                 }
+ 
+-                this.level.destroyBlockProgress(this.player.getId(), pos, -1);
++                this.level.abortDestroyBlock(this.player.getId(), pos, this.gameTicks - this.destroyProgressStart); // KioCG - keep block destruction
+                 this.debugLogging(pos, true, sequence, "aborted destroying");
+ 
+                 org.bukkit.craftbukkit.event.CraftEventFactory.callBlockDamageAbortEvent(this.player, pos, this.player.getInventory().getSelectedItem()); // CraftBukkit
