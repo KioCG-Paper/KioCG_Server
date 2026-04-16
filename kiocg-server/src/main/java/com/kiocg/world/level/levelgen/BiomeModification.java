@@ -13,10 +13,7 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BiomeModification {
     public final PlacedFeatureModifications placedFeatureModifications = new PlacedFeatureModifications();
@@ -28,8 +25,10 @@ public class BiomeModification {
     }
 
     private void addDefaultModifications() {
-        final Holder.Reference<PlacedFeature> oreDiamond = registryAccess.getOrThrow(OrePlacements.ORE_DIAMOND);
-        final Holder.Reference<PlacedFeature> mixedOre = registryAccess.getOrThrow(PlacementUtils.createKey("kiocg_mixed_ore"));
+        final Registry<PlacedFeature> lookup = registryAccess.lookupOrThrow(Registries.PLACED_FEATURE);
+        final Holder.Reference<PlacedFeature> oreDiamond = lookup.getOrThrow(OrePlacements.ORE_DIAMOND);
+        final Holder.Reference<PlacedFeature> oreEmerald = lookup.getOrThrow(OrePlacements.ORE_EMERALD);
+        final Holder.Reference<PlacedFeature> mixedOre = lookup.getOrThrow(PlacementUtils.createKey("kiocg_mixed_ore"));
 
         final Registry<Biome> biomeRegistry = registryAccess.lookupOrThrow(Registries.BIOME);
         for (Biome biome : biomeRegistry) {
@@ -37,6 +36,9 @@ public class BiomeModification {
             if (features.size() > GenerationStep.Decoration.UNDERGROUND_ORES.ordinal()) {
                 final HolderSet<PlacedFeature> holders = features.get(GenerationStep.Decoration.UNDERGROUND_ORES.ordinal());
                 if (holders.contains(oreDiamond)) {
+                    if (!holders.contains(oreEmerald)) {
+                        placedFeatureModifications.modify(biome, GenerationStep.Decoration.UNDERGROUND_ORES, oreEmerald);
+                    }
                     placedFeatureModifications.modify(biome, GenerationStep.Decoration.UNDERGROUND_ORES, mixedOre);
                 }
             }

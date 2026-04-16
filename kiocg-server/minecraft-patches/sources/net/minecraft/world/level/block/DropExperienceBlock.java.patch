@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/level/block/DropExperienceBlock.java
++++ b/net/minecraft/world/level/block/DropExperienceBlock.java
+@@ -35,7 +_,20 @@
+     @Override
+     public int getExpDrop(BlockState state, ServerLevel level, BlockPos pos, ItemStack tool, boolean dropExperience) {
+         if (dropExperience) {
+-            return this.tryDropExperience(level, pos, tool, this.xpRange);
++            // KioCG start - EXP emerald ore
++            int expDrop = this.tryDropExperience(level, pos, tool, this.xpRange);
++            if (this == Blocks.EMERALD_ORE || this == Blocks.DEEPSLATE_EMERALD_ORE) {
++                final net.minecraft.world.item.enchantment.ItemEnchantments enchantments = tool.getEnchantments();
++                final net.minecraft.core.Registry<net.minecraft.world.item.enchantment.Enchantment> enchantmentRegistry = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT);
++                final int silkTouchLevel = enchantments.getLevel(enchantmentRegistry.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SILK_TOUCH));
++                if (silkTouchLevel <= 0) {
++                    final int fortuneLevel = enchantments.getLevel(enchantmentRegistry.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.FORTUNE));
++                    final int count = net.minecraft.world.level.storage.loot.functions.ApplyBonusCount.OreDrops.INSTANCE.calculateNewCount(level.getRandom(), 1, fortuneLevel);
++                    expDrop += net.minecraft.util.valueproviders.UniformInt.of(this.xpRange.minInclusive() * 10 * count, this.xpRange.maxInclusive() * 10 * count).sample(level.getRandom());
++                }
++            }
++            return expDrop;
++            // KioCG end - EXP emerald ore
+          }
+ 
+         return 0;

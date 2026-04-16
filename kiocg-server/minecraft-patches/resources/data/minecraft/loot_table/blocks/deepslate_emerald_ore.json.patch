@@ -1,0 +1,11 @@
+--- a/data/minecraft/loot_table/blocks/deepslate_emerald_ore.json
++++ b/data/minecraft/loot_table/blocks/deepslate_emerald_ore.json
+@@ -29,7 +_,7 @@
+               "name": "minecraft:deepslate_emerald_ore"
+             },
+             {
+-              "type": "minecraft:item",
++              "type": "minecraft:empty",
+               "functions": [
+                 {
+                   "enchantment": "minecraft:fortune",
