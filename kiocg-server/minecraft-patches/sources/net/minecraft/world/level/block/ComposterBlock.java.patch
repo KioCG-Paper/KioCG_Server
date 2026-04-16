@@ -18,28 +18,6 @@
              entity.setDefaultPickUpDelay();
              level.addFreshEntity(entity);
          }
-@@ -333,6 +_,21 @@
-         return emptyState;
-     }
- 
-+    // KioCG start - change container behavior
-+    public static void hopperSuckInTrigger(final BlockState state, final Level level, final BlockPos pos) {
-+        if (state.getValue(LEVEL) == 8) {
-+            if (!level.isClientSide()) {
-+                Vec3 itemPos = Vec3.atCenterOf(pos);
-+                ItemEntity entity = new ItemEntity(level, itemPos.x(), itemPos.y(), itemPos.z(), new ItemStack(Items.BONE_MEAL, level.getRandom().nextInt(16, 25)));
-+                entity.setDefaultPickUpDelay();
-+                level.addFreshEntity(entity);
-+            }
-+
-+            empty(null, state, level, pos);
-+        }
-+    }
-+    // KioCG end - change container behavior
-+
-     private static BlockState empty(final @Nullable Entity sourceEntity, final BlockState state, final LevelAccessor level, final BlockPos pos) {
-         BlockState newState = state.setValue(LEVEL, 0);
-         level.setBlock(pos, newState, Block.UPDATE_ALL);
 @@ -381,7 +_,7 @@
              level.setBlock(pos, newState, Block.UPDATE_ALL);
              level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(sourceEntity, newState));
@@ -49,12 +27,37 @@
              }
  
              return newState;
-@@ -419,7 +_,7 @@
-     @Override
+@@ -420,7 +_,7 @@
      public WorldlyContainer getContainer(final BlockState state, final LevelAccessor level, final BlockPos pos) {
          int contentLevel = state.getValue(LEVEL);
--        if (contentLevel == 8) {
-+        if (false && contentLevel == 8) { // KioCG - change container behavior
-             return new ComposterBlock.OutputContainer(state, level, pos, new ItemStack(Items.BONE_MEAL));
+         if (contentLevel == 8) {
+-            return new ComposterBlock.OutputContainer(state, level, pos, new ItemStack(Items.BONE_MEAL));
++            return new ComposterBlock.OutputContainer(state, level, pos, new ItemStack(Items.BONE_MEAL, level.getRandom().nextInt(16, 25))); // KioCG - change container behavior
          } else {
              return (WorldlyContainer)(contentLevel < 7 ? new ComposterBlock.InputContainer(state, level, pos) : new ComposterBlock.EmptyContainer(level, pos)); // CraftBukkit - empty levelAccessor, blockPos
+         }
+@@ -504,6 +_,7 @@
+         private final LevelAccessor level;
+         private final BlockPos pos;
+         private boolean changed;
++        private final int originalCount; // KioCG - change container behavior
+ 
+         public OutputContainer(final BlockState state, final LevelAccessor level, final BlockPos pos, final ItemStack contents) {
+             super(contents);
+@@ -511,6 +_,7 @@
+             this.state = state;
+             this.level = level;
+             this.pos = pos;
++            this.originalCount = contents.getCount(); // KioCG - change container behavior
+         }
+ 
+         @Override
+@@ -536,7 +_,7 @@
+         @Override
+         public void setChanged() {
+             // CraftBukkit start - allow putting items back (eg cancelled InventoryMoveItemEvent)
+-            if (this.isEmpty()) {
++            if (this.items.getFirst().getCount() < this.originalCount) { // KioCG - change container behavior
+             ComposterBlock.empty(null, this.state, this.level, this.pos);
+             this.changed = true;
+             } else {

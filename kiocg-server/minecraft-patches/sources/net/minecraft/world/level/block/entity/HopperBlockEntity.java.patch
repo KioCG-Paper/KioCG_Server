@@ -1,20 +1,18 @@
 --- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -652,7 +_,16 @@
- 
-     private static @Nullable Container getSourceContainer(final Level level, final Hopper hopper, final BlockPos pos, final BlockState state) {
-         // Paper start
--        final Container inventory = HopperBlockEntity.getContainerAt(level, pos, state, hopper.getLevelX(), hopper.getLevelY() + 1.0, hopper.getLevelZ());
+@@ -270,7 +_,14 @@
+     private static boolean hopperPull(final Level level, final Hopper hopper, final Container container, ItemStack origItemStack, final int i) {
+         ItemStack movedItem = origItemStack;
+         final int originalItemCount = origItemStack.getCount();
+-        final int movedItemCount = Math.min(level.spigotConfig.hopperAmount, originalItemCount);
 +        // KioCG start - change container behavior
-+        final Container inventory;
-+        if (state.getBlock() instanceof net.minecraft.world.level.block.ComposterBlock) {
-+            net.minecraft.world.level.block.ComposterBlock.hopperSuckInTrigger(state, level, pos);
-+            inventory = null;
++        final int movedItemCount;
++        if (container instanceof net.minecraft.world.level.block.ComposterBlock.OutputContainer) {
++            movedItemCount = originalItemCount;
 +        } else {
-+            inventory = HopperBlockEntity.getContainerAt(level, pos, state, hopper.getLevelX(), hopper.getLevelY() + 1.0, hopper.getLevelZ());
++            movedItemCount = Math.min(level.spigotConfig.hopperAmount, originalItemCount);
 +        }
 +        // KioCG end - change container behavior
-+
-         if (org.bukkit.event.inventory.HopperInventorySearchEvent.getHandlerList().getRegisteredListeners().length == 0) return inventory;
+         container.setChanged(); // original logic always marks source inv as changed even if no move happens.
+         movedItem.setCount(movedItemCount);
  
-         final BlockPos hopperPos = BlockPos.containing(hopper.getLevelX(), hopper.getLevelY(), hopper.getLevelZ());
