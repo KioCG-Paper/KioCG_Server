@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
+@@ -159,7 +_,7 @@
+     public int sleepCounter = 0;
+     protected boolean wasUnderwater;
+     private final Abilities abilities = new Abilities();
+-    public int experienceLevel = 0;
++    public int experienceLevel = io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.player.initialLevel;
+     public int totalExperience = 0;
+     public float experienceProgress = 0.0F;
+     public int enchantmentSeed = 0;
+@@ -662,7 +_,7 @@
+         this.inventory.setSelectedSlot(input.getIntOr("SelectedItemSlot", 0));
+         this.sleepCounter = input.getShortOr("SleepTimer", (short)0);
+         this.experienceProgress = input.getFloatOr("XpP", 0.0F);
+-        this.experienceLevel = input.getIntOr("XpLevel", 0);
++        this.experienceLevel = input.getIntOr("XpLevel", io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.player.initialLevel);
+         this.totalExperience = input.getIntOr("XpTotal", 0);
+         this.enchantmentSeed = input.getIntOr("XpSeed", 0);
+         if (this.enchantmentSeed == 0) {
 @@ -1661,7 +_,7 @@
              this.totalExperience = 0;
          }

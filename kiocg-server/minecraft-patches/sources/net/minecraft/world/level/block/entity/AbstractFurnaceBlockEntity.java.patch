@@ -21,7 +21,7 @@
                  if (!(recipe.value() instanceof AbstractCookingRecipe)) return; // Paper - don't process non-cooking recipes
                  recipesToAward.add((RecipeHolder<?>)recipe);
 -                createExperience(level, position, entry.getIntValue(), ((AbstractCookingRecipe)recipe.value()).experience(), blockPos, serverPlayer, itemStack, amount); // Paper - don't process non-cooking recipes
-+                createExperience(level, position, entry.getIntValue(), ((AbstractCookingRecipe)recipe.value()).experience() * 10, blockPos, serverPlayer, itemStack, amount); // Paper - don't process non-cooking recipes // KioCG - EXP is money: 烧炼经验提升为10倍
++                createExperience(level, position, entry.getIntValue(), ((AbstractCookingRecipe)recipe.value()).experience() * 5, blockPos, serverPlayer, itemStack, amount); // Paper - don't process non-cooking recipes // KioCG - EXP is money: 烧炼经验提升为10倍
              });
          }
  
