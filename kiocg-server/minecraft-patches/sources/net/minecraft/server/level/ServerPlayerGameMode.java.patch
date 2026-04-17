@@ -86,3 +86,30 @@
                  this.debugLogging(pos, true, sequence, "aborted destroying");
  
                  org.bukkit.craftbukkit.event.CraftEventFactory.callBlockDamageAbortEvent(this.player, pos, this.player.getInventory().getSelectedItem()); // CraftBukkit
+@@ -334,6 +_,12 @@
+     }
+ 
+     public boolean destroyBlock(final BlockPos pos) {
++        // KioCG start - more enchantments
++        return destroyBlock(pos, true);
++    }
++
++    public boolean destroyBlock(final BlockPos pos, boolean applyChainEnchantments) {
++        // KioCG end - more enchantments
+         BlockState state = this.level.getBlockState(pos);
+         // CraftBukkit start - fire BlockBreakEvent
+         org.bukkit.block.Block bblock = org.bukkit.craftbukkit.block.CraftBlock.at(this.level, pos);
+@@ -436,6 +_,13 @@
+                     }
+                 }
+                 // Paper end - Trigger bee_nest_destroyed trigger in the correct place
++
++                // KioCG start - more enchantments
++                applyChainEnchantments &= !player.isShiftKeyDown();
++                if (applyChainEnchantments && mainHandStack != null && changed && isCorrectTool) {
++                    com.kiocg.world.item.enchantment.Veinchain.onDestroyBlock(this.level, pos, state, this.player, mainHandStack);
++                }
++                // KioCG end - more enchantments
+ 
+                 return true;
+                 // CraftBukkit end
