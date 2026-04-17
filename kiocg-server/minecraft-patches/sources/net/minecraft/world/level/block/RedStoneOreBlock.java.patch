@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/level/block/RedStoneOreBlock.java
++++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
+@@ -128,6 +_,14 @@
+         // CraftBukkit end
+     }
+ 
++    // KioCG start - more enchantments
++    @Override
++    protected java.util.List<ItemStack> getDrops(final BlockState state, final net.minecraft.world.level.storage.loot.LootParams.Builder params) {
++        java.util.List<ItemStack> drops = super.getDrops(state, params);
++        return com.kiocg.world.item.enchantment.Metallurgy.onGetDrops(drops, state, params);
++    }
++    // KioCG end - more enchantments
++
+     @Override
+     public void animateTick(final BlockState state, final Level level, final BlockPos pos, final RandomSource random) {
+         if (state.getValue(LIT)) {

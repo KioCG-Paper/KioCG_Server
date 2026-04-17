@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DropExperienceBlock.java
 +++ b/net/minecraft/world/level/block/DropExperienceBlock.java
-@@ -35,7 +_,20 @@
+@@ -35,10 +_,31 @@
      @Override
      public int getExpDrop(BlockState state, ServerLevel level, BlockPos pos, ItemStack tool, boolean dropExperience) {
          if (dropExperience) {
@@ -22,3 +22,14 @@
           }
  
          return 0;
+         // CraftBukkit end
+     }
++
++    // KioCG start - more enchantments
++    @Override
++    protected java.util.List<ItemStack> getDrops(final BlockState state, final net.minecraft.world.level.storage.loot.LootParams.Builder params) {
++        java.util.List<ItemStack> drops = super.getDrops(state, params);
++        return com.kiocg.world.item.enchantment.Metallurgy.onGetDrops(drops, state, params);
++    }
++    // KioCG end - more enchantments
+ }
