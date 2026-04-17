@@ -19,7 +19,7 @@
              // Paper - per-level GameRules
              this.fixerUpper = fixerUpper;
              this.functionManager = new ServerFunctionManager(this, this.resources.managers.getFunctionLibrary());
-@@ -2576,7 +_,7 @@
+@@ -2577,7 +_,7 @@
  
      // Paper start - per-level WeatherData
      public void setWeatherParameters(final ServerLevel level, final int clearTime, final int rainTime, final boolean raining, final boolean thundering) {
@@ -28,7 +28,7 @@
          // Paper end - per-level WeatherData
          weatherData.setClearWeatherTime(clearTime);
          weatherData.setRainTime(rainTime);
-@@ -2585,9 +_,9 @@
+@@ -2586,9 +_,9 @@
          weatherData.setThundering(thundering, org.bukkit.event.weather.ThunderChangeEvent.Cause.COMMAND); // Paper - per-level WeatherData
      }
  
@@ -40,7 +40,7 @@
      }
  
      public boolean isEnforceWhitelist() {
-@@ -2939,6 +_,7 @@
+@@ -2940,6 +_,7 @@
              byte event = (byte)((Boolean)value ? 22 : 23);
  
              for (ServerPlayer player : level.players()) { // Paper - per-world game rules
