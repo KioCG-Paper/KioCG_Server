@@ -10,6 +10,14 @@
      private final ServerFunctionManager functionManager;
      private boolean enforceWhitelist;
      private boolean usingWhitelist;
+@@ -290,6 +_,7 @@
+     private LevelData.RespawnData effectiveRespawnData = LevelData.RespawnData.DEFAULT;
+     public PotionBrewing potionBrewing;
+     private FuelValues fuelValues;
++    private FuelValues smokerFuelValues; // KioCG - change container behavior
+     private int emptyTicks;
+     private volatile boolean isSaving;
+     private final SuppressedExceptionCollector suppressedExceptions = new SuppressedExceptionCollector();
 @@ -549,7 +_,7 @@
              this.storageSource = storageSource;
              this.playerDataStorage = storageSource.createPlayerStorage();
@@ -19,6 +27,38 @@
              // Paper - per-level GameRules
              this.fixerUpper = fixerUpper;
              this.functionManager = new ServerFunctionManager(this, this.resources.managers.getFunctionLibrary());
+@@ -561,8 +_,11 @@
+             this.serverThread = serverThread;
+             this.executor = Util.backgroundExecutor();
+             this.potionBrewing = PotionBrewing.bootstrap(this.worldData.enabledFeatures());
+-            this.resources.managers.getRecipeManager().finalizeRecipeLoading(this.worldData.enabledFeatures());
++            // KioCG start - change container behavior: moved up
+             this.fuelValues = FuelValues.vanillaBurnTimes(this.registries.compositeAccess(), this.worldData.enabledFeatures());
++            this.smokerFuelValues = this.fuelValues.toSmokerFuel();
++            // KioCG end - change container behavior: moved up
++            this.resources.managers.getRecipeManager().finalizeRecipeLoading(this.worldData.enabledFeatures());
+             this.tickFrame = TracyClient.createDiscontinuousFrame("Server Tick");
+             this.notificationManager = new NotificationManager();
+             this.serverActivityMonitor = new ServerActivityMonitor(this.notificationManager, 30);
+@@ -2329,6 +_,10 @@
+                 WorldDataConfiguration newConfig = new WorldDataConfiguration(getSelectedPacks(this.packRepository, true), this.worldData.enabledFeatures());
+                 this.worldData.setDataConfiguration(newConfig);
+                 this.resources.managers.updateComponentsAndStaticRegistryTags();
++                // KioCG start - change container behavior: moved up
++                this.fuelValues = FuelValues.vanillaBurnTimes(this.registries.compositeAccess(), this.worldData.enabledFeatures());
++                this.smokerFuelValues = this.fuelValues.toSmokerFuel();
++                // KioCG end - change container behavior: moved up
+                 this.resources.managers.getRecipeManager().finalizeRecipeLoading(this.worldData.enabledFeatures());
+                 this.potionBrewing = this.potionBrewing.reload(this.worldData.enabledFeatures()); // Paper - Custom Potion Mixes
+                 if (Thread.currentThread() != this.serverThread) return; // Paper
+@@ -2341,7 +_,6 @@
+                 this.getPlayerList().reloadResources();
+                 this.functionManager.replaceLibrary(this.resources.managers.getFunctionLibrary());
+                 this.structureTemplateManager.onResourceManagerReload(this.resources.resourceManager);
+-                this.fuelValues = FuelValues.vanillaBurnTimes(this.registries.compositeAccess(), this.worldData.enabledFeatures());
+                 org.bukkit.craftbukkit.block.data.CraftBlockData.reloadCache(); // Paper - cache block data strings; they can be defined by datapacks so refresh it here
+                 // Paper start - brigadier command API
+                 io.papermc.paper.command.brigadier.PaperCommands.INSTANCE.setValid(); // reset invalid state for event fire below
 @@ -2577,7 +_,7 @@
  
      // Paper start - per-level WeatherData
@@ -48,3 +88,17 @@
                  player.connection.send(new ClientboundEntityEventPacket(player, event));
              }
          } else if (rule == GameRules.LIMITED_CRAFTING || rule == GameRules.IMMEDIATE_RESPAWN) {
+@@ -3051,6 +_,13 @@
+     }
+ 
+     public FuelValues fuelValues() {
++        // KioCG start - change container behavior
++        return fuelValues(FuelValues.FuelType.FURNACE);
++    }
++
++    public FuelValues fuelValues(final FuelValues.FuelType fuelType) {
++        if (fuelType == FuelValues.FuelType.SMOKER) return this.smokerFuelValues;
++        // KioCG end - change container behavior
+         return this.fuelValues;
+     }
+ 

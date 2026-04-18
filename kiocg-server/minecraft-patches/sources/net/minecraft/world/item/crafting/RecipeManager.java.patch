@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/crafting/RecipeManager.java
++++ b/net/minecraft/world/item/crafting/RecipeManager.java
+@@ -105,6 +_,7 @@
+     }
+ 
+     public void finalizeRecipeLoading(final FeatureFlagSet enabledFlags) {
++        net.minecraft.world.item.crafting.display.SlotDisplay.SmokerFuel.reload(); // KioCG - change container behavior
+         this.enabledFlags = enabledFlags;
+         // CraftBukkit end
+         List<SelectableRecipe.SingleInputEntry<StonecutterRecipe>> stonecutterRecipes = new ArrayList<>();

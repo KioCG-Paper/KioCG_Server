@@ -12,7 +12,7 @@
  public class Items {
      public static final Item AIR = registerBlock(Blocks.AIR, AirItem::new);
      public static final Item STONE = registerBlock(Blocks.STONE);
-@@ -2407,4 +_,14 @@
+@@ -2407,4 +_,16 @@
  
          return Registry.register(BuiltInRegistries.ITEM, key, item);
      }
@@ -24,6 +24,8 @@
 +        LINGERING_POTION.overrideComponents(DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 16).build());
 +        EMERALD_ORE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("电荷矿石")).build());
 +        DEEPSLATE_EMERALD_ORE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("深层电荷矿石")).build());
++        SMOKER.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("柴火灶")).build());
++        BLAST_FURNACE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("精炼炉")).build());
 +    }
 +    // KioCG end - customize default components
  }

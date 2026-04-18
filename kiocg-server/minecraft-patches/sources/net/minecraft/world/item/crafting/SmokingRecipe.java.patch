@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/item/crafting/SmokingRecipe.java
++++ b/net/minecraft/world/item/crafting/SmokingRecipe.java
+@@ -28,6 +_,22 @@
+         return Items.SMOKER;
+     }
+ 
++    // KioCG start - change container behavior
++    @Override
++    public java.util.List<net.minecraft.world.item.crafting.display.RecipeDisplay> display() {
++        return java.util.List.of(
++            new net.minecraft.world.item.crafting.display.FurnaceRecipeDisplay(
++                this.input().display(),
++                net.minecraft.world.item.crafting.display.SlotDisplay.SmokerFuel.get(),
++                new net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay(this.result()),
++                new net.minecraft.world.item.crafting.display.SlotDisplay.ItemSlotDisplay(this.furnaceIcon()),
++                this.cookingTime(),
++                this.experience()
++            )
++        );
++    }
++    // KioCG end - change container behavior
++
+     @Override
+     public RecipeType<SmokingRecipe> getType() {
+         return RecipeType.SMOKING;

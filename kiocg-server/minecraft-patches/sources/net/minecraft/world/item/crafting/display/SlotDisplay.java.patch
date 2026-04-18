@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/item/crafting/display/SlotDisplay.java
++++ b/net/minecraft/world/item/crafting/display/SlotDisplay.java
+@@ -143,6 +_,21 @@
+         }
+     }
+ 
++    // KioCG start - change container behavior
++    public static class SmokerFuel {
++        public static SlotDisplay.Composite slotDisplay;
++
++        public static void reload() {
++            FuelValues fuelValues = net.minecraft.server.MinecraftServer.getServer().fuelValues(FuelValues.FuelType.SMOKER);
++            slotDisplay = new Composite(fuelValues.fuelItems().stream().map(item -> (SlotDisplay) new ItemSlotDisplay(item)).toList());
++        }
++
++        public static SlotDisplay get() {
++            return slotDisplay;
++        }
++    }
++    // KioCG end - change container behavior
++
+     public record Composite(List<SlotDisplay> contents) implements SlotDisplay {
+         public static final MapCodec<SlotDisplay.Composite> MAP_CODEC = RecordCodecBuilder.mapCodec(
+             i -> i.group(SlotDisplay.CODEC.listOf().fieldOf("contents").forGetter(SlotDisplay.Composite::contents)).apply(i, SlotDisplay.Composite::new)

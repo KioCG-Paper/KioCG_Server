@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/level/block/entity/BlastFurnaceBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BlastFurnaceBlockEntity.java
+@@ -10,7 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ 
+ public class BlastFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
+-    private static final Component DEFAULT_NAME = Component.translatable("container.blast_furnace");
++    private static final Component DEFAULT_NAME = Component.literal("精炼炉"); // KioCG - change container behavior
+ 
+     public BlastFurnaceBlockEntity(final BlockPos worldPosition, final BlockState blockState) {
+         super(BlockEntityType.BLAST_FURNACE, worldPosition, blockState, RecipeType.BLASTING);
+@@ -21,10 +_,12 @@
+         return DEFAULT_NAME;
+     }
+ 
+-    @Override
+-    protected int getBurnDuration(final FuelValues fuelValues, final ItemStack itemStack) {
+-        return super.getBurnDuration(fuelValues, itemStack) / 2;
+-    }
++    // KioCG start - change container behavior: 不要加速高炉和烟熏炉
++    // @Override
++    // protected int getBurnDuration(final FuelValues fuelValues, final ItemStack itemStack) {
++    //     return super.getBurnDuration(fuelValues, itemStack) / 2;
++    // }
++    // KioCG end - change container behavior: 不要加速高炉和烟熏炉
+ 
+     @Override
+     protected AbstractContainerMenu createMenu(final int containerId, final Inventory inventory) {

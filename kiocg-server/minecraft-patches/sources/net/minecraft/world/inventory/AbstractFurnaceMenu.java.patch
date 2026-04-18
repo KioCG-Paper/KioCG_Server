@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/inventory/AbstractFurnaceMenu.java
++++ b/net/minecraft/world/inventory/AbstractFurnaceMenu.java
+@@ -160,7 +_,12 @@
+     }
+ 
+     protected boolean isFuel(final ItemStack itemStack) {
+-        return this.level.fuelValues().isFuel(itemStack);
++        // KioCG start - change container behavior
++        net.minecraft.world.level.block.entity.FuelValues.FuelType fuelType = this.container instanceof net.minecraft.world.level.block.entity.SmokerBlockEntity
++                ? net.minecraft.world.level.block.entity.FuelValues.FuelType.SMOKER
++                : net.minecraft.world.level.block.entity.FuelValues.FuelType.FURNACE;
++        return this.level.fuelValues(fuelType).isFuel(itemStack);
++        // KioCG end - change container behavior
+     }
+ 
+     public float getBurnProgress() {

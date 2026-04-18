@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+@@ -210,7 +_,7 @@
+                         org.bukkit.event.inventory.FurnaceBurnEvent furnaceBurnEvent = new org.bukkit.event.inventory.FurnaceBurnEvent(
+                             org.bukkit.craftbukkit.block.CraftBlock.at(level, pos),
+                             org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(fuel),
+-                            entity.getBurnDuration(level.fuelValues(), fuel)
++                            entity.getBurnDuration(level.fuelValues(entity instanceof SmokerBlockEntity ? FuelValues.FuelType.SMOKER : FuelValues.FuelType.FURNACE), fuel) // KioCG - change container behavior
+                         );
+                         if (!furnaceBurnEvent.callEvent()) return;
+                         // CraftBukkit end
+@@ -411,7 +_,7 @@
+             return true;
+         } else {
+             ItemStack fuelSlot = this.items.get(1);
+-            return this.level.fuelValues().isFuel(itemStack) || itemStack.is(Items.BUCKET) && !fuelSlot.is(Items.BUCKET);
++            return this.level.fuelValues(this instanceof SmokerBlockEntity ? FuelValues.FuelType.SMOKER : FuelValues.FuelType.FURNACE).isFuel(itemStack) || itemStack.is(Items.BUCKET) && !fuelSlot.is(Items.BUCKET); // KioCG - change container behavior
+         }
+     }
+ 
 @@ -419,7 +_,14 @@
      public void setRecipeUsed(final @Nullable RecipeHolder<?> recipeUsed) {
          if (recipeUsed != null) {

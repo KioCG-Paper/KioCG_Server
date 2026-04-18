@@ -25,3 +25,12 @@
          // CraftBukkit start - tree generation
          if (this.captureTreeGeneration) {
              // Paper start - Protect Bedrock and End Portal/Frames from being destroyed
+@@ -2146,7 +_,7 @@
+ 
+     public abstract PotionBrewing potionBrewing();
+ 
+-    public abstract FuelValues fuelValues();
++    public abstract FuelValues fuelValues(final FuelValues.FuelType fuelType); // KioCG - change container behavior
+ 
+     public int getClientLeafTintColor(final BlockPos pos) {
+         return 0;

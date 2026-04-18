@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/level/block/entity/FuelValues.java
++++ b/net/minecraft/world/level/block/entity/FuelValues.java
+@@ -35,6 +_,17 @@
+         return itemStack.isEmpty() ? 0 : this.values.getInt(itemStack.getItem());
+     }
+ 
++    // KioCG start - change container behavior
++    public FuelValues toSmokerFuel() {
++        final Object2IntSortedMap<Item> values = new Object2IntLinkedOpenHashMap<>(this.values);
++        values.removeInt(Items.LAVA_BUCKET);
++        values.removeInt(Items.COAL_BLOCK);
++        values.removeInt(Items.BLAZE_ROD);
++        values.removeInt(Items.COAL);
++        return new FuelValues(values);
++    }
++    // KioCG end - change container behavior
++
+     public static FuelValues vanillaBurnTimes(final HolderLookup.Provider registries, final FeatureFlagSet enabledFeatures) {
+         return vanillaBurnTimes(registries, enabledFeatures, 200);
+     }
+@@ -149,4 +_,11 @@
+             }
+         }
+     }
++
++    // KioCG start - change container behavior
++    public enum FuelType {
++        FURNACE,
++        SMOKER;
++    }
++    // KioCG end - change container behavior
+ }
