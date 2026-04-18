@@ -163,16 +163,3 @@
      }
  
      @Override
-@@ -2712,8 +_,10 @@
-     }
- 
-     @Override
--    public FuelValues fuelValues() {
--        return this.server.fuelValues();
-+    // KioCG start - change container behavior
-+    public FuelValues fuelValues(final FuelValues.FuelType fuelType) {
-+        return this.server.fuelValues(fuelType);
-+        // KioCG end - change container behavior
-     }
- 
-     public GameRules getGameRules() {
