@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/HarvestFarmland.java
++++ b/net/minecraft/world/entity/ai/behavior/HarvestFarmland.java
+@@ -47,7 +_,7 @@
+ 
+     @Override
+     protected boolean checkExtraStartConditions(final ServerLevel level, final Villager body) {
+-        if (!level.getGameRules().get(GameRules.MOB_GRIEFING)) {
++        if (!level.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG)) { // KioCG - better mob griefing setting
+             return false;
+         } else if (!body.getVillagerData().profession().is(VillagerProfession.FARMER)) {
+             return false;

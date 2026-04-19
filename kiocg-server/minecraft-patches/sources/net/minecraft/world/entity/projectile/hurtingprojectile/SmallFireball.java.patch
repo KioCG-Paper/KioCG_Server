@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/entity/projectile/hurtingprojectile/SmallFireball.java
++++ b/net/minecraft/world/entity/projectile/hurtingprojectile/SmallFireball.java
+@@ -24,8 +_,10 @@
+     public SmallFireball(final Level level, final LivingEntity mob, final Vec3 direction) {
+         super(EntityType.SMALL_FIREBALL, mob, direction, level);
+         // CraftBukkit start
+-        if (this.getOwner() != null && this.getOwner() instanceof Mob) {
+-            this.isIncendiary = (level instanceof ServerLevel serverLevel) && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING);
++        // KioCG start - better mob griefing setting
++        if (/*this.getOwner() != null && this.getOwner() instanceof Mob*/true) {
++            this.isIncendiary = (level instanceof ServerLevel serverLevel) && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG);
++            // KioCG end - better mob griefing setting
+         }
+         // CraftBukkit end
+     }

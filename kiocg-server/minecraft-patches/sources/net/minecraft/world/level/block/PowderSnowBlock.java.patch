@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/PowderSnowBlock.java
++++ b/net/minecraft/world/level/block/PowderSnowBlock.java
+@@ -103,7 +_,7 @@
+                         // CraftBukkit - move down
+                     && e.mayInteract(serverLevel, position)) {
+                     // CraftBukkit start
+-                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(e, pos, Blocks.AIR.defaultBlockState(), !(serverLevel.getGameRules().get(GameRules.MOB_GRIEFING) || e instanceof Player))) {
++                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(e, pos, Blocks.AIR.defaultBlockState(), !(serverLevel.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG) /*|| e instanceof Player*/))) { // KioCG - better mob griefing setting
+                         return;
+                     }
+                     // CraftBukkit end

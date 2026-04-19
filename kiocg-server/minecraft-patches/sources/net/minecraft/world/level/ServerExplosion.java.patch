@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/level/ServerExplosion.java
++++ b/net/minecraft/world/level/ServerExplosion.java
+@@ -701,14 +_,17 @@
+     @Override
+     public boolean canTriggerBlocks() {
+         return this.blockInteraction == Explosion.BlockInteraction.TRIGGER_BLOCK
+-            && (this.source == null || !this.source.is(EntityType.BREEZE_WIND_CHARGE) || this.level.getGameRules().get(GameRules.MOB_GRIEFING));
++            && (this.source == null /*|| !this.source.is(EntityType.BREEZE_WIND_CHARGE)*/ || this.level.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG)); // KioCG - better mob griefing setting
+     }
+ 
+     @Override
+     public boolean shouldAffectBlocklikeEntities() {
+-        boolean mobGriefingEnabled = this.level.getGameRules().get(GameRules.MOB_GRIEFING);
++        boolean mobGriefingEnabled = this.level.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG); // KioCG - better mob griefing setting
+         boolean isNotWindCharge = this.source == null || !this.source.is(EntityType.BREEZE_WIND_CHARGE) && !this.source.is(EntityType.WIND_CHARGE);
+-        return mobGriefingEnabled ? isNotWindCharge : this.blockInteraction.shouldAffectBlocklikeEntities() && isNotWindCharge;
++        // KioCG start - better mob griefing setting: 允许玩家风弹击退
++        boolean isNotBreezeWindCharge = this.source == null || !this.source.is(EntityType.BREEZE_WIND_CHARGE);
++        return mobGriefingEnabled ? isNotBreezeWindCharge : this.blockInteraction.shouldAffectBlocklikeEntities() && isNotWindCharge;
++        // KioCG end - better mob griefing setting: 允许玩家风弹击退
+     }
+ 
+     public boolean isSmall() {

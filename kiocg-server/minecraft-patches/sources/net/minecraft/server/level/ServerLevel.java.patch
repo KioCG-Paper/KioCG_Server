@@ -112,6 +112,15 @@
                  }
              }
          }
+@@ -1979,7 +_,7 @@
+         Explosion.BlockInteraction blockInteraction = switch (interactionType) {
+             case NONE -> Explosion.BlockInteraction.KEEP;
+             case BLOCK -> this.getDestroyType(GameRules.BLOCK_EXPLOSION_DROP_DECAY);
+-            case MOB -> this.getGameRules().get(GameRules.MOB_GRIEFING)
++            case MOB -> this.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG) // KioCG - better mob griefing setting
+                 ? this.getDestroyType(GameRules.MOB_EXPLOSION_DROP_DECAY)
+                 : Explosion.BlockInteraction.KEEP;
+             case TNT -> this.getDestroyType(GameRules.TNT_EXPLOSION_DROP_DECAY);
 @@ -2523,6 +_,41 @@
          return this.getEntities().getAll();
      }

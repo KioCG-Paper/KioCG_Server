@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/projectile/hurtingprojectile/LargeFireball.java
++++ b/net/minecraft/world/entity/projectile/hurtingprojectile/LargeFireball.java
+@@ -20,13 +_,13 @@
+ 
+     public LargeFireball(final EntityType<? extends LargeFireball> type, final Level level) {
+         super(type, level);
+-        this.isIncendiary = (level instanceof ServerLevel serverLevel) && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING); // CraftBukkit
++        this.isIncendiary = (level instanceof ServerLevel serverLevel) && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG); // CraftBukkit // KioCG - better mob griefing setting
+     }
+ 
+     public LargeFireball(final Level level, final LivingEntity mob, final Vec3 direction, final int explosionPower) {
+         super(EntityType.FIREBALL, mob, direction, level);
+         this.explosionPower = explosionPower;
+-        this.isIncendiary = (level instanceof ServerLevel serverLevel) && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING); // CraftBukkit
++        this.isIncendiary = (level instanceof ServerLevel serverLevel) && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG); // CraftBukkit // KioCG - better mob griefing setting
+     }
+ 
+     @Override

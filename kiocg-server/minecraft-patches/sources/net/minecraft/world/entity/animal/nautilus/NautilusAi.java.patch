@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/nautilus/NautilusAi.java
++++ b/net/minecraft/world/entity/animal/nautilus/NautilusAi.java
+@@ -51,7 +_,7 @@
+     private static final double MAX_TARGET_DETECTION_DISTANCE = 11.0;
+     protected static final TargetingConditions ATTACK_TARGET_CONDITIONS = TargetingConditions.forCombat()
+         .selector(
+-            (target, level) -> (level.getGameRules().get(GameRules.MOB_GRIEFING) || !target.is(EntityType.ARMOR_STAND))
++            (target, level) -> (/*level.getGameRules().get(GameRules.MOB_GRIEFING) ||*/ !target.is(EntityType.ARMOR_STAND)) // KioCG - better mob griefing setting
+                 && level.getWorldBorder().isWithinBounds(target.getBoundingBox())
+         );
+ 

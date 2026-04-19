@@ -1,0 +1,36 @@
+--- a/net/minecraft/world/entity/animal/rabbit/Rabbit.java
++++ b/net/minecraft/world/entity/animal/rabbit/Rabbit.java
+@@ -607,7 +_,7 @@
+         @Override
+         public boolean canUse() {
+             if (this.nextStartTick <= 0) {
+-                if (!getServerLevel(this.rabbit).getGameRules().get(GameRules.MOB_GRIEFING)) {
++                if (getServerLevel(this.rabbit).getGameRules().get(GameRules.RANDOM_TICK_SPEED) <= 0) { // KioCG - better mob griefing setting
+                     return false;
+                 }
+ 
+@@ -637,9 +_,12 @@
+                 if (this.canRaid && block instanceof CarrotBlock) {
+                     int carrotAge = blockState.getValue(CarrotBlock.AGE);
+                     if (carrotAge == 0) {
+-                        if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, cropsPos, blockState.getFluidState().createLegacyBlock())) return; // CraftBukkit // Paper - fix wrong block state
+-                        level.setBlock(cropsPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+-                        level.destroyBlock(cropsPos, true, this.rabbit);
++                        // KioCG start - better mob griefing setting
++                        // 这里实际上并不会运行，因为兔子只寻找Age>0的植株
++                        // if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, cropsPos, blockState.getFluidState().createLegacyBlock())) return; // CraftBukkit // Paper - fix wrong block state
++                        // level.setBlock(cropsPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
++                        // level.destroyBlock(cropsPos, true, this.rabbit);
++                        // KioCG end - better mob griefing setting
+                     } else {
+                         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, cropsPos, blockState.setValue(CarrotBlock.AGE, carrotAge - 1))) return; // CraftBukkit // Paper - fix wrong block state
+                         level.setBlock(cropsPos, blockState.setValue(CarrotBlock.AGE, carrotAge - 1), Block.UPDATE_CLIENTS);
+@@ -660,7 +_,7 @@
+             BlockState state = level.getBlockState(pos);
+             if (state.is(BlockTags.SUPPORTS_CROPS) && this.wantsToRaid && !this.canRaid) {
+                 state = level.getBlockState(pos.above());
+-                if (state.getBlock() instanceof CarrotBlock carrotBlock && carrotBlock.isMaxAge(state)) {
++                if (state.getBlock() instanceof CarrotBlock carrotBlock && carrotBlock.getAge(state) > 0) { // KioCG - better mob griefing setting
+                     this.canRaid = true;
+                     return true;
+                 }

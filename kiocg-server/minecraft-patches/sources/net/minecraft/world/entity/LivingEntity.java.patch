@@ -1,9 +1,19 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -2899,6 +_,17 @@
+@@ -1891,7 +_,7 @@
+         if (this.level() instanceof ServerLevel serverLevel) {
+             boolean var6 = false;
+             if (this.dead && killer instanceof WitherBoss) { // Paper
+-                if (serverLevel.getGameRules().get(GameRules.MOB_GRIEFING)) {
++                if (serverLevel.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG)) { // KioCG - better mob griefing setting
+                     BlockPos pos = this.blockPosition();
+                     BlockState state = Blocks.WITHER_ROSE.defaultBlockState();
+                     if (this.level().getBlockState(pos).isAir() && state.canSurvive(this.level(), pos)) {
+@@ -2898,6 +_,17 @@
+             throw new IllegalArgumentException("Invalid hand " + hand);
          }
      }
- 
++
 +    // KioCG start - more api
 +    public @Nullable InteractionHand getHandWithItem(final Item item) {
 +        if (this.getMainHandItem().is(item)) {
@@ -14,7 +24,6 @@
 +        return null;
 +    }
 +    // KioCG end - more api
-+
+ 
      public void setItemInHand(final InteractionHand hand, final ItemStack itemStack) {
          if (hand == InteractionHand.MAIN_HAND) {
-             this.setItemSlot(EquipmentSlot.MAINHAND, itemStack);

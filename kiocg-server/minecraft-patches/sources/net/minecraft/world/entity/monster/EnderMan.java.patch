@@ -1,0 +1,55 @@
+--- a/net/minecraft/world/entity/monster/EnderMan.java
++++ b/net/minecraft/world/entity/monster/EnderMan.java
+@@ -430,7 +_,7 @@
+ 
+     @Override
+     public boolean requiresCustomPersistence() {
+-        return super.requiresCustomPersistence() || this.getCarriedBlock() != null;
++        return super.requiresCustomPersistence() /*|| this.getCarriedBlock() != null*/; // KioCG - optimize entity behavior: 始终允许消失
+     }
+ 
+     private static class EndermanFreezeWhenLookedAt extends Goal {
+@@ -474,7 +_,7 @@
+         @Override
+         public boolean canUse() {
+             return this.enderman.getCarriedBlock() != null
+-                && getServerLevel(this.enderman).getGameRules().get(GameRules.MOB_GRIEFING)
++                /*&& getServerLevel(this.enderman).getGameRules().get(GameRules.MOB_GRIEFING)*/ // KioCG - better mob griefing setting
+                 && this.enderman.getRandom().nextInt(reducedTickDelay(2000)) == 0;
+         }
+ 
+@@ -494,8 +_,10 @@
+             if (carried != null) {
+                 carried = Block.updateFromNeighbourShapes(carried, this.enderman.level(), pos);
+                 if (this.canPlaceBlock(level, pos, carried, targetState, belowState, below)) {
+-                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, pos, carried)) { // CraftBukkit - Place event
+-                    level.setBlock(pos, carried, Block.UPDATE_ALL);
++                    // KioCG start - better mob griefing setting
++                    if (true || org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, pos, carried)) { // CraftBukkit - Place event
++                        // level.setBlock(pos, carried, Block.UPDATE_ALL);
++                        // KioCG end - better mob griefing setting
+                     level.gameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Context.of(this.enderman, carried));
+                     this.enderman.setCarriedBlock(null);
+                     } // CraftBukkit
+@@ -617,7 +_,7 @@
+         @Override
+         public boolean canUse() {
+             return this.enderman.getCarriedBlock() == null
+-                && getServerLevel(this.enderman).getGameRules().get(GameRules.MOB_GRIEFING)
++                /*&& getServerLevel(this.enderman).getGameRules().get(GameRules.MOB_GRIEFING)*/ // KioCG - better mob griefing setting
+                 && this.enderman.getRandom().nextInt(reducedTickDelay(20)) == 0;
+         }
+ 
+@@ -636,8 +_,10 @@
+             BlockHitResult result = level.clip(new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.enderman));
+             boolean reachable = result.getBlockPos().equals(pos);
+             if (blockState.is(BlockTags.ENDERMAN_HOLDABLE) && reachable) {
+-                if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, pos, blockState.getFluidState().createLegacyBlock())) { // Paper - Place event
+-                level.removeBlock(pos, false);
++                // KioCG start - better mob griefing setting
++                if (true || org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, pos, blockState.getFluidState().createLegacyBlock())) { // Paper - Place event
++                    // level.removeBlock(pos, false);
++                    // KioCG end - better mob griefing setting
+                 level.gameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Context.of(this.enderman, blockState));
+                 this.enderman.setCarriedBlock(blockState.getBlock().defaultBlockState());
+                 } // CraftBukkit

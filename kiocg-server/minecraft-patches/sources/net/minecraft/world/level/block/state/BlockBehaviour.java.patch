@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/block/state/BlockBehaviour.java
++++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
+@@ -186,6 +_,17 @@
+         final BlockState state, final ServerLevel level, final BlockPos pos, final Explosion explosion, final BiConsumer<ItemStack, BlockPos> onHit
+     ) {
+         if (!state.isAir() && explosion.getBlockInteraction() != Explosion.BlockInteraction.TRIGGER_BLOCK && state.isDestroyable()) { // Paper - Protect Bedrock and End Portal/Frames from being destroyed
++            // KioCG start - better mob griefing setting
++            if (explosion.getDirectSourceEntity() instanceof net.minecraft.world.entity.monster.Creeper creeper) {
++                net.minecraft.server.level.BlockDestructionProgress blockDestructionProgress = level.destroyingBlocks.get(pos);
++                int progress = blockDestructionProgress.getProgress() + 5;
++                if (progress < 10) {
++                    level.destroyBlockProgress(creeper.getId(), pos, progress);
++                    return;
++                }
++            }
++            // KioCG end - better mob griefing setting
++
+             Block block = state.getBlock();
+             boolean doDropExperienceHack = explosion.getIndirectSourceEntity() instanceof Player;
+             if (block.dropFromExplosion(explosion)) {

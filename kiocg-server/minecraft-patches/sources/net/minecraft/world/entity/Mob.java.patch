@@ -8,6 +8,15 @@
      public static final String TAG_DROP_CHANCES = "drop_chances";
      public static final String TAG_LEFT_HANDED = "LeftHanded";
      public static final String TAG_CAN_PICK_UP_LOOT = "CanPickUpLoot";
+@@ -541,7 +_,7 @@
+             && this.canPickUpLoot()
+             && this.isAlive()
+             && !this.dead
+-            && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING)) {
++            /*&& serverLevel.getGameRules().get(GameRules.MOB_GRIEFING)*/) { // KioCG - better mob griefing setting
+             Vec3i pickupReach = this.getPickupReach();
+ 
+             for (ItemEntity entity : this.level()
 @@ -762,6 +_,7 @@
      public void checkDespawn() {
          if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) { // Paper - allow changing despawnInPeaceful

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/fox/Fox.java
++++ b/net/minecraft/world/entity/animal/fox/Fox.java
+@@ -996,7 +_,7 @@
+         }
+ 
+         protected void onReachedTarget() {
+-            if (getServerLevel(Fox.this.level()).getGameRules().get(GameRules.MOB_GRIEFING)) {
++            if (getServerLevel(Fox.this.level()).getGameRules().get(GameRules.RANDOM_TICK_SPEED) > 0) { // KioCG - better mob griefing setting
+                 BlockState state = Fox.this.level().getBlockState(this.blockPos);
+                 if (state.is(Blocks.SWEET_BERRY_BUSH)) {
+                     this.pickSweetBerries(state);

@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/FarmlandBlock.java
++++ b/net/minecraft/world/level/block/FarmlandBlock.java
+@@ -111,9 +_,10 @@
+     public void fallOn(final Level level, final BlockState state, final BlockPos pos, final Entity entity, final double fallDistance) {
+         super.fallOn(level, state, pos, entity, fallDistance); // CraftBukkit - moved here as game rules / events shouldn't affect fall damage.
+         if (level instanceof ServerLevel serverLevel
++                && fallDistance > 1.0 // KioCG - better mob griefing setting: 摔落大于1格才能退化耕地
+             && level.getRandom().nextFloat() < fallDistance - 0.5
+             && entity instanceof LivingEntity
+-            && (entity instanceof Player || serverLevel.getGameRules().get(GameRules.MOB_GRIEFING))
++            && (/*entity instanceof Player ||*/ serverLevel.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG)) // KioCG - better mob griefing setting
+             && entity.getBbWidth() * entity.getBbWidth() * entity.getBbHeight() > 0.512F) {
+             // CraftBukkit start - Interact soil
+             org.bukkit.event.Cancellable cancellable;

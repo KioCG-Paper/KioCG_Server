@@ -8,30 +8,30 @@
      private int gameTicks;
      private boolean hasDelayedDestroy;
      private BlockPos delayedDestroyPos = BlockPos.ZERO;
-@@ -136,7 +_,11 @@
+@@ -136,7 +_,12 @@
                  float destroyProgress = this.incrementDestroyProgress(blockState, this.delayedDestroyPos, this.delayedTickStart);
                  if (destroyProgress >= 1.0F) {
                      this.hasDelayedDestroy = false;
 -                    this.destroyBlock(this.delayedDestroyPos);
 +                    // KioCG start - keep block destruction
 +                    if (!this.destroyBlock(this.delayedDestroyPos)) {
-+                        this.level.destroyBlockProgress(this.player.getId(), this.delayedDestroyPos, -1);
++                        // 仅清除裂纹, 不要调用事件, 原本就没有调用!
++                        this.level.destroyBlockProgress(-1, this.delayedDestroyPos, -1);
 +                    }
 +                    // KioCG end - keep block destruction
                  }
              }
          } else if (this.isDestroyingBlock) {
-@@ -151,6 +_,16 @@
+@@ -151,6 +_,15 @@
                  this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
                  this.lastSentState = -1;
                  this.isDestroyingBlock = false;
 +                // KioCG start - keep block destruction
 +            } else if (this.restoredDestroyPos == this.destroyPos && this.level.destroyingBlocks.get(this.destroyPos).getProgress() >= 10) {
++                this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
 +                this.lastSentState = -1;
 +                this.isDestroyingBlock = false;
-+                if (!this.destroyBlock(this.destroyPos)) {
-+                    this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
-+                } else {
++                if (this.destroyBlock(this.destroyPos)) {
 +                    this.player.connection.send(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(net.minecraft.world.level.block.LevelEvent.PARTICLES_DESTROY_BLOCK, this.destroyPos, net.minecraft.world.level.block.Block.getId(blockState), false));
 +                }
 +                // KioCG end - keep block destruction

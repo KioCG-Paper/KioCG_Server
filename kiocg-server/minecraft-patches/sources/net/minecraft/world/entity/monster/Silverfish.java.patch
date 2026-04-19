@@ -22,3 +22,36 @@
      private static class SilverfishMergeWithStoneGoal extends RandomStrollGoal {
          private @Nullable Direction selectedDirection;
          private boolean doMerge;
+@@ -139,7 +_,7 @@
+                 return false;
+             } else {
+                 RandomSource random = this.mob.getRandom();
+-                if (getServerLevel(this.mob).getGameRules().get(GameRules.MOB_GRIEFING) && random.nextInt(reducedTickDelay(10)) == 0) {
++                if (getServerLevel(this.mob).getGameRules().get(GameRules.MOB_GRIEFING_KIOCG) && random.nextInt(reducedTickDelay(10)) == 0) { // KioCG - better mob griefing setting
+                     this.selectedDirection = Direction.getRandom(random);
+                     BlockPos pos = BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5, this.mob.getZ()).relative(this.selectedDirection);
+                     BlockState blockState = this.mob.level().getBlockState(pos);
+@@ -208,6 +_,8 @@
+                 RandomSource random = this.silverfish.getRandom();
+                 BlockPos basePos = this.silverfish.blockPosition();
+ 
++                if (!getServerLevel(level).getGameRules().get(GameRules.MOB_GRIEFING_KIOCG)) return; // KioCG - better mob griefing setting
++
+                 for (int yOff = 0; yOff <= 5 && yOff >= -5; yOff = (yOff <= 0 ? 1 : 0) - yOff) {
+                     for (int xOff = 0; xOff <= 10 && xOff >= -10; xOff = (xOff <= 0 ? 1 : 0) - xOff) {
+                         for (int zOff = 0; zOff <= 10 && zOff >= -10; zOff = (zOff <= 0 ? 1 : 0) - zOff) {
+@@ -216,12 +_,12 @@
+                             Block block = blockState.getBlock();
+                             if (block instanceof InfestedBlock) {
+                                 // CraftBukkit start
+-                                BlockState afterState = getServerLevel(level).getGameRules().get(GameRules.MOB_GRIEFING) ? blockState.getFluidState().createLegacyBlock() : ((InfestedBlock) block).hostStateByInfested(level.getBlockState(testPos)); // Paper - fix wrong block state
++                                BlockState afterState = /*getServerLevel(level).getGameRules().get(GameRules.MOB_GRIEFING)*/false ? blockState.getFluidState().createLegacyBlock() : ((InfestedBlock) block).hostStateByInfested(level.getBlockState(testPos)); // Paper - fix wrong block state // KioCG - better mob griefing setting
+                                 if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, testPos, afterState)) { // Paper - fix wrong block state
+                                     continue;
+                                 }
+                                 // CraftBukkit end
+-                                if (getServerLevel(level).getGameRules().get(GameRules.MOB_GRIEFING)) {
++                                if (/*getServerLevel(level).getGameRules().get(GameRules.MOB_GRIEFING)*/false) { // KioCG - better mob griefing setting
+                                     level.destroyBlock(testPos, true, this.silverfish);
+                                 } else {
+                                     level.setBlock(testPos, ((InfestedBlock)block).hostStateByInfested(level.getBlockState(testPos)), Block.UPDATE_ALL);

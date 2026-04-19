@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/effect/WeavingMobEffect.java
++++ b/net/minecraft/world/effect/WeavingMobEffect.java
+@@ -26,7 +_,7 @@
+ 
+     @Override
+     public void onMobRemoved(final ServerLevel level, final LivingEntity mob, final int amplifier, final Entity.RemovalReason reason) {
+-        if (reason == Entity.RemovalReason.KILLED && (mob instanceof Player || level.getGameRules().get(GameRules.MOB_GRIEFING))) {
++        if (reason == Entity.RemovalReason.KILLED && (/*mob instanceof Player ||*/ level.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG))) { // KioCG - better mob griefing setting
+             this.spawnCobwebsRandomlyAround(level, mob.getRandom(), mob.blockPosition(), mob); // Paper - Fire EntityChangeBlockEvent in more places
+         }
+     }

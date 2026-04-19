@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/piglin/Piglin.java
++++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
+@@ -385,7 +_,7 @@
+ 
+     @Override
+     public boolean wantsToPickUp(final ServerLevel level, final ItemStack itemStack) {
+-        return level.getGameRules().get(GameRules.MOB_GRIEFING) && this.canPickUpLoot() && PiglinAi.wantsToPickup(this, itemStack);
++        return /*level.getGameRules().get(GameRules.MOB_GRIEFING) &&*/ this.canPickUpLoot() && PiglinAi.wantsToPickup(this, itemStack); // KioCG - better mob griefing setting
+     }
+ 
+     protected boolean canReplaceCurrentItem(final ItemStack newItemStack) {

@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
++++ b/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
+@@ -64,7 +_,7 @@
+             BlockPos pos = this.mob.blockPosition();
+             final BlockState blockState = this.level.getBlockState(pos); // Paper - fix wrong block state
+             if (IS_EDIBLE.test(blockState)) { // Paper - fix wrong block state
+-                if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, pos, blockState.getFluidState().createLegacyBlock(), !getServerLevel(this.level).getGameRules().get(GameRules.MOB_GRIEFING))) { // CraftBukkit // Paper - fix wrong block state
++                if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, pos, blockState.getFluidState().createLegacyBlock(), !getServerLevel(this.level).getGameRules().get(GameRules.MOB_GRIEFING_KIOCG))) { // CraftBukkit // Paper - fix wrong block state // KioCG - better mob griefing setting
+                     this.level.destroyBlock(pos, false);
+                 }
+ 
+@@ -72,7 +_,7 @@
+             } else {
+                 BlockPos below = pos.below();
+                 if (this.level.getBlockState(below).is(Blocks.GRASS_BLOCK)) {
+-                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, below, Blocks.DIRT.defaultBlockState(), !getServerLevel(this.level).getGameRules().get(GameRules.MOB_GRIEFING))) { // CraftBukkit // Paper - Fix wrong block state
++                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, below, Blocks.DIRT.defaultBlockState(), !getServerLevel(this.level).getGameRules().get(GameRules.MOB_GRIEFING_KIOCG))) { // CraftBukkit // Paper - Fix wrong block state // KioCG - better mob griefing setting
+                         this.level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, below, Block.getId(Blocks.GRASS_BLOCK.defaultBlockState()));
+                         this.level.setBlock(below, Blocks.DIRT.defaultBlockState(), Block.UPDATE_CLIENTS);
+                     }
