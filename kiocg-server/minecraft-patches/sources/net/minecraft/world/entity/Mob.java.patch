@@ -8,7 +8,7 @@
      public static final String TAG_DROP_CHANCES = "drop_chances";
      public static final String TAG_LEFT_HANDED = "LeftHanded";
      public static final String TAG_CAN_PICK_UP_LOOT = "CanPickUpLoot";
-@@ -541,7 +_,7 @@
+@@ -542,7 +_,7 @@
              && this.canPickUpLoot()
              && this.isAlive()
              && !this.dead
@@ -17,7 +17,7 @@
              Vec3i pickupReach = this.getPickupReach();
  
              for (ItemEntity entity : this.level()
-@@ -762,6 +_,7 @@
+@@ -763,6 +_,7 @@
      public void checkDespawn() {
          if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) { // Paper - allow changing despawnInPeaceful
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
@@ -25,7 +25,7 @@
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
              Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
              if (player != null) {
-@@ -776,11 +_,13 @@
+@@ -777,11 +_,13 @@
                  // Despawn if hard/soft limit is exceeded
                  if (despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) {
                      this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
@@ -39,7 +39,7 @@
                      }
                  } else {
                      // Paper end - Configurable despawn distances
-@@ -1254,6 +_,14 @@
+@@ -1255,6 +_,14 @@
                  new AttributeModifier(RANDOM_SPAWN_BONUS_ID, random.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE)
              );
          }
