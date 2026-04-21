@@ -1,0 +1,10 @@
+--- a/data/minecraft/tags/block/mineable/pickaxe.json
++++ b/data/minecraft/tags/block/mineable/pickaxe.json
+@@ -27,7 +_,6 @@
+     "minecraft:bricks",
+     "minecraft:mossy_cobblestone",
+     "minecraft:obsidian",
+-    "minecraft:spawner",
+     "minecraft:diamond_ore",
+     "minecraft:deepslate_diamond_ore",
+     "minecraft:diamond_block",
