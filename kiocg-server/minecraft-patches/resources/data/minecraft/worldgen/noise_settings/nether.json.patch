@@ -1,0 +1,11 @@
+--- a/data/minecraft/worldgen/noise_settings/nether.json
++++ b/data/minecraft/worldgen/noise_settings/nether.json
+@@ -133,7 +_,7 @@
+             "type": "paper:optionally_flat_bedrock_condition_source",
+             "is_roof": true,
+             "false_at_and_above": {
+-              "below_top": 0
++              "below_top": 1
+             },
+             "random_name": "minecraft:bedrock_roof",
+             "true_at_and_below": {
