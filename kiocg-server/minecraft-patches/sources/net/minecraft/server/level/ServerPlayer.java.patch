@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -840,6 +_,17 @@
+@@ -840,6 +_,26 @@
                  if (!this.isSleeping()) {
                      this.awardStat(Stats.TIME_SINCE_REST);
                  }
@@ -15,9 +15,52 @@
 +                    }
 +                }
 +                // KioCG end - EXP is life
++
++                // KioCG start - terrifying Cave
++                if (!this.getAbilities().invulnerable && !this.hasEffect(MobEffects.NIGHT_VISION) && this.level().getRawBrightness(this.blockPosition(), 0) <= 0) {
++                    double x = this.random.triangle(this.getX(), 16.0);
++                    double y = this.random.triangle(this.getY(), 8.0);
++                    double z = this.random.triangle(this.getZ(), 16.0);
++                    this.createSpellEntity(x, y, z);
++                }
++                // KioCG end - terrifying Cave
              }
  
              for (int i = 0; i < this.getInventory().getContainerSize(); i++) {
+@@ -925,6 +_,33 @@
+         }
+     }
+ 
++    // KioCG start - terrifying Cave
++    private void createSpellEntity(final double x, final double y, final double z) {
++        BlockPos pos = BlockPos.containing(x, y, z);
++        BlockState blockState = this.level().getBlockState(pos);
++        if (blockState.isCollisionShapeFullBlock(this.level(), pos)) {
++            return;
++        }
++
++        for (int i = 0; i <= 4; i++) {
++            BlockPos below = pos.below();
++            BlockState belowState = this.level().getBlockState(below);
++            if (!belowState.isCollisionShapeFullBlock(this.level(), below)) {
++                pos = below;
++                continue;
++            }
++
++            if (belowState.isFaceSturdy(this.level(), below, Direction.UP) && this.level().getRawBrightness(pos, 0) <= 0) {
++                net.minecraft.world.entity.projectile.EvokerFangs evokerFangs = new net.minecraft.world.entity.projectile.EvokerFangs(EntityType.EVOKER_FANGS, this.level());
++                evokerFangs.setYRot(this.random.nextFloat() * 360.0F);
++                evokerFangs.setPos(x, pos.getY(), z);
++                this.level().addFreshEntity(evokerFangs);
++            }
++            return;
++        }
++    }
++    // KioCG end - terrifying Cave
++
+     private void synchronizeSpecialItemUpdates(final ItemStack itemStack) {
+         MapId mapId = itemStack.get(DataComponents.MAP_ID);
+         MapItemSavedData data = MapItem.getSavedData(mapId, this.level());
 @@ -1158,11 +_,30 @@
              return;
          }
