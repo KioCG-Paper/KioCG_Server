@@ -1,17 +1,31 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -840,6 +_,26 @@
+@@ -454,6 +_,10 @@
+     public boolean isRealPlayer; // Paper
+     public com.destroystokyo.paper.event.entity.@Nullable PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
+     public org.bukkit.event.player.PlayerQuitEvent.@Nullable QuitReason quitReason = null; // Paper - Add API for quit reason; there are a lot of changes to do if we change all methods leading to the event
++    // KioCG start - EXP is life
++    public it.unimi.dsi.fastutil.objects.Object2IntMap<EquipmentSlot> insulationLevels = new it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<>(4);
++    public int timerPerLife = 0;
++    // KioCG end - EXP is life
+ 
+     // Paper start - rewrite chunk system
+     private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
+@@ -840,6 +_,29 @@
                  if (!this.isSleeping()) {
                      this.awardStat(Stats.TIME_SINCE_REST);
                  }
 +
 +                // KioCG start - EXP is life
 +                if (this.tickCount % 20 == 0 && !this.getAbilities().invulnerable && !this.getBukkitEntity().hasPermission("kiocg.lifecountdown.bypass")) {
-+                    final int prevLevel = this.experienceLevel;
-+                    this.giveExperienceLevels(-1);
-+                    if (prevLevel > 0 && this.experienceLevel <= 0) {
-+                        this.level().playSound(null, this, this.getDeathSound(), net.minecraft.sounds.SoundSource.PLAYERS, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-+                        this.getBukkitEntity().showTitle(net.kyori.adventure.title.Title.title(io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.player.permadeathWarningTitle, io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.player.permadeathWarningSubtitle));
++                    if (++this.timerPerLife >= Math.pow(2, this.insulationLevels.values().intStream().sum())) {
++                        this.timerPerLife = 0;
++                        final int prevLevel = this.experienceLevel;
++                        this.giveExperienceLevels(-1);
++                        if (prevLevel > 0 && this.experienceLevel <= 0) {
++                            this.level().playSound(null, this, this.getDeathSound(), net.minecraft.sounds.SoundSource.PLAYERS, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
++                            this.getBukkitEntity().showTitle(net.kyori.adventure.title.Title.title(io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.player.permadeathWarningTitle, io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.player.permadeathWarningSubtitle));
++                        }
 +                    }
 +                }
 +                // KioCG end - EXP is life

@@ -9,11 +9,10 @@
                      BlockPos pos = this.blockPosition();
                      BlockState state = Blocks.WITHER_ROSE.defaultBlockState();
                      if (this.level().getBlockState(pos).isAir() && state.canSurvive(this.level(), pos)) {
-@@ -2898,6 +_,17 @@
-             throw new IllegalArgumentException("Invalid hand " + hand);
+@@ -2899,6 +_,17 @@
          }
      }
-+
+ 
 +    // KioCG start - more api
 +    public @Nullable InteractionHand getHandWithItem(final Item item) {
 +        if (this.getMainHandItem().is(item)) {
@@ -24,6 +23,16 @@
 +        return null;
 +    }
 +    // KioCG end - more api
- 
++
      public void setItemInHand(final InteractionHand hand, final ItemStack itemStack) {
          if (hand == InteractionHand.MAIN_HAND) {
+             this.setItemSlot(EquipmentSlot.MAINHAND, itemStack);
+@@ -3588,6 +_,8 @@
+                 final org.bukkit.inventory.ItemStack newItem = CraftItemStack.asBukkitCopy(current);
+                 if (this instanceof ServerPlayer && slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
+                     new com.destroystokyo.paper.event.player.PlayerArmorChangeEvent((org.bukkit.entity.Player)this.getBukkitEntity(), com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType.valueOf(slot.name()), oldItem, newItem).callEvent();
++
++                    com.kiocg.world.item.enchantment.Insulation.update((ServerPlayer) this, slot, current); // KioCG - EXP is life
+                 }
+                 // Paper end - EntityEquipmentChangedEvent, PlayerArmorChangeEvent
+                 if (changedItems == null) {

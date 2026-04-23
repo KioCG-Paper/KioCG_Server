@@ -2,13 +2,6 @@ package com.kiocg.world.level.levelgen.feature;
 
 import com.kiocg.world.level.levelgen.feature.configurations.MixedOreConfiguration;
 import com.mojang.serialization.Codec;
-
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
@@ -23,6 +16,12 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class MixedOreFeature extends Feature<MixedOreConfiguration> {
     private static final List<Pair<Block, Block>> ORE_BLOCKS = new ArrayList<>();
@@ -181,7 +180,7 @@ public class MixedOreFeature extends Feature<MixedOreConfiguration> {
                                                         } else if (config.targetStates.deepslateTarget.test(blockState, random)) {
                                                             oreSupplier = () -> getRandomDeepslateOre(random);
                                                         }
-                                                        
+
                                                         if (oreSupplier != null) {
                                                             if (canPlaceOre(sectionGetter::getBlockState, random, config, orePos)) {
                                                                 section.setBlockState(

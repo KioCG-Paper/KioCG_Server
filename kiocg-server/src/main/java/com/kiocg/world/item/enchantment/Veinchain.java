@@ -20,7 +20,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Veinchain {
     private static final Registry<Enchantment> ENCHANTMENT = MinecraftServer.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
