@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -41,6 +_,7 @@
+@@ -41,11 +_,13 @@
      private boolean isDestroyingBlock;
      private int destroyProgressStart;
      private BlockPos destroyPos = BlockPos.ZERO;
@@ -8,6 +8,12 @@
      private int gameTicks;
      private boolean hasDelayedDestroy;
      private BlockPos delayedDestroyPos = BlockPos.ZERO;
+     private int delayedTickStart;
+     private int lastSentState = -1;
++    private float lastStateDestroyProgress = 0; // KioCG - keep block destruction: 修复挖掘速度改变时的破坏问题
+     public boolean captureSentBlockEntities = false; // Paper - Send block entities after destroy prediction
+     public boolean capturedBlockEntity = false; // Paper - Send block entities after destroy prediction
+ 
 @@ -136,7 +_,12 @@
                  float destroyProgress = this.incrementDestroyProgress(blockState, this.delayedDestroyPos, this.delayedTickStart);
                  if (destroyProgress >= 1.0F) {
@@ -22,15 +28,17 @@
                  }
              }
          } else if (this.isDestroyingBlock) {
-@@ -151,6 +_,15 @@
+@@ -151,6 +_,17 @@
                  this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
                  this.lastSentState = -1;
                  this.isDestroyingBlock = false;
 +                // KioCG start - keep block destruction
++                this.lastStateDestroyProgress = -1; // KioCG - keep block destruction: 修复挖掘速度改变时的破坏问题
 +            } else if (this.restoredDestroyPos == this.destroyPos && this.level.destroyingBlocks.get(this.destroyPos).getProgress() >= 10) {
 +                this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
 +                this.lastSentState = -1;
 +                this.isDestroyingBlock = false;
++                this.lastStateDestroyProgress = -1; // KioCG - keep block destruction: 修复挖掘速度改变时的破坏问题
 +                if (this.destroyBlock(this.destroyPos)) {
 +                    this.player.connection.send(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(net.minecraft.world.level.block.LevelEvent.PARTICLES_DESTROY_BLOCK, this.destroyPos, net.minecraft.world.level.block.Block.getId(blockState), false));
 +                }
@@ -38,6 +46,31 @@
              } else {
                  this.incrementDestroyProgress(blockState, this.destroyPos, this.destroyProgressStart);
              }
+@@ -159,9 +_,22 @@
+ 
+     private float incrementDestroyProgress(final BlockState blockState, final BlockPos delayedDestroyPos, final int destroyStartTick) {
+         int ticksSpentDestroying = this.gameTicks - destroyStartTick;
+-        float destroyProgress = blockState.getDestroyProgress(this.player, this.player.level(), delayedDestroyPos) * (ticksSpentDestroying + 1);
++        // KioCG start - keep block destruction: 修复挖掘速度改变时的破坏问题
++        float stateDestroyProgress = blockState.getDestroyProgress(this.player, this.player.level(), delayedDestroyPos);
++
++        if (this.restoredDestroyPos == this.destroyPos && stateDestroyProgress > this.lastStateDestroyProgress) {
++            int progressIncrease = this.level.destroyingBlocks.get(delayedDestroyPos).getProgress();
++            if (progressIncrease > 0) {
++                this.destroyProgressStart = this.gameTicks - (int) (progressIncrease / 10.0F / stateDestroyProgress);
++                ticksSpentDestroying = this.gameTicks - this.destroyProgressStart;
++            }
++        }
++        this.lastStateDestroyProgress = stateDestroyProgress;
++
++        float destroyProgress = stateDestroyProgress * (ticksSpentDestroying + 1);
++        // KioCG end - keep block destruction: 修复挖掘速度改变时的破坏问题
+         int state = (int)(destroyProgress * 10.0F);
+-        if (state != this.lastSentState) {
++        if (state > this.lastSentState) { // KioCG - keep block destruction: 修复挖掘速度改变时的破坏问题
+             this.level.destroyBlockProgress(this.player.getId(), delayedDestroyPos, state);
+             this.lastSentState = state;
+         }
 @@ -228,7 +_,7 @@
                      return;
                  }
@@ -56,7 +89,7 @@
                      if (this.isDestroyingBlock) {
                          this.player.connection.send(new ClientboundBlockUpdatePacket(this.destroyPos, this.level.getBlockState(this.destroyPos)));
                          this.debugLogging(pos, false, sequence, "abort destroying since another started (client insta mine, server disagreed)");
-@@ -274,6 +_,16 @@
+@@ -274,9 +_,20 @@
                      this.isDestroyingBlock = true;
                      this.destroyPos = pos.immutable();
                      int state = (int)(progress * 10.0F);
@@ -73,6 +106,10 @@
                      this.level.destroyBlockProgress(this.player.getId(), pos, state);
                      this.debugLogging(pos, true, sequence, "actual start of destroying");
                      this.lastSentState = state;
++                    this.lastStateDestroyProgress = progress; // KioCG - keep block destruction: 修复挖掘速度改变时的破坏问题
+                 }
+             } else if (action == ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK) {
+                 if (pos.equals(this.destroyPos)) {
 @@ -312,10 +_,11 @@
                      this.debugLogging(pos, true, sequence, "aborted mismatched destroying");
                      }
