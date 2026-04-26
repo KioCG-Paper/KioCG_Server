@@ -1,20 +1,43 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -454,6 +_,10 @@
+@@ -454,6 +_,11 @@
      public boolean isRealPlayer; // Paper
      public com.destroystokyo.paper.event.entity.@Nullable PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
      public org.bukkit.event.player.PlayerQuitEvent.@Nullable QuitReason quitReason = null; // Paper - Add API for quit reason; there are a lot of changes to do if we change all methods leading to the event
-+    // KioCG start - EXP is life
++    public float insomniaProgress = 1.0F; // KioCG - EXP bar shows insomnia progress
++    // KioCG start - more enchantments
 +    public it.unimi.dsi.fastutil.objects.Object2IntMap<EquipmentSlot> insulationLevels = new it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<>(4);
 +    public int timerPerLife = 0;
-+    // KioCG end - EXP is life
++    // KioCG end - more enchantments
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
-@@ -840,6 +_,29 @@
+@@ -839,7 +_,50 @@
+ 
                  if (!this.isSleeping()) {
                      this.awardStat(Stats.TIME_SINCE_REST);
-                 }
+-                }
++                    // KioCG start - EXP bar shows insomnia progress
++                    int playerInsomniaTicks = this.level().paperConfig().entities.behavior.playerInsomniaStartTicks;
++                    if (playerInsomniaTicks > 0) {
++                        int timeSinceRest = Mth.clamp(this.stats.getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)), 1, playerInsomniaTicks);
++                        this.insomniaProgress = 1.0F - (float) timeSinceRest / playerInsomniaTicks;
++                        if (this.tickCount % 20 == 0) {
++                            this.lastSentExp = -1;
++                        }
++                    } else if (playerInsomniaTicks == 0) {
++                        if (this.insomniaProgress != 0.0F) {
++                            this.insomniaProgress = 0.0F;
++                            this.lastSentExp = -1;
++                        }
++                    } else {
++                        if (this.insomniaProgress != 1.0F) {
++                            this.insomniaProgress = 1.0F;
++                            this.lastSentExp = -1;
++                        }
++                    }
++                    // KioCG end - EXP bar shows insomnia progress
++                }
 +
 +                // KioCG start - EXP is life
 +                if (this.tickCount % 20 == 0 && !this.getAbilities().invulnerable && !this.getBukkitEntity().hasPermission("kiocg.lifecountdown.bypass")) {
@@ -41,6 +64,15 @@
              }
  
              for (int i = 0; i < this.getInventory().getContainerSize(); i++) {
+@@ -896,7 +_,7 @@
+ 
+             if (this.totalExperience != this.lastSentExp) {
+                 this.lastSentExp = this.totalExperience;
+-                this.connection.send(new ClientboundSetExperiencePacket(this.experienceProgress, this.totalExperience, this.experienceLevel));
++                this.connection.send(new ClientboundSetExperiencePacket(this.insomniaProgress, this.totalExperience, this.experienceLevel)); // KioCG - EXP bar shows insomnia progress
+             }
+ 
+             if (this.tickCount % 20 == 0) {
 @@ -925,6 +_,33 @@
          }
      }

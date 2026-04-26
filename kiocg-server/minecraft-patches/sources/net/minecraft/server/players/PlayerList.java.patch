@@ -9,6 +9,15 @@
          boolean doLimitedCrafting = gameRules.get(GameRules.LIMITED_CRAFTING);
          playerConnection.send(
              new ClientboundLoginPacket(
+@@ -643,7 +_,7 @@
+         player.connection.internalTeleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot()); // Paper
+         player.connection.send(new ClientboundSetDefaultSpawnPositionPacket(level.getRespawnData()));
+         player.connection.send(new ClientboundChangeDifficultyPacket(levelData.getDifficulty(), levelData.isDifficultyLocked()));
+-        player.connection.send(new ClientboundSetExperiencePacket(player.experienceProgress, player.totalExperience, player.experienceLevel));
++        player.connection.send(new ClientboundSetExperiencePacket(player.insomniaProgress, player.totalExperience, player.experienceLevel)); // KioCG - EXP bar shows insomnia progress
+         this.sendActivePlayerEffects(player);
+         this.sendLevelInfo(player, level);
+         this.sendPlayerPermissionLevel(player);
 @@ -1027,7 +_,7 @@
          player.refreshEntityData(player); // CraftBukkit - SPIGOT-7218: sync metadata
          player.connection.send(new ClientboundSetHeldSlotPacket(player.getInventory().getSelectedSlot()));

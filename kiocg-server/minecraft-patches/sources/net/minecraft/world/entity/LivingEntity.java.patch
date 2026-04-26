@@ -32,7 +32,7 @@
                  if (this instanceof ServerPlayer && slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
                      new com.destroystokyo.paper.event.player.PlayerArmorChangeEvent((org.bukkit.entity.Player)this.getBukkitEntity(), com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType.valueOf(slot.name()), oldItem, newItem).callEvent();
 +
-+                    com.kiocg.world.item.enchantment.Insulation.update((ServerPlayer) this, slot, current); // KioCG - EXP is life
++                    com.kiocg.world.item.enchantment.Insulation.update((ServerPlayer) this, slot, current); // KioCG - more enchantments
                  }
                  // Paper end - EntityEquipmentChangedEvent, PlayerArmorChangeEvent
                  if (changedItems == null) {
