@@ -65,18 +65,8 @@
              }
  
              this.oThunderLevel = this.thunderLevel;
-@@ -1690,8 +_,28 @@
-     }
-     // CraftBukkit end
+@@ -1692,6 +_,17 @@
  
-+    // KioCG start - keep block destruction
-+    public void abortDestroyBlock(final int id, final BlockPos blockPos, final int destroyTick) {
-+        if (this.destroyingBlocks.containsKey(blockPos) && destroyTick < 20 * 1.5) {
-+            this.destroyBlockProgress(id, blockPos, -1);
-+        }
-+    }
-+    // KioCG end - keep block destruction
-+
      @Override
      public void destroyBlockProgress(final int id, final BlockPos blockPos, final int progress) {
 +        // KioCG start - keep block destruction
@@ -88,27 +78,17 @@
 +        } else {
 +            blockDestructionProgress = this.destroyingBlocks.remove(blockPos);
 +        }
-+        int fakeId = blockDestructionProgress.getId();
 +        // KioCG end - keep block destruction
 +
          // CraftBukkit start
          Player breakerPlayer = null;
          Entity entity = this.getEntity(id);
-@@ -1709,7 +_,7 @@
-         }
-         // Paper end - Add BlockBreakProgressUpdateEvent
-         for (ServerPlayer player : this.server.getPlayerList().getPlayers()) {
--            if (player.level() == this && player.getId() != id) {
-+            if (player.level() == this /*&& player.getId() != id*/) { // KioCG - keep block destruction
-                 double xd = blockPos.getX() - player.getX();
-                 double yd = blockPos.getY() - player.getY();
-                 double zd = blockPos.getZ() - player.getZ();
 @@ -1719,7 +_,7 @@
                          continue;
                      }
                      // CraftBukkit end
 -                    player.connection.send(new ClientboundBlockDestructionPacket(id, blockPos, progress));
-+                    player.connection.send(new ClientboundBlockDestructionPacket(fakeId, blockPos, Math.min(progress, 9))); // KioCG - keep block destruction: 破坏程度为10客户端不显示
++                    player.connection.send(new ClientboundBlockDestructionPacket(breakerPlayer != null ? id : blockDestructionProgress.getId(), blockPos, progress)); // KioCG - keep block destruction
                  }
              }
          }
