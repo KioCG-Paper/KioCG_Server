@@ -1,5 +1,41 @@
 --- a/net/minecraft/world/level/ServerExplosion.java
 +++ b/net/minecraft/world/level/ServerExplosion.java
+@@ -44,6 +_,7 @@
+     private final Explosion.BlockInteraction blockInteraction;
+     private final ServerLevel level;
+     private final Vec3 center;
++    private final it.unimi.dsi.fastutil.objects.Object2FloatMap<BlockPos> powers = new it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap<>(); // KioCG - better mob griefing setting
+     private final @Nullable Entity source;
+     private final float radius;
+     private final DamageSource damageSource;
+@@ -444,12 +_,14 @@
+                     if (shouldExplode) {
+                         if (this.fire || !cachedBlock.blockState.isAir()) {
+                             ret.add(cachedBlock.immutablePos);
++                            this.powers.put(cachedBlock.immutablePos, power); // KioCG - better mob griefing setting
+                             // Paper start - prevent headless pistons from forming
+                             if (!io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.allowHeadlessPistons && iblockdata.getBlock() == net.minecraft.world.level.block.Blocks.MOVING_PISTON) {
+                                 net.minecraft.world.level.block.entity.BlockEntity extension = this.level.getBlockEntity(cachedBlock.immutablePos); // Paper - optimise collisions
+                                 if (extension instanceof net.minecraft.world.level.block.piston.PistonMovingBlockEntity blockEntity && blockEntity.isSourcePiston()) {
+                                     net.minecraft.core.Direction direction = iblockdata.getValue(net.minecraft.world.level.block.piston.PistonHeadBlock.FACING);
+                                     ret.add(cachedBlock.immutablePos.relative(direction.getOpposite())); // Paper - optimise collisions
++                                    this.powers.put(cachedBlock.immutablePos.relative(direction.getOpposite()), power); // KioCG - better mob griefing setting
+                                 }
+                             }
+ 
+@@ -469,6 +_,12 @@
+         // Paper end - collision optimisations
+     }
+ 
++    // KioCG start - better mob griefing setting
++    public float getPowerAt(BlockPos pos) {
++        return this.powers.getOrDefault(pos, -1.0F);
++    }
++    // KioCG end - better mob griefing setting
++
+     private void hurtEntities() {
+         if (!(this.radius < 1.0E-5F)) {
+             float doubleRadius = this.radius * 2.0F;
 @@ -701,14 +_,17 @@
      @Override
      public boolean canTriggerBlocks() {
