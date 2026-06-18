@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -388,4 +_,19 @@
+@@ -388,4 +_,34 @@
      public class UpdateChecker extends ConfigurationPart {
          public boolean enabled = true;
      }
@@ -16,6 +16,21 @@
 +            public Component permadeath = Component.text("因电荷消耗殆尽被系统抹除数据", NamedTextColor.RED);
 +            public Component permadeathWarningTitle = Component.text("电荷已消耗殆尽", NamedTextColor.GRAY);
 +            public Component permadeathWarningSubtitle = Component.text("你的下一次死亡将是永久的", NamedTextColor.RED);
++        }
++
++        public TpsBar tpsBar;
++
++        public class TpsBar extends ConfigurationPart {
++            public int tickInterval = 20;
++
++            public String title = "<white>TPS: <tps> MSPT: <mspt> Ping: <ping>ms Load: <loadpct>%";
++            public net.kyori.adventure.bossbar.BossBar.Overlay progressOverlay = net.kyori.adventure.bossbar.BossBar.Overlay.NOTCHED_20;
++            public net.kyori.adventure.bossbar.BossBar.Color progressColorGood = net.kyori.adventure.bossbar.BossBar.Color.GREEN;
++            public net.kyori.adventure.bossbar.BossBar.Color progressColorMedium = net.kyori.adventure.bossbar.BossBar.Color.YELLOW;
++            public net.kyori.adventure.bossbar.BossBar.Color progressColorLow = net.kyori.adventure.bossbar.BossBar.Color.RED;
++            public String textColorGood = "<green><text>";
++            public String textColorMedium = "<yellow><text>";
++            public String textColorLow = "<red><text>";
 +        }
 +    }
 +    // KioCG end - kiocg config

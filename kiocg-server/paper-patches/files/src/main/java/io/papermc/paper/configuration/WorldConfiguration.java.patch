@@ -9,7 +9,7 @@
              public boolean perPlayerMobSpawns = true;
              public boolean scanForLegacyEnderDragon = true;
              @MergeMap
-@@ -587,4 +_,13 @@
+@@ -587,4 +_,22 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -20,6 +20,15 @@
 +    public class Kiocg extends ConfigurationPart {
 +        public boolean perWorldTime = false; // TODO - Paper尚未实现独立世界时间
 +        public boolean perWorldWeather = false;
++
++        public ChunkLoad chunkLoad;
++
++        public class ChunkLoad extends ConfigurationPart {
++            public long mediumPhase = 300_000L;
++            public long lowPhase = 450_000L;
++            public String mediumMessage = "<yellow>模拟区域的负载接近上限";
++            public String lowMessage = "<red><b>模拟区域的负载已达上限";
++        }
 +    }
 +    // KioCG end - kiocg config
  }

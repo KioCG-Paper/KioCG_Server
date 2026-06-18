@@ -45,3 +45,17 @@
      }
  
      @Override
+@@ -2182,6 +_,13 @@
+     public boolean onClimbable() {
+         return !this.abilities.flying && super.onClimbable();
+     }
++
++    // KioCG start - chunk load
++    @Override
++    public boolean shouldAnalyzeLoad() {
++        return false;
++    }
++    // KioCG end - chunk load
+ 
+     public String debugInfo() {
+         return MoreObjects.toStringHelper(this)

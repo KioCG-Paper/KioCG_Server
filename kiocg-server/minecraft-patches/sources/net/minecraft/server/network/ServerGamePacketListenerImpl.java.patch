@@ -1,9 +1,18 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -3019,6 +_,14 @@
+@@ -372,6 +_,7 @@
+                 && this.server.playerIdleTimeout() > 0
+                 && Util.getMillis() - this.player.getLastActionTime() > TimeUnit.MINUTES.toMillis(this.server.playerIdleTimeout())
+                 && !this.player.wonGame) {
++                if (this.player.getNearbyChunkLoad() >= this.player.level().paperConfig().kiocg.chunkLoad.lowPhase || this.player.getNearbyChunkLoad() >= this.player.level().paperConfig().kiocg.chunkLoad.mediumPhase && MinecraftServer.getServer().getTPS()[1] < 18.0) // KioCG - chunk load
+                 this.disconnect(Component.translatable("multiplayer.disconnect.idling"), org.bukkit.event.player.PlayerKickEvent.Cause.IDLING); // Paper - kick event cause
+             }
+         }
+@@ -3018,6 +_,14 @@
+                     if (this.player.getHealth() > 0.0F) {
                          return;
                      }
- 
++
 +                    // KioCG start - EXP is life
 +                    if (this.player.experienceLevel <= 0) {
 +                        this.connection.send(new net.minecraft.network.protocol.game.ClientboundRespawnPacket(this.player.createCommonSpawnInfo(this.player.level()), net.minecraft.network.protocol.game.ClientboundRespawnPacket.KEEP_ALL_DATA));
@@ -11,7 +20,6 @@
 +                        return;
 +                    }
 +                    // KioCG end - EXP is life
-+
+ 
                      this.player = this.server.getPlayerList().respawn(this.player, false, Entity.RemovalReason.KILLED, RespawnReason.DEATH); // CraftBukkit
                      this.resetPosition();
-                     this.restartClientLoadTimerAfterRespawn();

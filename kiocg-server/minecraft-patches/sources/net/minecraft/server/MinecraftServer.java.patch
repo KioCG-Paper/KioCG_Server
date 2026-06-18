@@ -19,6 +19,33 @@
              // Paper - per-level GameRules
              this.fixerUpper = fixerUpper;
              this.functionManager = new ServerFunctionManager(this, this.resources.managers.getFunctionLibrary());
+@@ -1141,6 +_,8 @@
+         this.safeShutdown(wait, false);
+     }
+     public void safeShutdown(final boolean wait, final boolean isRestarting) {
++        com.kiocg.server.tasks.BossBarTask.stopAll(); // KioCG - bossbar task
++
+         this.isRestarting = isRestarting;
+         this.hasLoggedStop = true; // Paper - Debugging
+         if (this.isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper - Debugging
+@@ -1638,6 +_,17 @@
+             }
+         }
+ 
++        // KioCG start - chunk load
++        if (this.tickCount % 20 == 0) {
++            for (ServerLevel serverLevel : this.getAllLevels()) {
++                for (net.minecraft.world.level.chunk.LevelChunk chunk : serverLevel.moonrise$getTickingChunks()) {
++                    chunk.getChunkLoad().newTick();
++                }
++            }
++            com.kiocg.world.level.chunk.ChunkLoad.nextTick();
++        }
++        // KioCG end - chunk load
++
+         this.server.spark.tickStart(); // Paper - spark
+         new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
+         this.tickCount++;
 @@ -2577,7 +_,7 @@
  
      // Paper start - per-level WeatherData

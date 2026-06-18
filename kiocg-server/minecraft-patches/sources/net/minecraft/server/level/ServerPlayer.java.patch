@@ -1,9 +1,10 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -454,6 +_,11 @@
+@@ -454,6 +_,12 @@
      public boolean isRealPlayer; // Paper
      public com.destroystokyo.paper.event.entity.@Nullable PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
      public org.bukkit.event.player.PlayerQuitEvent.@Nullable QuitReason quitReason = null; // Paper - Add API for quit reason; there are a lot of changes to do if we change all methods leading to the event
++    private long nearbyChunkLoad = 0; public long getNearbyChunkLoad() { return this.nearbyChunkLoad; } // KioCG - chunk load
 +    public float insomniaProgress = 1.0F; // KioCG - EXP bar shows insomnia progress
 +    // KioCG start - more enchantments
 +    public it.unimi.dsi.fastutil.objects.Object2IntMap<EquipmentSlot> insulationLevels = new it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<>(4);
@@ -12,6 +13,67 @@
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
+@@ -786,7 +_,59 @@
+         this.trackEnteredOrExitedLavaOnVehicle();
+         this.updatePlayerAttributes();
+         this.advancements.flushDirty(this, true);
+-    }
++
++        // KioCG start - chunk load
++        if (this.server.getTickCount() % 20 == 1) {
++            this.wasOverloaded = false;
++            this.nearbyChunkLoad = this.refreshNearbyChunkLoad();
++            if (this.nearbyChunkLoad >= this.level().paperConfig().kiocg.chunkLoad.mediumPhase) {
++                if (!com.kiocg.server.tasks.TPSBarTask.instance().hasPlayer(this.uuid)) {
++                    com.kiocg.server.tasks.TPSBarTask.instance().addPlayer(this.getBukkitEntity());
++                    this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocg.chunkLoad.mediumMessage)), true);
++                }
++                if (this.nearbyChunkLoad >= this.level().paperConfig().kiocg.chunkLoad.lowPhase) {
++                    this.wasOverloaded = !this.getAbilities().invulnerable;
++                    if (this.wasOverloaded) {
++                        if (!this.hasEffect(MobEffects.FIRE_RESISTANCE)) {
++                            this.hurtServer(this.level(), this.damageSources().generic(), 2.0F);
++                        }
++                    }
++                    this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocg.chunkLoad.lowMessage)), true);
++                }
++            }
++        }
++        // KioCG end - chunk load
++    }
++
++    // KioCG start - chunk load
++    private boolean wasOverloaded = false;
++
++    @Override
++    public void setSharedFlagOnFire(boolean isOnFire) {
++        if (this.wasOverloaded) {
++            this.setSharedFlag(FLAG_ONFIRE, true);
++            return;
++        }
++
++        super.setSharedFlagOnFire(isOnFire);
++    }
++
++    private long refreshNearbyChunkLoad() {
++        int x = SectionPos.blockToSectionCoord(this.getBlockX());
++        int z = SectionPos.blockToSectionCoord(this.getBlockZ());
++        net.minecraft.world.level.Level level = this.level();
++        long total = 0L;
++        for (int i = x - 4; i <= x + 4; ++i) {
++            for (int j = z - 4; j <= z + 4; ++j) {
++                net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunkIfLoaded(i, j);
++                if (chunk != null) {
++                    total += chunk.getChunkLoad().getAverage();
++                }
++            }
++        }
++        return total;
++    }
++    // KioCG end - chunk load
+ 
+     private void updatePlayerAttributes() {
+         AttributeInstance blockInteractionRange = this.getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
 @@ -839,7 +_,50 @@
  
                  if (!this.isSleeping()) {

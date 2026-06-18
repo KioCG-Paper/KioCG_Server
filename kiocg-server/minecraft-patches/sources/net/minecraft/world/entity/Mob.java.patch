@@ -54,3 +54,17 @@
  
          this.setLeftHanded(random.nextFloat() < 0.05F);
          return groupData;
+@@ -1646,6 +_,13 @@
+             }
+         }
+     }
++
++    // KioCG start - chunk load
++    @Override
++    public boolean shouldAnalyzeLoad() {
++        return super.shouldAnalyzeLoad() && (this.isPersistenceRequired() || this.requiresCustomPersistence() || !this.removeWhenFarAway(0.0));
++    }
++    // KioCG end - chunk load
+ 
+     @Override
+     public @Nullable ItemStack getPickResult() {

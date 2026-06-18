@@ -65,6 +65,51 @@
              }
  
              this.oThunderLevel = this.thunderLevel;
+@@ -1376,10 +_,20 @@
+         profiler.push(entity.typeHolder()::getRegisteredName);
+         profiler.incrementCounter("tickNonPassenger");
+         final boolean isActive = io.papermc.paper.entity.activation.ActivationRange.checkIfActive(entity); // Paper - EAR 2
++            // KioCG start - chunk load
++            LevelChunk levelChunk = entity.shouldAnalyzeLoad() ? this.getChunkIfLoaded(entity.blockPosition()) : null;
++            if (levelChunk != null) levelChunk.getChunkLoad().startTicking();
++            try {
++            // KioCG end - chunk load
+         if (isActive) { // Paper - EAR 2
+         entity.tick();
+         entity.postTick(); // CraftBukkit
+         } else {entity.inactiveTick();} // Paper - EAR 2
++            // KioCG start - chunk load
++            } finally {
++                if (levelChunk != null) levelChunk.getChunkLoad().endTickingAndCount();
++            }
++            // KioCG end - chunk load
+         profiler.pop();
+ 
+         for (Entity passenger : entity.getPassengers()) {
+@@ -1404,6 +_,11 @@
+             ProfilerFiller profiler = Profiler.get();
+             profiler.push(entity.typeHolder()::getRegisteredName);
+             profiler.incrementCounter("tickPassenger");
++            // KioCG start - chunk load
++            LevelChunk levelChunk = entity.shouldAnalyzeLoad() ? this.getChunkIfLoaded(entity.blockPosition()) : null;
++            if (levelChunk != null) levelChunk.getChunkLoad().startTicking();
++            try {
++            // KioCG end - chunk load
+             // Paper start - EAR 2
+             if (isActive) {
+             entity.rideTick();
+@@ -1415,6 +_,11 @@
+                 vehicle.positionRider(entity);
+             }
+             // Paper end - EAR 2
++            // KioCG start - chunk load
++            } finally {
++                if (levelChunk != null) levelChunk.getChunkLoad().endTickingAndCount();
++            }
++            // KioCG end - chunk load
+             profiler.pop();
+ 
+             for (Entity passenger : entity.getPassengers()) {
 @@ -1692,6 +_,17 @@
  
      @Override

@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/level/chunk/LevelChunk.java
++++ b/net/minecraft/world/level/chunk/LevelChunk.java
+@@ -95,6 +_,7 @@
+     private final LevelChunkTicks<Block> blockTicks;
+     private final LevelChunkTicks<Fluid> fluidTicks;
+     private LevelChunk.UnsavedListener unsavedListener = chunkPos -> {};
++    private final com.kiocg.world.level.chunk.ChunkLoad chunkLoad = new com.kiocg.world.level.chunk.ChunkLoad(); public com.kiocg.world.level.chunk.ChunkLoad getChunkLoad() { return this.chunkLoad; } // KioCG - chunk load
+     // CraftBukkit start
+     public boolean mustNotSave;
+     public boolean needsDecoration;
+@@ -950,9 +_,14 @@
+                     try {
+                         ProfilerFiller profiler = Profiler.get();
+                         profiler.push(this::getType);
++                        // KioCG start - chunk load
++                        LevelChunk.this.chunkLoad.startTicking();
++                        try {
++                        // KioCG end - chunk load
+                         BlockState blockState = LevelChunk.this.getBlockState(pos);
+                         if (this.blockEntity.getType().isValid(blockState)) {
+                             this.ticker.tick(LevelChunk.this.level, this.blockEntity.getBlockPos(), blockState, this.blockEntity);
++                            com.kiocg.server.commands.TickingViewerCommand.onBlockEntityTicking(LevelChunk.this.level, this.blockEntity.getBlockPos(), blockState); // KioCG - ticking viewer
+                             this.loggedInvalidBlockState = false;
+                         // Paper start - Remove the Block Entity if it's invalid
+                         } else {
+@@ -964,6 +_,11 @@
+                             // Paper end - Remove the Block Entity if it's invalid
+                         }
+ 
++                        // KioCG start - chunk load
++                        } finally {
++                            LevelChunk.this.chunkLoad.endTickingAndCount();
++                        }
++                        // KioCG end - chunk load
+                         profiler.pop();
+                     } catch (Throwable var5) {
+                         // Paper start - Prevent block entity and entity crashes

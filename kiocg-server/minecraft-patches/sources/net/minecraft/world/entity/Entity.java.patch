@@ -8,3 +8,14 @@
              return;
          }
          // Paper end - entity despawn time limit
+@@ -5384,4 +_,10 @@
+         return ((ServerLevel) this.level()).isPositionEntityTicking(this.blockPosition());
+     }
+     // Paper end - Expose entity id counter
++
++    // KioCG start - chunk load
++    public boolean shouldAnalyzeLoad() {
++        return this.tickCount > 20 && this.isAlive();
++    }
++    // KioCG end - chunk load
+ }
