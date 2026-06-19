@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/VehicleEntity.java
 +++ b/net/minecraft/world/entity/vehicle/VehicleEntity.java
-@@ -84,7 +_,7 @@
+@@ -88,7 +_,7 @@
  
      @Override
      public boolean ignoreExplosion(final Explosion explosion) {

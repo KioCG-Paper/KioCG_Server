@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BellBlock.java
 +++ b/net/minecraft/world/level/block/BellBlock.java
-@@ -219,7 +_,7 @@
+@@ -224,7 +_,7 @@
      protected void onExplosionHit(
          final BlockState state, final ServerLevel level, final BlockPos pos, final Explosion explosion, final BiConsumer<ItemStack, BlockPos> onHit
      ) {

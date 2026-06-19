@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -228,7 +_,7 @@
+@@ -227,7 +_,7 @@
                      return;
                  }
  
@@ -9,7 +9,7 @@
                  float progress = 1.0F;
                  BlockState blockState = this.level.getBlockState(pos);
                  if (event.useInteractedBlock() != org.bukkit.event.Event.Result.DENY && !blockState.isAir()) { // Paper
-@@ -266,6 +_,8 @@
+@@ -265,6 +_,8 @@
                  if (!blockState.isAir() && progress >= 1.0F) {
                      this.destroyAndAck(pos, sequence, "insta mine");
                  } else {
@@ -18,7 +18,7 @@
                      if (this.isDestroyingBlock) {
                          this.player.connection.send(new ClientboundBlockUpdatePacket(this.destroyPos, this.level.getBlockState(this.destroyPos)));
                          this.debugLogging(pos, false, sequence, "abort destroying since another started (client insta mine, server disagreed)");
-@@ -334,6 +_,12 @@
+@@ -333,6 +_,12 @@
      }
  
      public boolean destroyBlock(final BlockPos pos) {
@@ -31,17 +31,17 @@
          BlockState state = this.level.getBlockState(pos);
          // CraftBukkit start - fire BlockBreakEvent
          org.bukkit.block.Block bblock = org.bukkit.craftbukkit.block.CraftBlock.at(this.level, pos);
-@@ -436,6 +_,13 @@
-                     }
-                 }
-                 // Paper end - Trigger bee_nest_destroyed trigger in the correct place
+@@ -435,6 +_,13 @@
+         }
+         // Paper end - Trigger bee_nest_destroyed trigger in the correct place
+         // CraftBukkit end
 +
-+                // KioCG start - more enchantments
-+                applyChainEnchantments &= !player.isShiftKeyDown();
-+                if (applyChainEnchantments && mainHandStack != null && changed && isCorrectTool) {
-+                    com.kiocg.world.item.enchantment.Veinchain.onDestroyBlock(this.level, pos, state, this.player, mainHandStack);
-+                }
-+                // KioCG end - more enchantments
++        // KioCG start - more enchantments
++        applyChainEnchantments &= !player.isShiftKeyDown();
++        if (applyChainEnchantments && destroyedWith != null && changed && canDestroy) {
++            com.kiocg.world.item.enchantment.Veinchain.onDestroyBlock(this.level, pos, state, this.player, destroyedWith);
++        }
++        // KioCG end - more enchantments
  
-                 return true;
-                 // CraftBukkit end
+         return true;
+     }

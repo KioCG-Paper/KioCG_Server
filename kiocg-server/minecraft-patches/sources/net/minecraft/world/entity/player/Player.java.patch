@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -159,7 +_,7 @@
+@@ -158,7 +_,7 @@
      public int sleepCounter = 0;
      protected boolean wasUnderwater;
      private final Abilities abilities = new Abilities();
@@ -9,7 +9,7 @@
      public int totalExperience = 0;
      public float experienceProgress = 0.0F;
      public int enchantmentSeed = 0;
-@@ -662,7 +_,7 @@
+@@ -665,7 +_,7 @@
          this.inventory.setSelectedSlot(input.getIntOr("SelectedItemSlot", 0));
          this.sleepCounter = input.getShortOr("SleepTimer", (short)0);
          this.experienceProgress = input.getFloatOr("XpP", 0.0F);
@@ -18,7 +18,7 @@
          this.totalExperience = input.getIntOr("XpTotal", 0);
          this.enchantmentSeed = input.getIntOr("XpSeed", 0);
          if (this.enchantmentSeed == 0) {
-@@ -1661,7 +_,7 @@
+@@ -1669,7 +_,7 @@
              this.totalExperience = 0;
          }
  
@@ -27,7 +27,7 @@
              float vol = this.experienceLevel > 30 ? 1.0F : this.experienceLevel / 30.0F;
              Player.sendSoundEffect(this, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_LEVELUP, this.getSoundSource(), vol * 0.75F, 1.0F); // Paper - send while respecting visibility
              this.lastLevelUpTime = this.tickCount;
-@@ -1669,6 +_,8 @@
+@@ -1677,6 +_,8 @@
      }
  
      public int getXpNeededForNextLevel() {
@@ -36,7 +36,7 @@
          if (this.experienceLevel >= 30) {
              return 112 + (this.experienceLevel - 30) * 9;
          } else { // Paper - diff on change; calculateTotalExperiencePoints
-@@ -1740,7 +_,7 @@
+@@ -1748,7 +_,7 @@
  
      @Override
      protected int getBaseExperienceReward(final ServerLevel level) {
@@ -45,7 +45,7 @@
      }
  
      @Override
-@@ -2182,6 +_,13 @@
+@@ -2192,6 +_,13 @@
      public boolean onClimbable() {
          return !this.abilities.flying && super.onClimbable();
      }

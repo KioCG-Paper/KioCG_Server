@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/loot/functions/SmeltItemFunction.java
 +++ b/net/minecraft/world/level/storage/loot/functions/SmeltItemFunction.java
-@@ -34,11 +_,17 @@
+@@ -34,12 +_,18 @@
  
      @Override
      public ItemStack run(final ItemStack itemStack, final LootContext context) {
@@ -12,10 +12,11 @@
 +        // KioCG end - more enchantments
          if (itemStack.isEmpty()) {
              return itemStack;
-         } else {
-             SingleRecipeInput input = new SingleRecipeInput(itemStack);
--            Optional<RecipeHolder<SmeltingRecipe>> recipe = context.getLevel().recipeAccess().getRecipeFor(RecipeType.SMELTING, input, context.getLevel());
-+            Optional<RecipeHolder<SmeltingRecipe>> recipe = level.recipeAccess().getRecipeFor(RecipeType.SMELTING, input, level); // KioCG - more enchantments
-             if (recipe.isPresent()) {
-                 ItemStack result = recipe.get().value().assemble(input);
-                 if (!result.isEmpty()) {
+         }
+ 
+         SingleRecipeInput input = new SingleRecipeInput(itemStack);
+-        Optional<RecipeHolder<SmeltingRecipe>> recipe = context.getLevel().recipeAccess().getRecipeFor(RecipeType.SMELTING, input, context.getLevel());
++        Optional<RecipeHolder<SmeltingRecipe>> recipe = level.recipeAccess().getRecipeFor(RecipeType.SMELTING, input, level); // KioCG - more enchantments
+         if (recipe.isPresent()) {
+             ItemStack result = recipe.get().value().assemble(input);
+             if (!result.isEmpty()) {

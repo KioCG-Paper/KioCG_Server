@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -254,7 +_,7 @@
+@@ -249,7 +_,7 @@
          }
  
          // Paper start - detect running as root
@@ -9,7 +9,7 @@
              LOGGER.warn("****************************");
              LOGGER.warn("YOU ARE RUNNING THIS SERVER AS AN ADMINISTRATIVE OR ROOT USER. THIS IS NOT ADVISED.");
              LOGGER.warn("YOU ARE OPENING YOURSELF UP TO POTENTIAL RISKS WHEN DOING THIS.");
-@@ -347,7 +_,7 @@
+@@ -342,7 +_,7 @@
          String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
          String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
          // Paper end - Add Velocity IP Forwarding Support
@@ -18,12 +18,12 @@
              LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
              LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
-@@ -410,6 +_,8 @@
-                 MinecraftServerStatistics.registerJmxMonitoring(this);
-                 LOGGER.info("JMX monitoring enabled");
-             }
+@@ -406,6 +_,8 @@
+             MinecraftServerStatistics.registerJmxMonitoring(this);
+             LOGGER.info("JMX monitoring enabled");
+         }
 +
-+            com.kiocg.server.tasks.BossBarTask.startAll(); // KioCG - bossbar task
++        com.kiocg.server.tasks.BossBarTask.startAll(); // KioCG - bossbar task
  
-             this.saveEverything(false, true, true);
-             this.notificationManager().serverStarted();
+         this.saveEverything(false, true, true);
+         this.notificationManager().serverStarted();

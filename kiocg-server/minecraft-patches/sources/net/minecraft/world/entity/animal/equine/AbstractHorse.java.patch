@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/equine/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/equine/AbstractHorse.java
-@@ -468,6 +_,15 @@
+@@ -467,6 +_,15 @@
              }
          }
  

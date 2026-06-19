@@ -1,10 +1,10 @@
 --- a/net/minecraft/world/entity/animal/armadillo/Armadillo.java
 +++ b/net/minecraft/world/entity/animal/armadillo/Armadillo.java
 @@ -328,6 +_,7 @@
-                 this.gameEvent(GameEvent.ENTITY_INTERACT);
-             }
- 
-+            this.setBaby(true); // KioCG - raising animals
-             return true;
+             this.gameEvent(GameEvent.ENTITY_INTERACT);
          }
+ 
++        this.setBaby(true); // KioCG - raising animals
+         return true;
      }
+ 

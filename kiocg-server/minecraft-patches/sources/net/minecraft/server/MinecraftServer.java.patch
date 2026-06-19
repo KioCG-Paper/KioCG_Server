@@ -10,15 +10,15 @@
      private final ServerFunctionManager functionManager;
      private boolean enforceWhitelist;
      private boolean usingWhitelist;
-@@ -549,7 +_,7 @@
-             this.storageSource = storageSource;
-             this.playerDataStorage = storageSource.createPlayerStorage();
-             this.randomSequences = this.savedDataStorage.computeIfAbsent(RandomSequences.TYPE);
--            // Paper - per-level WeatherData
-+            this.weatherData = this.getDataStorage().computeIfAbsent(WeatherData.TYPE); // Paper - per-level WeatherData // KioCG - per world weather config
-             // Paper - per-level GameRules
-             this.fixerUpper = fixerUpper;
-             this.functionManager = new ServerFunctionManager(this, this.resources.managers.getFunctionLibrary());
+@@ -550,7 +_,7 @@
+         this.storageSource = storageSource;
+         this.playerDataStorage = storageSource.createPlayerStorage();
+         this.randomSequences = this.savedDataStorage.computeIfAbsent(RandomSequences.TYPE);
+-        // Paper - per-level WeatherData
++        this.weatherData = this.getDataStorage().computeIfAbsent(WeatherData.TYPE); // Paper - per-level WeatherData // KioCG - per world weather config
+         // Paper - per-level GameRules
+         this.fixerUpper = fixerUpper;
+         this.functionManager = new ServerFunctionManager(this, this.resources.managers.getFunctionLibrary());
 @@ -1141,6 +_,8 @@
          this.safeShutdown(wait, false);
      }
@@ -46,7 +46,7 @@
          this.server.spark.tickStart(); // Paper - spark
          new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
          this.tickCount++;
-@@ -2577,7 +_,7 @@
+@@ -2586,7 +_,7 @@
  
      // Paper start - per-level WeatherData
      public void setWeatherParameters(final ServerLevel level, final int clearTime, final int rainTime, final boolean raining, final boolean thundering) {
@@ -55,7 +55,7 @@
          // Paper end - per-level WeatherData
          weatherData.setClearWeatherTime(clearTime);
          weatherData.setRainTime(rainTime);
-@@ -2586,9 +_,9 @@
+@@ -2595,9 +_,9 @@
          weatherData.setThundering(thundering, org.bukkit.event.weather.ThunderChangeEvent.Cause.COMMAND); // Paper - per-level WeatherData
      }
  
@@ -67,7 +67,7 @@
      }
  
      public boolean isEnforceWhitelist() {
-@@ -2940,6 +_,7 @@
+@@ -2945,6 +_,7 @@
              byte event = (byte)((Boolean)value ? 22 : 23);
  
              for (ServerPlayer player : level.players()) { // Paper - per-world game rules

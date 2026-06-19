@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/npc/villager/Villager.java
 +++ b/net/minecraft/world/entity/npc/villager/Villager.java
-@@ -899,7 +_,10 @@
+@@ -901,7 +_,10 @@
                  .limit(5L)
                  .toList();
              if (nearbyVillagersThatWantAGolem.size() >= villagersNeededToAgree) {
@@ -12,7 +12,7 @@
                          EntityType.IRON_GOLEM,
                          EntitySpawnReason.MOB_SUMMONED,
                          level,
-@@ -911,9 +_,10 @@
+@@ -913,9 +_,10 @@
                          false,
                          org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE, // CraftBukkit,
                          () -> {GolemSensor.golemDetected(this);} // Paper - Set Golem Last Seen to stop it from spawning another one

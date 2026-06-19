@@ -18,15 +18,15 @@
              entity.setDefaultPickUpDelay();
              level.addFreshEntity(entity);
          }
-@@ -381,7 +_,7 @@
-             level.setBlock(pos, newState, Block.UPDATE_ALL);
-             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(sourceEntity, newState));
-             if (newLevel == 7) {
--                level.scheduleTick(pos, state.getBlock(), 20);
-+                level.scheduleTick(pos, state.getBlock(), 20 * 5 * 60); // KioCG - change container behavior
-             }
+@@ -382,7 +_,7 @@
+         level.setBlock(pos, newState, Block.UPDATE_ALL);
+         level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(sourceEntity, newState));
+         if (newLevel == 7) {
+-            level.scheduleTick(pos, state.getBlock(), 20);
++            level.scheduleTick(pos, state.getBlock(), 20 * 5 * 60); // KioCG - change container behavior
+         }
  
-             return newState;
+         return newState;
 @@ -420,7 +_,7 @@
      public WorldlyContainer getContainer(final BlockState state, final LevelAccessor level, final BlockPos pos) {
          int contentLevel = state.getValue(LEVEL);
@@ -34,7 +34,7 @@
 -            return new ComposterBlock.OutputContainer(state, level, pos, new ItemStack(Items.BONE_MEAL));
 +            return new ComposterBlock.OutputContainer(state, level, pos, new ItemStack(Items.BONE_MEAL, level.getRandom().nextInt(16, 25))); // KioCG - change container behavior
          } else {
-             return (WorldlyContainer)(contentLevel < 7 ? new ComposterBlock.InputContainer(state, level, pos) : new ComposterBlock.EmptyContainer(level, pos)); // CraftBukkit - empty levelAccessor, blockPos
+             return contentLevel < 7 ? new ComposterBlock.InputContainer(state, level, pos) : new ComposterBlock.EmptyContainer(level, pos); // CraftBukkit - empty levelAccessor, blockPos
          }
 @@ -504,6 +_,7 @@
          private final LevelAccessor level;

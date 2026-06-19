@@ -11,7 +11,7 @@
              int distanceFromBottom = posY - veinType.minY;
 @@ -62,7 +_,7 @@
  
-     protected static enum VeinType {
+     protected enum VeinType {
          COPPER(Blocks.COPPER_ORE.defaultBlockState(), Blocks.RAW_COPPER_BLOCK.defaultBlockState(), Blocks.GRANITE.defaultBlockState(), 0, 50),
 -        IRON(Blocks.DEEPSLATE_IRON_ORE.defaultBlockState(), Blocks.RAW_IRON_BLOCK.defaultBlockState(), Blocks.TUFF.defaultBlockState(), -60, -8);
 +        COAL(Blocks.DEEPSLATE_COAL_ORE.defaultBlockState(), Blocks.COAL_BLOCK.defaultBlockState(), Blocks.TUFF.defaultBlockState(), -60, -8); // KioCG - coal ore veins

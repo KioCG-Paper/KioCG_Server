@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -1891,7 +_,7 @@
+@@ -1897,7 +_,7 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              boolean var6 = false;
              if (this.dead && killer instanceof WitherBoss) { // Paper
@@ -9,7 +9,7 @@
                      BlockPos pos = this.blockPosition();
                      BlockState state = Blocks.WITHER_ROSE.defaultBlockState();
                      if (this.level().getBlockState(pos).isAir() && state.canSurvive(this.level(), pos)) {
-@@ -2899,6 +_,17 @@
+@@ -2894,6 +_,17 @@
          }
      }
  
@@ -27,7 +27,7 @@
      public void setItemInHand(final InteractionHand hand, final ItemStack itemStack) {
          if (hand == InteractionHand.MAIN_HAND) {
              this.setItemSlot(EquipmentSlot.MAINHAND, itemStack);
-@@ -3588,6 +_,8 @@
+@@ -3589,6 +_,8 @@
                  final org.bukkit.inventory.ItemStack newItem = CraftItemStack.asBukkitCopy(current);
                  if (this instanceof ServerPlayer && slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
                      new com.destroystokyo.paper.event.player.PlayerArmorChangeEvent((org.bukkit.entity.Player)this.getBukkitEntity(), com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType.valueOf(slot.name()), oldItem, newItem).callEvent();

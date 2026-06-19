@@ -9,7 +9,7 @@
              public boolean perPlayerMobSpawns = true;
              public boolean scanForLegacyEnderDragon = true;
              @MergeMap
-@@ -587,4 +_,22 @@
+@@ -593,4 +_,22 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }

@@ -32,16 +32,16 @@
          if (fromStack.isEmpty()) {
              fromItem.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.MERGE); // CraftBukkit - add Bukkit remove cause
          }
-@@ -341,7 +_,7 @@
-     public final boolean hurtServer(final ServerLevel level, final DamageSource source, final float damage) {
-         if (this.isInvulnerableToBase(source)) {
+@@ -343,7 +_,7 @@
              return false;
--        } else if (!level.getGameRules().get(GameRules.MOB_GRIEFING) && source.getEntity() instanceof Mob) {
-+        } else if (/*!level.getGameRules().get(GameRules.MOB_GRIEFING) &&*/ source.getEntity() instanceof Mob) { // KioCG - better mob griefing setting
+         }
+ 
+-        if (!level.getGameRules().get(GameRules.MOB_GRIEFING) && source.getEntity() instanceof Mob) {
++        if (/*!level.getGameRules().get(GameRules.MOB_GRIEFING) &&*/ source.getEntity() instanceof Mob) { // KioCG - better mob griefing setting
              return false;
-         } else if (!this.getItem().canBeHurtBy(source)) {
-             return false;
-@@ -365,7 +_,7 @@
+         }
+ 
+@@ -369,7 +_,7 @@
  
      @Override
      public boolean ignoreExplosion(final Explosion explosion) {
@@ -50,7 +50,7 @@
      }
  
      @Override
-@@ -383,6 +_,7 @@
+@@ -387,6 +_,7 @@
              output.putString("Paper.FrictionState", this.frictionState.toString());
          }
          // Paper end - Friction API
@@ -58,7 +58,7 @@
      }
  
      @Override
-@@ -405,6 +_,7 @@
+@@ -409,6 +_,7 @@
          if (this.getItem().isEmpty()) {
              this.discard(null); // CraftBukkit - add Bukkit remove cause
          }

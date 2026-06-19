@@ -8,19 +8,19 @@
  
      public BeehiveBlockEntity(final BlockPos worldPosition, final BlockState blockState) {
          super(BlockEntityType.BEEHIVE, worldPosition, blockState);
-@@ -281,6 +_,11 @@
+@@ -273,6 +_,11 @@
  
-                                     if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, blockPos, newBlockState)) {
-                                         level.setBlockAndUpdate(blockPos, newBlockState);
-+                                        // KioCG start - raising animals
-+                                        if (level.getBlockEntity(blockPos) instanceof BeehiveBlockEntity beehiveBlockEntity) {
-+                                            beehiveBlockEntity.honeyTime = beehiveBlockEntity.pickNextHoneyTime();
-+                                        }
-+                                        // KioCG end - raising animals
-                                     }
-                                     // Paper end - Fire EntityChangeBlockEvent in more places
-                                 }
-@@ -346,13 +_,64 @@
+                             if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, blockPos, newBlockState)) {
+                                 level.setBlockAndUpdate(blockPos, newBlockState);
++                                // KioCG start - raising animals
++                                if (level.getBlockEntity(blockPos) instanceof BeehiveBlockEntity beehiveBlockEntity) {
++                                    beehiveBlockEntity.honeyTime = beehiveBlockEntity.pickNextHoneyTime();
++                                }
++                                // KioCG end - raising animals
+                             }
+                             // Paper end - Fire EntityChangeBlockEvent in more places
+                         }
+@@ -336,13 +_,64 @@
  
      public static void serverTick(final Level level, final BlockPos blockPos, final BlockState state, final BeehiveBlockEntity entity) {
          tickOccupants(level, blockPos, state, entity.stored, entity.savedFlowerPos);
@@ -87,7 +87,7 @@
  
      @Override
      protected void loadAdditional(final ValueInput input) {
-@@ -361,6 +_,7 @@
+@@ -351,6 +_,7 @@
          input.read("bees", BeehiveBlockEntity.Occupant.LIST_CODEC).orElse(List.of()).forEach(this::storeBee);
          this.savedFlowerPos = input.read("flower_pos", BlockPos.CODEC).orElse(null);
          this.maxBees = input.getIntOr("Bukkit.MaxEntities", MAX_OCCUPANTS); // Paper - persist max bukkit occupants
@@ -95,7 +95,7 @@
      }
  
      @Override
-@@ -369,6 +_,7 @@
+@@ -359,6 +_,7 @@
          output.store("bees", BeehiveBlockEntity.Occupant.LIST_CODEC, this.getBees());
          output.storeNullable("flower_pos", BlockPos.CODEC, this.savedFlowerPos);
          output.putInt("Bukkit.MaxEntities", this.maxBees); // Paper - persist max bukkit occupants

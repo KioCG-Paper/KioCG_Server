@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -93,19 +_,40 @@
+@@ -84,19 +_,40 @@
              }
          });
          this.addStandardInventorySlots(inventory, 8, 84);
@@ -50,21 +50,21 @@
      @Override
      public void slotsChanged(final Container container) {
          if (container == this.enchantSlots) {
-@@ -201,7 +_,7 @@
-                 return false;
-             } else if (this.costs[buttonId] <= 0
+@@ -194,7 +_,7 @@
+ 
+             if (this.costs[buttonId] <= 0
                  || itemStack.isEmpty()
 -                || (player.experienceLevel < enchantmentCost || player.experienceLevel < this.costs[buttonId]) && !player.hasInfiniteMaterials()) {
 +                || (player.experienceLevel < enchantmentCost || player.experienceLevel < this.costs[buttonId] * 100) && !player.hasInfiniteMaterials()) { // KioCG - EXP is money: 扣除100倍附魔等级
                  return false;
-             } else {
-                 this.access.execute((level, pos) -> {
-@@ -248,7 +_,7 @@
-                             enchantmentItem.enchant(enchantment, entry.getValue());
-                         }
-                         // CraftBukkit end
--                        player.onEnchantmentPerformed(itemStack, enchantmentCost);
-+                        player.onEnchantmentPerformed(itemStack, this.costs[buttonId] * 100); // KioCG - EXP is money: 扣除100倍附魔等级
+             }
  
-                         // CraftBukkit - TODO: let plugins change this
-                         currency.consume(enchantmentCost, player);
+@@ -241,7 +_,7 @@
+ 
+                         enchantmentItem.enchant(enchantment, entry.getValue());
+                     }
+-                    player.onEnchantmentPerformed(enchantmentItem, enchantmentCost);
++                    player.onEnchantmentPerformed(enchantmentItem, this.costs[buttonId] * 100); // KioCG - EXP is money: 扣除100倍附魔等级
+                     // CraftBukkit end
+ 
+                     // CraftBukkit - TODO: let plugins change this

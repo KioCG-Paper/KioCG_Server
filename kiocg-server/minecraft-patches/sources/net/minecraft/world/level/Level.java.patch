@@ -8,7 +8,7 @@
  
      // CraftBukkit start
      public final io.papermc.paper.antixray.ChunkPacketBlockController chunkPacketBlockController; // Paper - Anti-Xray
-@@ -873,6 +_,7 @@
+@@ -874,6 +_,7 @@
          this.damageSources = new DamageSources(registryAccess);
          this.entityLookup = new ca.spottedleaf.moonrise.patches.chunk_system.level.entity.dfl.DefaultEntityLookup(this); // Paper - rewrite chunk system
          this.chunkPacketBlockController = this.paperConfig().anticheat.antiXray.enabled ? new io.papermc.paper.antixray.ChunkPacketBlockControllerAntiXray(this, executor) : io.papermc.paper.antixray.ChunkPacketBlockController.NO_OPERATION_INSTANCE; // Paper - Anti-Xray
@@ -16,7 +16,7 @@
      }
  
      // Paper start - Cancel hit for vanished players
-@@ -1049,6 +_,8 @@
+@@ -1050,6 +_,8 @@
  
      @Override
      public boolean setBlock(final BlockPos pos, final BlockState blockState, @Block.UpdateFlags final int updateFlags, final int updateLimit) {

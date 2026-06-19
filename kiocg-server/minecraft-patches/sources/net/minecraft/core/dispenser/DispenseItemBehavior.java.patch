@@ -12,27 +12,27 @@
 +                    // KioCG end - raising animals
                      this.setSuccess(false);
                      return dispensed;
-                 } else {
-@@ -580,7 +_,7 @@
-                     org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, source.pos());
-                     org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(dispensed); // Paper - ignore stack size on damageable items
+                 }
+@@ -581,7 +_,7 @@
+                 org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, source.pos());
+                 org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(dispensed); // Paper - ignore stack size on damageable items
  
--                    org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseArmorEvent(block, craftItem.clone(), armadillos.get(0).getBukkitLivingEntity());
-+                    org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseArmorEvent(block, craftItem.clone(), animals.get(0).getBukkitLivingEntity()); // KioCG - raising animals
-                     level.getCraftServer().getPluginManager().callEvent(event);
+-                org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseArmorEvent(block, craftItem.clone(), armadillos.get(0).getBukkitLivingEntity());
++                org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseArmorEvent(block, craftItem.clone(), animals.get(0).getBukkitLivingEntity()); // KioCG - raising animals
+                 level.getCraftServer().getPluginManager().callEvent(event);
  
-                     if (event.isCancelled()) {
-@@ -598,8 +_,11 @@
-                         }
+                 if (event.isCancelled()) {
+@@ -599,8 +_,11 @@
                      }
-                     // CraftBukkit end
--                    for (Armadillo armadillo : armadillos) {
--                        if (armadillo.brushOffScute(null, dispensed)) {
-+                    // KioCG start - raising animals
-+                    for (net.minecraft.world.entity.animal.Animal animal : animals) {
-+                        if (animal instanceof Armadillo armadillo && armadillo.brushOffScute(null, dispensed)
-+                                || animal instanceof net.minecraft.world.entity.animal.turtle.Turtle turtle && turtle.brushOffScute(null, dispensed)) {
-+                            // KioCG end - raising animals
-                             dispensed.hurtAndBreak(16, level, null, item -> {});
-                             return dispensed;
-                         }
+                 }
+                 // CraftBukkit end
+-                for (Armadillo armadillo : armadillos) {
+-                    if (armadillo.brushOffScute(null, dispensed)) {
++                // KioCG start - raising animals
++                for (net.minecraft.world.entity.animal.Animal animal : animals) {
++                    if (animal instanceof Armadillo armadillo && armadillo.brushOffScute(null, dispensed)
++                            || animal instanceof net.minecraft.world.entity.animal.turtle.Turtle turtle && turtle.brushOffScute(null, dispensed)) {
++                        // KioCG end - raising animals
+                         dispensed.hurtAndBreak(16, level, null, item -> {});
+                         return dispensed;
+                     }

@@ -13,7 +13,7 @@
      @Override
      default Iterator<TypedDataComponent<?>> iterator() {
          return Iterators.transform(this.keySet().iterator(), type -> Objects.requireNonNull(this.getTyped((DataComponentType<?>)type)));
-@@ -180,6 +_,19 @@
+@@ -176,6 +_,19 @@
              public <T> @Nullable T get(final DataComponentType<? extends T> type) {
                  return (T)this.map.get(type);
              }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -419,7 +_,14 @@
+@@ -418,7 +_,14 @@
      public void setRecipeUsed(final @Nullable RecipeHolder<?> recipeUsed) {
          if (recipeUsed != null) {
              ResourceKey<Recipe<?>> id = recipeUsed.id();
@@ -16,7 +16,7 @@
          }
      }
  
-@@ -455,7 +_,7 @@
+@@ -454,7 +_,7 @@
              level.recipeAccess().byKey(entry.getKey()).ifPresent(recipe -> {
                  if (!(recipe.value() instanceof AbstractCookingRecipe)) return; // Paper - don't process non-cooking recipes
                  recipesToAward.add((RecipeHolder<?>)recipe);

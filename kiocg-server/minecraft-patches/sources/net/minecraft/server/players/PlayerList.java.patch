@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -175,7 +_,7 @@
+@@ -174,7 +_,7 @@
          playerConnection.suspendFlushing();
          GameRules gameRules = level.getGameRules();
          boolean immediateRespawn = gameRules.get(GameRules.IMMEDIATE_RESPAWN);
@@ -9,7 +9,7 @@
          boolean doLimitedCrafting = gameRules.get(GameRules.LIMITED_CRAFTING);
          playerConnection.send(
              new ClientboundLoginPacket(
-@@ -437,6 +_,9 @@
+@@ -432,6 +_,9 @@
      }
      public net.kyori.adventure.text.@Nullable Component remove(final ServerPlayer player, final net.kyori.adventure.text.Component leaveMessage) {
          // Paper end - Fix kick event leave message not being sent
@@ -19,7 +19,7 @@
          ServerLevel level = player.level();
          player.awardStat(Stats.LEAVE_GAME);
          // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
-@@ -643,7 +_,7 @@
+@@ -639,7 +_,7 @@
          player.connection.internalTeleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot()); // Paper
          player.connection.send(new ClientboundSetDefaultSpawnPositionPacket(level.getRespawnData()));
          player.connection.send(new ClientboundChangeDifficultyPacket(levelData.getDifficulty(), levelData.isDifficultyLocked()));
@@ -28,7 +28,7 @@
          this.sendActivePlayerEffects(player);
          this.sendLevelInfo(player, level);
          this.sendPlayerPermissionLevel(player);
-@@ -1027,7 +_,7 @@
+@@ -1023,7 +_,7 @@
          player.refreshEntityData(player); // CraftBukkit - SPIGOT-7218: sync metadata
          player.connection.send(new ClientboundSetHeldSlotPacket(player.getInventory().getSelectedSlot()));
          // CraftBukkit start - from GameRules

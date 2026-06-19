@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/decoration/BlockAttachedEntity.java
 +++ b/net/minecraft/world/entity/decoration/BlockAttachedEntity.java
-@@ -87,7 +_,7 @@
-     public boolean hurtServer(final ServerLevel level, final DamageSource source, final float damage) {
-         if (this.isInvulnerableToBase(source)) {
+@@ -89,7 +_,7 @@
              return false;
--        } else if (!level.getGameRules().get(GameRules.MOB_GRIEFING) && source.getEntity() instanceof Mob) {
-+        } else if (!level.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG) && source.getEntity() instanceof Player || source.getEntity() instanceof Mob) { // KioCG - better mob griefing setting
+         }
+ 
+-        if (!level.getGameRules().get(GameRules.MOB_GRIEFING) && source.getEntity() instanceof Mob) {
++        if (!level.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG) && source.getEntity() instanceof Player || source.getEntity() instanceof Mob) { // KioCG - better mob griefing setting
              return false;
-         } else {
-             if (!this.isRemoved()) {
+         }
+ 

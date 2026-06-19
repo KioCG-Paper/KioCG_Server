@@ -7,5 +7,5 @@
 -        if (!level.getGameRules().get(GameRules.MOB_GRIEFING)) {
 +        if (!level.getGameRules().get(GameRules.MOB_GRIEFING_KIOCG)) { // KioCG - better mob griefing setting
              return false;
-         } else if (!body.getVillagerData().profession().is(VillagerProfession.FARMER)) {
-             return false;
+         }
+ 

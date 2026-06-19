@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/SpawnEggItem.java
 +++ b/net/minecraft/world/item/SpawnEggItem.java
-@@ -61,7 +_,7 @@
+@@ -63,7 +_,7 @@
  
                      return InteractionResult.FAIL;
                  } else {

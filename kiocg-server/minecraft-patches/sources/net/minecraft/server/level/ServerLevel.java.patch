@@ -9,7 +9,7 @@
      // CraftBukkit start
      private final ResourceKey<LevelStem> typeKey;
      public final String bukkitName;
-@@ -683,7 +_,7 @@
+@@ -690,7 +_,7 @@
          this.chunkSource.getGeneratorState().ensureStructuresGenerated();
          this.portalForcer = new PortalForcer(this);
          if (this.canHaveWeather()) {
@@ -18,7 +18,7 @@
          }
  
          this.raids = this.getDataStorage().computeIfAbsent(Raids.TYPE);
-@@ -815,6 +_,27 @@
+@@ -822,6 +_,27 @@
          this.updateSkyBrightness();
          if (runs) {
              this.tickTime();
@@ -46,7 +46,7 @@
          }
  
          profiler.push("tickPending");
-@@ -1193,6 +_,10 @@
+@@ -1203,6 +_,10 @@
          if (this.canHaveWeather()) {
              WeatherData weatherData = this.getWeatherData();
              if (this.getGameRules().get(GameRules.ADVANCE_WEATHER)) {
@@ -57,7 +57,7 @@
                  int clearWeatherTime = weatherData.getClearWeatherTime();
                  int thunderTime = weatherData.getThunderTime();
                  int rainTime = weatherData.getRainTime();
-@@ -1231,6 +_,7 @@
+@@ -1241,6 +_,7 @@
                  weatherData.setClearWeatherTime(clearWeatherTime);
                  weatherData.setThundering(thundering, org.bukkit.event.weather.ThunderChangeEvent.Cause.NATURAL); // Paper - Add cause to Weather/ThunderChangeEvents
                  weatherData.setRaining(raining, org.bukkit.event.weather.WeatherChangeEvent.Cause.NATURAL); // Paper - Add cause to Weather/ThunderChangeEvents
@@ -65,7 +65,7 @@
              }
  
              this.oThunderLevel = this.thunderLevel;
-@@ -1376,10 +_,20 @@
+@@ -1386,10 +_,20 @@
          profiler.push(entity.typeHolder()::getRegisteredName);
          profiler.incrementCounter("tickNonPassenger");
          final boolean isActive = io.papermc.paper.entity.activation.ActivationRange.checkIfActive(entity); // Paper - EAR 2
@@ -86,7 +86,7 @@
          profiler.pop();
  
          for (Entity passenger : entity.getPassengers()) {
-@@ -1404,6 +_,11 @@
+@@ -1414,6 +_,11 @@
              ProfilerFiller profiler = Profiler.get();
              profiler.push(entity.typeHolder()::getRegisteredName);
              profiler.incrementCounter("tickPassenger");
@@ -98,7 +98,7 @@
              // Paper start - EAR 2
              if (isActive) {
              entity.rideTick();
-@@ -1415,6 +_,11 @@
+@@ -1425,6 +_,11 @@
                  vehicle.positionRider(entity);
              }
              // Paper end - EAR 2
@@ -110,7 +110,7 @@
              profiler.pop();
  
              for (Entity passenger : entity.getPassengers()) {
-@@ -1692,6 +_,17 @@
+@@ -1702,6 +_,17 @@
  
      @Override
      public void destroyBlockProgress(final int id, final BlockPos blockPos, final int progress) {
@@ -128,7 +128,7 @@
          // CraftBukkit start
          Player breakerPlayer = null;
          Entity entity = this.getEntity(id);
-@@ -1719,7 +_,7 @@
+@@ -1729,7 +_,7 @@
                          continue;
                      }
                      // CraftBukkit end
@@ -137,7 +137,7 @@
                  }
              }
          }
-@@ -1979,7 +_,7 @@
+@@ -1989,7 +_,7 @@
          Explosion.BlockInteraction blockInteraction = switch (interactionType) {
              case NONE -> Explosion.BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.BLOCK_EXPLOSION_DROP_DECAY);
@@ -146,7 +146,7 @@
                  ? this.getDestroyType(GameRules.MOB_EXPLOSION_DROP_DECAY)
                  : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.TNT_EXPLOSION_DROP_DECAY);
-@@ -2523,6 +_,41 @@
+@@ -2532,6 +_,41 @@
          return this.getEntities().getAll();
      }
  
@@ -188,7 +188,7 @@
      @Override
      public String toString() {
          return "ServerLevel[" + this.serverLevelData.getLevelName() + "]";
-@@ -2542,7 +_,7 @@
+@@ -2551,7 +_,7 @@
      }
  
      public WeatherData getWeatherData() {

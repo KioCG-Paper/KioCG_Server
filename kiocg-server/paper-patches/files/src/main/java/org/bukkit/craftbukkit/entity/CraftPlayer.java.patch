@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -2052,7 +_,7 @@
+@@ -2039,7 +_,7 @@
          playerList.sendAllPlayerInfo(handle);
  
          // Resend their XP and effects because the respawn packet resets it

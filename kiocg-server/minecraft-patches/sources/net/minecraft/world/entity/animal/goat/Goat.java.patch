@@ -6,5 +6,5 @@
              player.setItemInHand(hand, bucketOrMilkBucket);
 +            this.setBaby(true); // KioCG - raising animals
              return InteractionResult.SUCCESS;
-         } else {
-             boolean isFood = this.isFood(heldItem); // Paper - track before stack is possibly decreased to 0 (Fixes MC-244739)
+         }
+ 

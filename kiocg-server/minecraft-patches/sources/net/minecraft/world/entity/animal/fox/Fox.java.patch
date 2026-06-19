@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/fox/Fox.java
 +++ b/net/minecraft/world/entity/animal/fox/Fox.java
-@@ -996,7 +_,7 @@
+@@ -982,7 +_,7 @@
          }
  
          protected void onReachedTarget() {

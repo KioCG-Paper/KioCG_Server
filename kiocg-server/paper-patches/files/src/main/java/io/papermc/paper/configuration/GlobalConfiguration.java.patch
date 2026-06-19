@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -388,4 +_,34 @@
+@@ -394,4 +_,34 @@
      public class UpdateChecker extends ConfigurationPart {
          public boolean enabled = true;
      }

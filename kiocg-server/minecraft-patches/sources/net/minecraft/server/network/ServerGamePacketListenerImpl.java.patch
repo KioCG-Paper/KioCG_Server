@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -372,6 +_,7 @@
+@@ -371,6 +_,7 @@
                  && this.server.playerIdleTimeout() > 0
                  && Util.getMillis() - this.player.getLastActionTime() > TimeUnit.MINUTES.toMillis(this.server.playerIdleTimeout())
                  && !this.player.wonGame) {
@@ -8,7 +8,7 @@
                  this.disconnect(Component.translatable("multiplayer.disconnect.idling"), org.bukkit.event.player.PlayerKickEvent.Cause.IDLING); // Paper - kick event cause
              }
          }
-@@ -3018,6 +_,14 @@
+@@ -3012,6 +_,14 @@
                      if (this.player.getHealth() > 0.0F) {
                          return;
                      }
