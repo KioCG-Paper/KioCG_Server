@@ -46,15 +46,25 @@
          this.server.spark.tickStart(); // Paper - spark
          new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
          this.tickCount++;
-@@ -2586,7 +_,7 @@
- 
-     // Paper start - per-level WeatherData
-     public void setWeatherParameters(final ServerLevel level, final int clearTime, final int rainTime, final boolean raining, final boolean thundering) {
--        WeatherData weatherData = level.getWeatherData();
-+        WeatherData weatherData = level.paperConfig().kiocg.perWorldWeather ? level.getWeatherData() : this.getWeatherData(); // KioCG - per world weather config
-         // Paper end - per-level WeatherData
-         weatherData.setClearWeatherTime(clearTime);
-         weatherData.setRainTime(rainTime);
+@@ -1809,13 +_,13 @@
+         if (this.tickRateManager.runsNormally()) {
+             profiler.push("clocks");
+             // Paper start - per-world time
+-            if (io.papermc.paper.configuration.GlobalConfiguration.get().time.affectsAllWorlds) {
+-                this.clockManager.tick();
+-            } else {
+-                for (ServerLevel level : this.getAllLevels()) {
++            // KioCG start - per world time config
++            this.clockManager.tick();
++            for (ServerLevel level : this.getAllLevels()) {
++                if (level.paperConfig().kiocg.perWorldTime)
+                     level.clockManager().tick();
+-                }
+             }
++            // KioCG end - per world time config
+             // Paper end - per-world time
+             profiler.pop();
+         }
 @@ -2595,9 +_,9 @@
          weatherData.setThundering(thundering, org.bukkit.event.weather.ThunderChangeEvent.Cause.COMMAND); // Paper - per-level WeatherData
      }

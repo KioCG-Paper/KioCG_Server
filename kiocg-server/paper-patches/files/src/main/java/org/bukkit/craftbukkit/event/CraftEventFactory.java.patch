@@ -14,3 +14,12 @@
          event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel
          populateFields(victim, event); // Paper - make cancellable
          Bukkit.getServer().getPluginManager().callEvent(event);
+@@ -2422,7 +_,7 @@
+     }
+ 
+     public static ClockTimeSkipEvent createTimeSkipEvent(final CommandSourceStack source, final long skipAmount) {
+-        if (io.papermc.paper.configuration.GlobalConfiguration.get().time.affectsAllWorlds) {
++        if (!source.getLevel().paperConfig().kiocg.perWorldTime) { // KioCG - per world time config
+             return new ClockTimeSkipEvent(ClockTimeSkipEvent.SkipReason.COMMAND, skipAmount);
+         }
+         return new TimeSkipEvent(source.getLevel().getWorld(), ClockTimeSkipEvent.SkipReason.COMMAND, skipAmount);

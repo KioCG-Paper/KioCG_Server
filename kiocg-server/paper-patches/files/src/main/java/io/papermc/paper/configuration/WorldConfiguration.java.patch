@@ -18,7 +18,7 @@
 +    public Kiocg kiocg;
 +
 +    public class Kiocg extends ConfigurationPart {
-+        public boolean perWorldTime = false; // TODO - Paper尚未实现独立世界时间
++        public boolean perWorldTime = false;
 +        public boolean perWorldWeather = false;
 +
 +        public ChunkLoad chunkLoad;

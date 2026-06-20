@@ -1,5 +1,14 @@
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -199,7 +_,7 @@
+     public Time time;
+ 
+     public class Time extends ConfigurationPart {
+-        public boolean affectsAllWorlds = false;
++        // public boolean affectsAllWorlds = false; // KioCG
+     }
+ 
+     public Scoreboards scoreboards;
 @@ -394,4 +_,34 @@
      public class UpdateChecker extends ConfigurationPart {
          public boolean enabled = true;

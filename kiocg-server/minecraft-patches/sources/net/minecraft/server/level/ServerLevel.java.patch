@@ -9,15 +9,33 @@
      // CraftBukkit start
      private final ResourceKey<LevelStem> typeKey;
      public final String bukkitName;
+@@ -648,7 +_,7 @@
+         ChunkGenerator generator = levelStem.generator();
+         // CraftBukkit start
+         // Paper start - per-world time
+-        if (!io.papermc.paper.configuration.GlobalConfiguration.get().time.affectsAllWorlds) {
++        if (true) { // KioCG - per world time config: 始终加载ClockManager
+             this.clockManager = savedDataStorage.computeIfAbsent(net.minecraft.world.clock.ServerClockManager.TYPE); // Paper - per-world time
+             this.clockManager.init(server, this); // Paper - per-world time
+         }
 @@ -690,7 +_,7 @@
          this.chunkSource.getGeneratorState().ensureStructuresGenerated();
          this.portalForcer = new PortalForcer(this);
          if (this.canHaveWeather()) {
 -            this.prepareWeather(this.weatherData); // Paper - per-level WeatherData
-+            this.prepareWeather(this.paperConfig().kiocg.perWorldWeather ? this.weatherData : server.getWeatherData()); // Paper - per-level WeatherData // KioCG - per world weather config
++            this.prepareWeather(this.getWeatherData()); // Paper - per-level WeatherData // KioCG - per world weather config
          }
  
          this.raids = this.getDataStorage().computeIfAbsent(Raids.TYPE);
+@@ -764,7 +_,7 @@
+ 
+     @Override
+     public ServerClockManager clockManager() {
+-        return io.papermc.paper.configuration.GlobalConfiguration.get().time.affectsAllWorlds ? this.server.clockManager() : this.clockManager; // Paper - per-world time
++        return !this.paperConfig().kiocg.perWorldTime ? this.server.clockManager() : this.clockManager; // Paper - per-world time // KioCG - per world time config
+     }
+ 
+     @Override
 @@ -822,6 +_,27 @@
          this.updateSkyBrightness();
          if (runs) {
@@ -193,7 +211,7 @@
  
      public WeatherData getWeatherData() {
 -        return this.weatherData; // Paper - per-level WeatherData
-+        return this.paperConfig().kiocg.perWorldWeather ? this.weatherData : this.server.getWeatherData(); // Paper - per-level WeatherData // KioCG - per world weather config
++        return !this.paperConfig().kiocg.perWorldWeather ? this.server.getWeatherData() : this.weatherData; // Paper - per-level WeatherData // KioCG - per world weather config
      }
  
      @Override
