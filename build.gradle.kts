@@ -1,3 +1,7 @@
+import io.papermc.paperweight.core.tasks.FilterRepo
+import io.papermc.paperweight.core.tasks.ImportLibraryFiles
+import io.papermc.paperweight.core.tasks.patching.ApplyFilePatches
+import io.papermc.paperweight.tasks.CollectATsFromPatches
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -77,6 +81,18 @@ subprojects {
                 credentials(PasswordCredentials::class)
             }
              */
+        }
+    }
+
+    // 运行配置 rebuildAllPatches 时需使用
+    listOf(
+        CollectATsFromPatches::class,
+        FilterRepo::class,
+        ImportLibraryFiles::class,
+        ApplyFilePatches::class
+    ).forEach { taskType ->
+        tasks.withType(taskType).configureEach {
+            dependsOn(rootProject.tasks.named("checkoutPaperRepo"))
         }
     }
 }
