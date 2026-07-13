@@ -9,7 +9,7 @@
      }
  
      public Scoreboards scoreboards;
-@@ -394,4 +_,34 @@
+@@ -394,4 +_,37 @@
      public class UpdateChecker extends ConfigurationPart {
          public boolean enabled = true;
      }
@@ -25,6 +25,9 @@
 +            public Component permadeath = Component.text("因电荷消耗殆尽被系统抹除数据", NamedTextColor.RED);
 +            public Component permadeathWarningTitle = Component.text("电荷已消耗殆尽", NamedTextColor.GRAY);
 +            public Component permadeathWarningSubtitle = Component.text("你的下一次死亡将是永久的", NamedTextColor.RED);
++            public Component airSupplySymbol = Component.text("O₂ ", NamedTextColor.BLUE).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD);
++            public Component airSupplyHave = Component.text("\uD83E\uDEE7", NamedTextColor.BLUE);
++            public Component airSupplyLost = Component.text("\uD83E\uDEE7", NamedTextColor.GRAY);
 +        }
 +
 +        public TpsBar tpsBar;

@@ -74,6 +74,14 @@
  
      private void updatePlayerAttributes() {
          AttributeInstance blockInteractionRange = this.getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
+@@ -808,6 +_,7 @@
+                 }
+ 
+                 this.foodData.tick(this);
++                this.thirstData.tick(this); // KioCG - player thirst
+                 this.awardStat(Stats.PLAY_TIME);
+                 this.awardStat(Stats.TOTAL_WORLD_TIME);
+                 if (this.isAlive()) {
 @@ -820,7 +_,50 @@
  
                  if (!this.isSleeping()) {
@@ -169,6 +177,38 @@
      private void synchronizeSpecialItemUpdates(final ItemStack itemStack) {
          MapId mapId = itemStack.get(DataComponents.MAP_ID);
          MapItemSavedData data = MapItem.getSavedData(mapId, this.level());
+@@ -933,8 +_,29 @@
+             if (this.tickCount % 10 == 0 && this.foodData.needsFood()) {
+                 this.foodData.setFoodLevel(this.foodData.getFoodLevel() + 1);
+             }
+-        }
+-    }
++
++            // KioCG start - player thirst
++            if (this.tickCount % 10 == 0 && this.thirstData.needsWater()) {
++                this.thirstData.setThirstLevel(this.thirstData.getThirstLevel() + 1);
++            }
++            // KioCG end - player thirst
++        }
++    }
++
++    // KioCG start - player thirst
++    public void sendAirSupplyPrompt() {
++        net.kyori.adventure.text.Component bubbles = io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.player.airSupplySymbol;
++        int airSupplyRatio = (int) Math.ceil(this.getAirSupply() / (this.getMaxAirSupply() / 10.0));
++        for (int i = 1; i <= 10; i++) {
++            if (airSupplyRatio >= i) {
++                bubbles = bubbles.append(io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.player.airSupplyHave);
++            } else {
++                bubbles = bubbles.append(io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.player.airSupplyLost);
++            }
++        }
++        this.getBukkitEntity().sendActionBar(bubbles);
++    }
++    // KioCG end - player thirst
+ 
+     @Override
+     public void handleShoulderEntities() {
 @@ -1134,11 +_,30 @@
              return;
          }
@@ -213,3 +253,19 @@
          // Paper start - cancellable death event
          if (event.isCancelled()) {
              // make compatible with plugins that might have already set the health in an event listener
+@@ -2168,6 +_,7 @@
+             // this.getAttributes().assignPermanentModifiers(oldPlayer.getAttributes()); // CraftBukkit
+             this.setHealth(oldPlayer.getHealth());
+             this.foodData = oldPlayer.foodData;
++            this.thirstData = oldPlayer.thirstData; // KioCG - player thirst
+ 
+             for (MobEffectInstance effect : oldPlayer.getActiveEffects()) {
+                 // this.addEffect(new MobEffectInstance(effect)); // CraftBukkit
+@@ -3119,6 +_,7 @@
+         this.setRemainingFireTicks(0);
+         this.fallDistance = 0;
+         this.foodData = new net.minecraft.world.food.FoodData();
++        this.thirstData = new com.kiocg.world.food.ThirstData(); // KioCG - player thirst
+         this.experienceLevel = this.newLevel;
+         this.totalExperience = this.newTotalExp;
+         this.experienceProgress = 0;

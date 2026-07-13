@@ -1,0 +1,21 @@
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -4013,4 +_,18 @@
+      */
+     @ApiStatus.Experimental
+     PlayerGameConnection getConnection();
++
++    // KioCG start - player thirst
++    int getThirstLevel();
++
++    void setThirstLevel(int value);
++
++    void addThirstLevel(int add);
++
++    float getDehydrationLevel();
++
++    void setDehydrationLevel(float value);
++
++    void addDehydrationLevel(float add);
++    // KioCG end - player thirst
+ }

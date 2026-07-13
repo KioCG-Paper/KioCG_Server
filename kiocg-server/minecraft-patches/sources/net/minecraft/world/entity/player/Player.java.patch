@@ -1,6 +1,15 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -158,7 +_,7 @@
+@@ -153,12 +_,16 @@
+     public final InventoryMenu inventoryMenu;
+     public AbstractContainerMenu containerMenu;
+     protected FoodData foodData = new FoodData();
++    // KioCG start - player thirst
++    protected com.kiocg.world.food.ThirstData thirstData = new com.kiocg.world.food.ThirstData();
++    public int realAirSupply;
++    // KioCG end - player thirst
+     protected int jumpTriggerTime;
+     public int takeXpDelay;
      public int sleepCounter = 0;
      protected boolean wasUnderwater;
      private final Abilities abilities = new Abilities();
@@ -18,6 +27,22 @@
          this.totalExperience = input.getIntOr("XpTotal", 0);
          this.enchantmentSeed = input.getIntOr("XpSeed", 0);
          if (this.enchantmentSeed == 0) {
+@@ -674,6 +_,7 @@
+ 
+         this.setScore(input.getIntOr("Score", 0));
+         this.foodData.readAdditionalSaveData(input);
++        this.thirstData.readAdditionalSaveData(input); // KioCG - player thirst
+         input.read("abilities", Abilities.Packed.CODEC).ifPresent(this.abilities::apply);
+         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.abilities.getWalkingSpeed());
+         this.enderChestInventory.fromSlots(input.listOrEmpty("EnderItems", ItemStackWithSlot.CODEC));
+@@ -693,6 +_,7 @@
+         output.putInt("XpSeed", this.enchantmentSeed);
+         output.putInt("Score", this.getScore());
+         this.foodData.addAdditionalSaveData(output);
++        this.thirstData.addAdditionalSaveData(output); // KioCG - player thirst
+         output.store("abilities", Abilities.Packed.CODEC, this.abilities.pack());
+         this.enderChestInventory.storeAsSlots(output.list("EnderItems", ItemStackWithSlot.CODEC));
+         this.lastDeathLocation.ifPresent(pos -> output.store("LastDeathLocation", GlobalPos.CODEC, pos));
 @@ -1669,7 +_,7 @@
              this.totalExperience = 0;
          }
@@ -36,6 +61,19 @@
          if (this.experienceLevel >= 30) {
              return 112 + (this.experienceLevel - 30) * 9;
          } else { // Paper - diff on change; calculateTotalExperiencePoints
+@@ -1724,6 +_,12 @@
+         return this.foodData;
+     }
+ 
++    // KioCG start - player thirst
++    public com.kiocg.world.food.ThirstData getThirstData() {
++        return this.thirstData;
++    }
++    // KioCG end - player thirst
++
+     public boolean canEat(final boolean canAlwaysEat) {
+         return this.abilities.invulnerable || canAlwaysEat || this.foodData.needsFood();
+     }
 @@ -1748,7 +_,7 @@
  
      @Override

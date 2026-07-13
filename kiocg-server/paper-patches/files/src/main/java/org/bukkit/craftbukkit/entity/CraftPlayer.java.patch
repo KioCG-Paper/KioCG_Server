@@ -9,3 +9,40 @@
          for (net.minecraft.world.effect.MobEffectInstance mobEffect : handle.getActiveEffects()) {
              connection.send(new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(handle.getId(), mobEffect, false));
          }
+@@ -3367,4 +_,36 @@
+         super.knockback(strength, directionX, directionZ);
+         this.entity.hurtMarked = true;
+     }
++
++    // KioCG start - player thirst
++    @Override
++    public int getThirstLevel() {
++        return this.getHandle().getThirstData().getThirstLevel();
++    }
++
++    @Override
++    public void setThirstLevel(int value) {
++        this.getHandle().getThirstData().setThirstLevel(value);
++    }
++
++    @Override
++    public void addThirstLevel(int add) {
++        this.getHandle().getThirstData().addThirstLevel(add);
++    }
++
++    @Override
++    public float getDehydrationLevel() {
++        return this.getHandle().getThirstData().getDehydrationLevel();
++    }
++
++    @Override
++    public void setDehydrationLevel(float value) {
++        this.getHandle().getThirstData().setDehydrationLevel(value);
++    }
++
++    @Override
++    public void addDehydrationLevel(float add) {
++        this.getHandle().getThirstData().addDehydrationLevel(add);
++    }
++    // KioCG end - player thirst
+ }

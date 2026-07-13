@@ -15,7 +15,7 @@
                  if (this.level().getBlockState(snowPos).isAir() && snow.canSurvive(this.level(), snowPos)) {
 +                    // KioCG start - better mob griefing setting: 只在下雪群系产生雪
 +                    net.minecraft.world.level.biome.Biome biome = serverLevel.getBiome(snowPos).value();
-+                    if (biome.warmEnoughToRain(snowPos, serverLevel.getSeaLevel())) {
++                    if (!biome.coldEnoughToSnow(snowPos, serverLevel.getSeaLevel())) {
 +                        return;
 +                    }
 +                    // KioCG end - better mob griefing setting: 只在下雪群系产生雪

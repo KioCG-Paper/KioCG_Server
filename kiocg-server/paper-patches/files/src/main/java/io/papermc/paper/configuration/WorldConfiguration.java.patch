@@ -9,7 +9,7 @@
              public boolean perPlayerMobSpawns = true;
              public boolean scanForLegacyEnderDragon = true;
              @MergeMap
-@@ -593,4 +_,22 @@
+@@ -593,4 +_,29 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -20,6 +20,13 @@
 +    public class Kiocg extends ConfigurationPart {
 +        public boolean perWorldTime = false;
 +        public boolean perWorldWeather = false;
++
++        public Thirst thirst;
++
++        public class Thirst extends ConfigurationPart {
++            public double naturalDehydration = 0.003333;
++            public double regainHealthDehydration = 2.0;
++        }
 +
 +        public ChunkLoad chunkLoad;
 +

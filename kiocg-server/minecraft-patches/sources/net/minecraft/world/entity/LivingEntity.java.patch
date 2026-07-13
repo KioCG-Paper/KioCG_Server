@@ -1,5 +1,58 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -446,6 +_,7 @@
+                 }
+             }
+ 
++            if (this instanceof ServerPlayer player) player.getThirstData().setUnderWater(false); // KioCG - player thirst
+             if (this.isEyeInFluid(FluidTags.WATER)
+                 && !level.getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN)) {
+                 boolean canDrownInWater = !this.canBreatheUnderwater()
+@@ -458,8 +_,15 @@
+                         level.broadcastEntityEvent(this, EntityEvent.DROWN_PARTICLES);
+                         this.hurtServer(level, this.damageSources().drown(), 2.0F);
+                     }
++                    // KioCG start - player thirst
++                    if (this instanceof ServerPlayer player) {
++                        player.getThirstData().setUnderWater(true);
++                        player.sendAirSupplyPrompt();
++                    }
++                    // KioCG end - player thirst
+                 } else if (this.getAirSupply() < this.getMaxAirSupply() && MobEffectUtil.shouldEffectsRefillAirsupply(this)) {
+                     this.setAirSupply(this.increaseAirSupply(this.getAirSupply()));
++                    if (this instanceof ServerPlayer player) player.sendAirSupplyPrompt(); // KioCG - player thirst
+                 }
+ 
+                 if (this.isPassenger() && this.getVehicle() != null && this.getVehicle().dismountsUnderwater()) {
+@@ -467,6 +_,7 @@
+                 }
+             } else if (this.getAirSupply() < this.getMaxAirSupply()) {
+                 this.setAirSupply(this.increaseAirSupply(this.getAirSupply()));
++                if (this instanceof ServerPlayer player) player.sendAirSupplyPrompt(); // KioCG - player thirst
+             }
+ 
+             BlockPos pos = this.blockPosition();
+@@ -1367,6 +_,7 @@
+     }
+ 
+     public void heal(final float heal, final EntityRegainHealthEvent.RegainReason regainReason, final boolean isFastRegen) {
++        if (this instanceof ServerPlayer player && player.getThirstData().isThirsty(player)) return; // KioCG - player thirst
+         // Paper end - Forward
+         float health = this.getHealth();
+         if (health > 0.0F) {
+@@ -1378,6 +_,12 @@
+ 
+             if (!event.isCancelled()) {
+                 this.setHealth((float) (this.getHealth() + event.getAmount()));
++                // KioCG start - player thirst
++                if (this instanceof ServerPlayer player) {
++                    float healthChange = Math.max(this.getHealth() - health, 0);
++                    player.getThirstData().addDehydrationLevel(healthChange * (float) this.level().paperConfig().kiocg.thirst.regainHealthDehydration);
++                }
++                // KioCG end - player thirst
+             }
+             // CraftBukkit end
+         }
 @@ -1897,7 +_,7 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              boolean var6 = false;

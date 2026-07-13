@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/food/FoodData.java
++++ b/net/minecraft/world/food/FoodData.java
+@@ -65,7 +_,7 @@
+             }
+         }
+ 
+-        boolean naturalRegen = level.getGameRules().get(GameRules.NATURAL_HEALTH_REGENERATION);
++        boolean naturalRegen = level.getGameRules().get(GameRules.NATURAL_HEALTH_REGENERATION) && !player.getThirstData().isThirsty(player); // KioCG - player thirst
+         if (naturalRegen && this.saturationLevel > 0.0F && player.isHurt() && this.foodLevel >= FoodConstants.MAX_FOOD) {
+             this.tickTimer++;
+             if (this.tickTimer >= this.saturatedRegenRate) { // CraftBukkit

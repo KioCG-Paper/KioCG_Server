@@ -8,6 +8,28 @@
              return;
          }
          // Paper end - entity despawn time limit
+@@ -3715,6 +_,7 @@
+     }
+ 
+     public int getAirSupply() {
++        if (this instanceof ServerPlayer player) return player.realAirSupply; // KioCG - player thirst
+         return this.entityData.get(DATA_AIR_SUPPLY_ID);
+     }
+ 
+@@ -3726,11 +_,12 @@
+             event.getEntity().getServer().getPluginManager().callEvent(event);
+         }
+         if (event.isCancelled() && this.getAirSupply() != supply) {
+-            if (this instanceof ServerPlayer player) {
++            if (false && this instanceof ServerPlayer player) { // KioCG - player thirst
+                 this.resendPossiblyDesyncedDataValues(java.util.List.of(DATA_AIR_SUPPLY_ID), player); // todo is that even needed?
+             }
+             return;
+         }
++        if (this instanceof ServerPlayer player) player.realAirSupply = event.getAmount(); else // KioCG - player thirst
+         this.entityData.set(DATA_AIR_SUPPLY_ID, event.getAmount());
+         // CraftBukkit end
+     }
 @@ -5385,4 +_,10 @@
          return ((ServerLevel) this.level()).isPositionEntityTicking(this.blockPosition());
      }
