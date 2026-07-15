@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/ticks/LevelChunkTicks.java
++++ b/net/minecraft/world/ticks/LevelChunkTicks.java
+@@ -85,6 +_,21 @@
+         }
+     }
+ 
++    // KioCG start - more api: unschedule scheduled tick
++    @Override
++    public void unschedule(final BlockPos pos, final T type) {
++        Iterator<ScheduledTick<?>> it = this.ticksPerPosition.iterator();
++        while (it.hasNext()) {
++            ScheduledTick<?> tick = it.next();
++            if (tick.type() == type && tick.pos().equals(pos)) {
++                it.remove();
++                this.tickQueue.remove(tick); this.dirty = true; // Paper - rewrite chunk system
++                break;
++            }
++        }
++    }
++    // KioCG end - more api: unschedule scheduled tick
++
+     @Override
+     public boolean hasScheduledTick(final BlockPos pos, final T type) {
+         return this.ticksPerPosition.contains(ScheduledTick.probe(type, pos));

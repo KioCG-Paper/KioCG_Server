@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/ticks/WorldGenTickAccess.java
++++ b/net/minecraft/world/ticks/WorldGenTickAccess.java
+@@ -20,6 +_,13 @@
+         this.containerGetter.apply(tick.pos()).schedule(tick);
+     }
+ 
++    // KioCG start - more api: unschedule scheduled tick
++    @Override
++    public void unschedule(final BlockPos pos, final T type) {
++        this.containerGetter.apply(pos).unschedule(pos, type);
++    }
++    // KioCG end - more api: unschedule scheduled tick
++
+     @Override
+     public boolean willTickThisTick(final BlockPos pos, final T type) {
+         return false;

@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/ticks/BlackholeTickAccess.java
++++ b/net/minecraft/world/ticks/BlackholeTickAccess.java
+@@ -8,6 +_,12 @@
+         public void schedule(final ScheduledTick<Object> tick) {
+         }
+ 
++        // KioCG start - more api: unschedule scheduled tick
++        @Override
++        public void unschedule(final BlockPos pos, final Object type) {
++        }
++        // KioCG end - more api: unschedule scheduled tick
++
+         @Override
+         public boolean hasScheduledTick(final BlockPos pos, final Object type) {
+             return false;
+@@ -22,6 +_,12 @@
+         @Override
+         public void schedule(final ScheduledTick<Object> tick) {
+         }
++
++        // KioCG start - more api: unschedule scheduled tick
++        @Override
++        public void unschedule(final BlockPos pos, final Object type) {
++        }
++        // KioCG end - more api: unschedule scheduled tick
+ 
+         @Override
+         public boolean hasScheduledTick(final BlockPos pos, final Object type) {

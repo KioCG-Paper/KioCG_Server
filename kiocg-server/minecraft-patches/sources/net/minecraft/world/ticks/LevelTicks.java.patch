@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/ticks/LevelTicks.java
++++ b/net/minecraft/world/ticks/LevelTicks.java
+@@ -78,6 +_,16 @@
+         }
+     }
+ 
++    // KioCG start - more api: unschedule scheduled tick
++    @Override
++    public void unschedule(final BlockPos pos, final T block) {
++        LevelChunkTicks<T> tickContainer = this.allContainers.get(ChunkPos.pack(pos));
++        if (tickContainer != null) {
++            tickContainer.unschedule(pos, block);
++        }
++    }
++    // KioCG end - more api: unschedule scheduled tick
++
+     public void tick(final long currentTick, final int maxTicksToProcess, final BiConsumer<BlockPos, T> output) {
+         ProfilerFiller profiler = Profiler.get();
+         profiler.push("collect");

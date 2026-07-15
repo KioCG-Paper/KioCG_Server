@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/ticks/ProtoChunkTicks.java
++++ b/net/minecraft/world/ticks/ProtoChunkTicks.java
+@@ -22,6 +_,21 @@
+         }
+     }
+ 
++    // KioCG start - more api: unschedule scheduled tick
++    @Override
++    public void unschedule(final BlockPos pos, final T type) {
++        java.util.Iterator<SavedTick<?>> it = this.ticksPerPosition.iterator();
++        while (it.hasNext()) {
++            SavedTick<?> tick = it.next();
++            if (tick.type() == type && tick.pos().equals(pos)) {
++                it.remove();
++                this.ticks.remove(tick);
++                break;
++            }
++        }
++    }
++    // KioCG end - more api: unschedule scheduled tick
++
+     @Override
+     public boolean hasScheduledTick(final BlockPos pos, final T type) {
+         return this.ticksPerPosition.contains(SavedTick.probe(type, pos));

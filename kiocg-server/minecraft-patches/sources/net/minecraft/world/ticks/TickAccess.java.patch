@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/ticks/TickAccess.java
++++ b/net/minecraft/world/ticks/TickAccess.java
+@@ -5,6 +_,8 @@
+ public interface TickAccess<T> {
+     void schedule(ScheduledTick<T> tick);
+ 
++    void unschedule(BlockPos pos, T type); // KioCG - more api: unschedule scheduled tick
++
+     boolean hasScheduledTick(BlockPos pos, T type);
+ 
+     int count();
