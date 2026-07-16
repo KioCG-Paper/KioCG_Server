@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
+@@ -124,7 +_,7 @@
+                 BlockState blockState = level.getBlockState(below.offset(xx, 0, zz));
+                 if (blockState.is(BlockTags.GROWS_CROPS)) {
+                     blockSpeed = 1.0F;
+-                    if (blockState.getValueOrElse(FarmlandBlock.MOISTURE, 0) > 0) {
++                    if (blockState.getValueOrElse(FarmlandBlock.MOISTURE, 0) == FarmlandBlock.MAX_MOISTURE) { // KioCG - irrigate farmland
+                         blockSpeed = 3.0F;
+                     }
+                 }
 @@ -177,7 +_,7 @@
          final boolean isPrecise
      ) {

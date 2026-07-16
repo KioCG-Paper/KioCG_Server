@@ -1,0 +1,58 @@
+--- a/net/minecraft/world/item/PotionItem.java
++++ b/net/minecraft/world/item/PotionItem.java
+@@ -75,6 +_,55 @@
+             level.setBlockAndUpdate(pos, Blocks.MUD.defaultBlockState());
+             return InteractionResult.SUCCESS;
+         } else {
++            // KioCG start - irrigate farmland
++            if (context.getClickedFace() != Direction.DOWN && potionContents.is(Potions.WATER)) {
++                BlockState farmland = null;
++                BlockPos farmlandPos = null;
++                if (blockState.is(Blocks.FARMLAND)) {
++                    farmlandPos = pos;
++                    farmland = blockState;
++                } else if (blockState.is(BlockTags.MAINTAINS_FARMLAND)) {
++                    farmlandPos = pos.below();
++                    farmland = level.getBlockState(farmlandPos);
++                    if (!farmland.is(Blocks.FARMLAND)) {
++                        farmlandPos = null;
++                        farmland = null;
++                    }
++                }
++
++                if (farmland != null) {
++                    // Paper start
++                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(player, farmlandPos, farmland.setValue(net.minecraft.world.level.block.FarmlandBlock.MOISTURE, 7))) {
++                        return InteractionResult.PASS;
++                    }
++                    // Paper end
++                    level.playSound(null, farmlandPos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 1.0F, 1.0F);
++                    player.setItemInHand(context.getHand(), ItemUtils.createFilledResult(itemStack, player, new ItemStack(Items.GLASS_BOTTLE)));
++                    if (!level.isClientSide()) {
++                        ServerLevel serverLevel = (ServerLevel) level;
++
++                        for (int i = 0; i < 5; i++) {
++                            serverLevel.sendParticles(
++                                    ParticleTypes.SPLASH,
++                                    farmlandPos.getX() + level.getRandom().nextDouble(),
++                                    farmlandPos.getY() + 1,
++                                    farmlandPos.getZ() + level.getRandom().nextDouble(),
++                                    1,
++                                    0.0,
++                                    0.0,
++                                    0.0,
++                                    1.0
++                            );
++                        }
++                    }
++
++                    level.playSound(null, farmlandPos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
++                    level.gameEvent(null, GameEvent.FLUID_PLACE, farmlandPos);
++                    org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(level, farmlandPos, farmland.setValue(net.minecraft.world.level.block.FarmlandBlock.MOISTURE, 7), net.minecraft.world.level.block.Block.UPDATE_CLIENTS); // CraftBukkit
++                    return InteractionResult.SUCCESS;
++                }
++            }
++            // KioCG end - irrigate farmland
+             return InteractionResult.PASS;
+         }
+     }

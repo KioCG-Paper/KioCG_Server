@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/BottleItem.java
++++ b/net/minecraft/world/item/BottleItem.java
+@@ -57,6 +_,7 @@
+                 if (level.getFluidState(pos).is(FluidTags.WATER)) {
+                     level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
+                     level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
++                    player.containerMenu.sendAllDataToRemote(); // KioCG - customize default components: 由于水瓶可以叠加，客户端灌水会显示虚拟水瓶物品
+                     return InteractionResult.SUCCESS
+                         .heldItemTransformedTo(this.turnBottleIntoItem(itemStack, player, PotionContents.createItemStack(Items.POTION, Potions.WATER)));
+                 }
