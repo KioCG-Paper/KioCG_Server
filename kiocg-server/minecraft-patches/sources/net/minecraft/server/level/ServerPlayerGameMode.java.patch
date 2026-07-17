@@ -1,5 +1,22 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -48,6 +_,7 @@
+     private int lastSentState = -1;
+     public boolean captureSentBlockEntities = false; // Paper - Send block entities after destroy prediction
+     public boolean capturedBlockEntity = false; // Paper - Send block entities after destroy prediction
++    private final List<com.kiocg.world.item.enchantment.Veinchain> veinchains = new java.util.ArrayList<>(); // KioCG - more enchantments
+ 
+     public ServerPlayerGameMode(final ServerPlayer player) {
+         this.player = player;
+@@ -154,6 +_,8 @@
+                 this.incrementDestroyProgress(blockState, this.destroyPos, this.destroyProgressStart);
+             }
+         }
++
++        this.veinchains.removeIf(veinchain -> !veinchain.tick(this.player, this.player.getMainHandItem())); // KioCG - more enchantments
+     }
+ 
+     private float incrementDestroyProgress(final BlockState blockState, final BlockPos delayedDestroyPos, final int destroyStartTick) {
 @@ -227,7 +_,7 @@
                      return;
                  }
@@ -31,7 +48,7 @@
          BlockState state = this.level.getBlockState(pos);
          // CraftBukkit start - fire BlockBreakEvent
          org.bukkit.block.Block bblock = org.bukkit.craftbukkit.block.CraftBlock.at(this.level, pos);
-@@ -435,6 +_,13 @@
+@@ -435,6 +_,16 @@
          }
          // Paper end - Trigger bee_nest_destroyed trigger in the correct place
          // CraftBukkit end
@@ -39,7 +56,10 @@
 +        // KioCG start - more enchantments
 +        applyChainEnchantments &= !player.isShiftKeyDown();
 +        if (applyChainEnchantments && destroyedWith != null && changed && canDestroy) {
-+            com.kiocg.world.item.enchantment.Veinchain.onDestroyBlock(this.level, pos, state, this.player, destroyedWith);
++            com.kiocg.world.item.enchantment.Veinchain veinchain = com.kiocg.world.item.enchantment.Veinchain.onDestroyBlock(this.level, pos, state, this.player.getMainHandItem());
++            if (veinchain != null) {
++                this.veinchains.add(veinchain);
++            }
 +        }
 +        // KioCG end - more enchantments
  
