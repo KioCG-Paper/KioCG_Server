@@ -1,0 +1,82 @@
+--- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
+@@ -46,6 +_,7 @@
+     private boolean[] lastPotionCount;
+     private Item ingredient;
+     public int fuel;
++    private boolean brewPause = true; // KioCG - mix potion effect: 默认暂停, 避免在生成结构中酿造
+     protected final ContainerData dataAccess = new ContainerData() {
+         @Override
+         public int get(final int dataId) {
+@@ -159,7 +_,7 @@
+             setChanged(level, pos, selfState);
+         }
+ 
+-        boolean brewable = isBrewable(level.potionBrewing(), entity.items);
++        boolean brewable = !entity.brewPause && isBrewable(level.potionBrewing(), entity.items); // KioCG - mix potion effect
+         boolean isBrewing = entity.brewTime > 0;
+         ItemStack ingredient = entity.items.get(3);
+         if (isBrewing) {
+@@ -171,6 +_,21 @@
+                 entity.brewTime = 0;
+             }
+ 
++            // KioCG start - particle effects
++            if (level.getGameTime() % 5L == 0L) {
++                int argb = 0xFF000000 | level.getRandom().nextInt(0xFFFFFF + 1);
++                double x = (double) pos.getX() + 0.5;
++                double y = (double) pos.getY() + 0.85;
++                double z = (double) pos.getZ() + 0.5;
++                ((net.minecraft.server.level.ServerLevel) level).sendParticles(
++                        net.minecraft.core.particles.ColorParticleOption.create(net.minecraft.core.particles.ParticleTypes.ENTITY_EFFECT, argb),
++                        x, y, z,
++                        1,
++                        0.0, 0.0, 0.0,
++                        0.0);
++            }
++            // KioCG end - particle effects
++
+             setChanged(level, pos, selfState);
+         } else if (brewable && entity.fuel > 0) {
+             entity.fuel--;
+@@ -235,6 +_,7 @@
+     }
+ 
+     private static void doBrew(final Level level, final BlockPos pos, final NonNullList<ItemStack> items, final BrewingStandBlockEntity entity) { // CraftBukkit
++        entity.brewPause = true; // KioCG - mix potion effect
+         ItemStack ingredient = items.get(3);
+         PotionBrewing potionBrewing = level.potionBrewing();
+ 
+@@ -280,6 +_,16 @@
+         level.levelEvent(LevelEvent.SOUND_BREWING_STAND_BREW, pos, 0);
+     }
+ 
++    // KioCG start - mix potion effect
++    @Override
++    public void setItem(final int slot, final ItemStack itemStack) {
++        if (this.brewPause && (slot == 3 || slot == 0 || slot == 1 || slot == 2) && !itemStack.isEmpty()) {
++            this.brewPause = false;
++        }
++        super.setItem(slot, itemStack);
++    }
++    // KioCG end - mix potion effect
++
+     @Override
+     protected void loadAdditional(final ValueInput input) {
+         super.loadAdditional(input);
+@@ -291,6 +_,7 @@
+         }
+ 
+         this.fuel = input.getByteOr("Fuel", (byte)0);
++        this.brewPause = input.getBooleanOr("KioCG.BrewPause", true); // KioCG - mix potion effect: 默认暂停, 避免在生成结构中酿造
+     }
+ 
+     @Override
+@@ -299,6 +_,7 @@
+         output.putShort("BrewTime", (short)this.brewTime);
+         ContainerHelper.saveAllItems(output, this.items);
+         output.putByte("Fuel", (byte)this.fuel);
++        output.putBoolean("KioCG.BrewPause", this.brewPause); // KioCG - mix potion effect
+     }
+ 
+     @Override
