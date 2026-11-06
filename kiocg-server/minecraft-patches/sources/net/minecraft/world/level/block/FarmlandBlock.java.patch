@@ -41,7 +41,7 @@
 +        if (/*!isNearWater(level, pos) &&*/ !level.isRainingAt(pos.above())) {
 +            if (moisture == MAX_MOISTURE) {
 +                if (!level.getBlockTicks().hasScheduledTick(pos, this)) {
-+                    level.scheduleTick(pos, this, 20 * 60 * 20);
++                    level.scheduleTick(pos, this, level.paperConfig().kiocg.farmlandDryingTicks);
 +                }
 +            } else if (moisture > 0 && !shouldMaintainFarmland(level, pos)) {
 +                // KioCG end - irrigate farmland
@@ -54,7 +54,7 @@
 +            // KioCG start - irrigate farmland
 +        } else {
 +            level.getBlockTicks().unschedule(pos, this);
-+            level.scheduleTick(pos, this, 20 * 60 * 20);
++            level.scheduleTick(pos, this, level.paperConfig().kiocg.farmlandDryingTicks);
 +            // KioCG end - irrigate farmland
          }
      }

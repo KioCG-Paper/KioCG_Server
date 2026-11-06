@@ -1,0 +1,97 @@
+--- a/net/minecraft/world/level/block/StemBlock.java
++++ b/net/minecraft/world/level/block/StemBlock.java
+@@ -41,6 +_,32 @@
+     public static final int MAX_AGE = 7;
+     public static final IntegerProperty AGE = BlockStateProperties.AGE_7;
+     private static final VoxelShape[] SHAPES = Block.boxes(7, age -> Block.column(2.0, 0.0, 2 + age * 2));
++
++    // KioCG start - large fruit
++    public static final Iterable<BlockPos> MEDIUM_OFFSETS_NORTH = BlockPos.betweenClosed(0, 0, -1, 1, 1, 0);
++    public static final Iterable<BlockPos> MEDIUM_OFFSETS_SOUTH = BlockPos.betweenClosed(-1, 0, 0, 0, 1, 1);
++    public static final Iterable<BlockPos> MEDIUM_OFFSETS_WEST = BlockPos.betweenClosed(-1, 0, -1, 0, 1, 0);
++    public static final Iterable<BlockPos> MEDIUM_OFFSETS_EAST = BlockPos.betweenClosed(0, 0, 0, 1, 1, 1);
++    public static final Iterable<BlockPos> LARGE_OFFSETS_NORTH = BlockPos.betweenClosed(-1, 0, -2, 1, 2, 0);
++    public static final Iterable<BlockPos> LARGE_OFFSETS_SOUTH = BlockPos.betweenClosed(-1, 0, 0, 1, 2, 2);
++    public static final Iterable<BlockPos> LARGE_OFFSETS_WEST = BlockPos.betweenClosed(-2, 0, -1, 0, 2, 1);
++    public static final Iterable<BlockPos> LARGE_OFFSETS_EAST = BlockPos.betweenClosed(0, 0, -1, 2, 2, 1);
++    public static final java.util.Map<Direction, Iterable<BlockPos>> MEDIUM_OFFSETS = new java.util.EnumMap<>(Direction.class);
++    public static final java.util.Map<Direction, Iterable<BlockPos>> LARGE_OFFSETS = new java.util.EnumMap<>(Direction.class);
++
++    static {
++        MEDIUM_OFFSETS.put(Direction.NORTH, MEDIUM_OFFSETS_NORTH);
++        MEDIUM_OFFSETS.put(Direction.SOUTH, MEDIUM_OFFSETS_SOUTH);
++        MEDIUM_OFFSETS.put(Direction.WEST, MEDIUM_OFFSETS_WEST);
++        MEDIUM_OFFSETS.put(Direction.EAST, MEDIUM_OFFSETS_EAST);
++
++        LARGE_OFFSETS.put(Direction.NORTH, LARGE_OFFSETS_NORTH);
++        LARGE_OFFSETS.put(Direction.SOUTH, LARGE_OFFSETS_SOUTH);
++        LARGE_OFFSETS.put(Direction.WEST, LARGE_OFFSETS_WEST);
++        LARGE_OFFSETS.put(Direction.EAST, LARGE_OFFSETS_EAST);
++    }
++    // KioCG end - large fruit
++
+     private final ResourceKey<Block> fruit;
+     private final ResourceKey<Block> attachedStem;
+     private final ResourceKey<Item> seed;
+@@ -103,12 +_,61 @@
+                             }
+                             // CraftBukkit end
+                             level.setBlockAndUpdate(pos, stem.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
++
++                            // KioCG start - large fruit
++                            double chance = random.nextDouble();
++                            if (chance < level.paperConfig().kiocg.growFruitLargeChance) {
++                                if (!this.growLarge(level, relative, random, direction, fruit.get().defaultBlockState())) {
++                                    this.growMedium(level, relative, random, direction, fruit.get().defaultBlockState());
++                                }
++                            } else if (chance < (level.paperConfig().kiocg.growFruitLargeChance + level.paperConfig().kiocg.growFruitMediumChance)) {
++                                this.growMedium(level, relative, random, direction, fruit.get().defaultBlockState());
++                            }
++                            // KioCG end - large fruit
+                         }
+                     }
+                 }
+             }
+         }
+     }
++
++    // KioCG start - large fruit
++    private boolean growMedium(final ServerLevel level, final BlockPos pos, final RandomSource random, final Direction direction, final BlockState fruit) {
++        return this.growCube(level, pos, random, direction, fruit, StemBlock.MEDIUM_OFFSETS, random.nextBoolean());
++    }
++
++    private boolean growLarge(final ServerLevel level, final BlockPos pos, final RandomSource random, final Direction direction, final BlockState fruit) {
++        return this.growCube(level, pos, random, direction, fruit, StemBlock.LARGE_OFFSETS, false);
++    }
++
++    private boolean growCube(final ServerLevel level, final BlockPos pos, final RandomSource random, final Direction direction, final BlockState fruit, final java.util.Map<Direction, Iterable<BlockPos>> growMap, final boolean mirror) {
++        Iterable<BlockPos> offsets = growMap.get(direction);
++        boolean lateralIsX = (direction == Direction.NORTH || direction == Direction.SOUTH);
++
++        java.util.List<BlockPos> targets = new java.util.ArrayList<>();
++        for (BlockPos offset : offsets) {
++            int dx = offset.getX();
++            int dy = offset.getY();
++            int dz = offset.getZ();
++
++            if (dx == 0 && dy == 0 && dz == 0) continue;
++
++            if (mirror) {
++                if (lateralIsX) dx = -dx;
++                else dz = -dz;
++            }
++
++            BlockPos dPos = pos.offset(dx, dy, dz);
++            if (!level.getBlockState(dPos).isAir() || (dy == 0 && !level.getBlockState(dPos.below()).is(this.fruitSupportBlocks))) {
++                return false;
++            }
++            targets.add(dPos);
++        }
++
++        targets.forEach(target -> org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(level, target, fruit, Block.UPDATE_ALL));
++        return true;
++    }
++    // KioCG end - large fruit
+ 
+     @Override
+     protected ItemStack getCloneItemStack(final LevelReader level, final BlockPos pos, final BlockState state, final boolean includeData) {
