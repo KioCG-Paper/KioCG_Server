@@ -33,7 +33,7 @@
      private final ResourceKey<Block> fruit;
      private final ResourceKey<Block> attachedStem;
      private final ResourceKey<Item> seed;
-@@ -103,12 +_,61 @@
+@@ -103,12 +_,62 @@
                              }
                              // CraftBukkit end
                              level.setBlockAndUpdate(pos, stem.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
@@ -82,7 +82,8 @@
 +            }
 +
 +            BlockPos dPos = pos.offset(dx, dy, dz);
-+            if (!level.getBlockState(dPos).isAir() || (dy == 0 && !level.getBlockState(dPos.below()).is(this.fruitSupportBlocks))) {
++            BlockState dState = level.getBlockState(dPos);
++            if ((!dState.isAir() && !dState.is(fruit.getBlock())) || (dy == 0 && !level.getBlockState(dPos.below()).is(this.fruitSupportBlocks))) {
 +                return false;
 +            }
 +            targets.add(dPos);
