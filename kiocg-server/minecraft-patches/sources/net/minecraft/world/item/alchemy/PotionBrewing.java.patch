@@ -84,6 +84,15 @@
      }
  
      public static PotionBrewing bootstrap(final FeatureFlagSet enabledFeatures) {
+@@ -172,7 +_,7 @@
+         builder.addMix(Potions.LONG_LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
+         builder.addMix(Potions.SLOWNESS, Items.REDSTONE, Potions.LONG_SLOWNESS);
+         builder.addMix(Potions.SLOWNESS, Items.GLOWSTONE_DUST, Potions.STRONG_SLOWNESS);
+-        builder.addMix(Potions.AWKWARD, Items.TURTLE_HELMET, Potions.TURTLE_MASTER);
++        builder.addMix(Potions.AWKWARD, Items.TURTLE_SCUTE, Potions.TURTLE_MASTER); // KioCG - mix potion effect
+         builder.addMix(Potions.TURTLE_MASTER, Items.REDSTONE, Potions.LONG_TURTLE_MASTER);
+         builder.addMix(Potions.TURTLE_MASTER, Items.GLOWSTONE_DUST, Potions.STRONG_TURTLE_MASTER);
+         builder.addMix(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
 @@ -252,6 +_,7 @@
      public static class Builder {
          private final List<Ingredient> containers = new ArrayList<>();

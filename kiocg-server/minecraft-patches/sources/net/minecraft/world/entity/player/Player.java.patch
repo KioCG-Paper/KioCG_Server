@@ -6,7 +6,7 @@
      protected FoodData foodData = new FoodData();
 +    // KioCG start - player thirst
 +    protected com.kiocg.world.food.ThirstData thirstData = new com.kiocg.world.food.ThirstData();
-+    public int realAirSupply;
++    public int realAirSupply = this.getDefaultMaxAirSupply();
 +    // KioCG end - player thirst
      protected int jumpTriggerTime;
      public int takeXpDelay;

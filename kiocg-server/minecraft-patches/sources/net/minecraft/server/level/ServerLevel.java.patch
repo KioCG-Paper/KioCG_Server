@@ -164,7 +164,7 @@
                  ? this.getDestroyType(GameRules.MOB_EXPLOSION_DROP_DECAY)
                  : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.TNT_EXPLOSION_DROP_DECAY);
-@@ -2532,6 +_,41 @@
+@@ -2532,6 +_,42 @@
          return this.getEntities().getAll();
      }
  
@@ -188,7 +188,8 @@
 +        } else {
 +            for (ServerLevel serverLevel : this.getServer().getAllLevels()) {
 +                if (serverLevel.uuid.equals(entity.originWorld)) {
-+                    serverLevel.mobFarmRestrictor.addTo(chunkPos, 1);
++                    serverLevel.mobFarmRestrictor.addTo(chunkPos, -1);
++                    return;
 +                }
 +            }
 +        }

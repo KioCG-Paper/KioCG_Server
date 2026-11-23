@@ -73,7 +73,7 @@ public abstract class BossBarTask extends BukkitRunnable {
 
     public void start() {
         stop();
-        this.runTaskTimerAsynchronously(new MinecraftInternalPlugin(), 1, 1);
+        this.runTaskTimer(new MinecraftInternalPlugin(), 1, 1);
         started = true;
     }
 
