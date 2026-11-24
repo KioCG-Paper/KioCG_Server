@@ -18,12 +18,3 @@
              LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
              LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
-@@ -406,6 +_,8 @@
-             MinecraftServerStatistics.registerJmxMonitoring(this);
-             LOGGER.info("JMX monitoring enabled");
-         }
-+
-+        com.kiocg.server.tasks.BossBarTask.startAll(); // KioCG - bossbar task
- 
-         this.saveEverything(false, true, true);
-         this.notificationManager().serverStarted();

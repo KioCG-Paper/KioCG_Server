@@ -19,15 +19,22 @@
          // Paper - per-level GameRules
          this.fixerUpper = fixerUpper;
          this.functionManager = new ServerFunctionManager(this, this.resources.managers.getFunctionLibrary());
-@@ -1142,6 +_,8 @@
-         this.safeShutdown(wait, false);
-     }
-     public void safeShutdown(final boolean wait, final boolean isRestarting) {
-+        com.kiocg.server.tasks.BossBarTask.stopAll(); // KioCG - bossbar task
-+
-         this.isRestarting = isRestarting;
-         this.hasLoggedStop = true; // Paper - Debugging
-         if (this.isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper - Debugging
+@@ -1050,6 +_,7 @@
+         // CraftBukkit start
+         if (this.server != null) {
+             this.server.spark.disable(); // Paper - spark
++            this.server.internalPlugin.onDisable(); // KioCG - internal plugin
+             this.server.disablePlugins();
+             this.server.waitForAsyncTasksShutdown(); // Paper - Wait for Async Tasks during shutdown
+         }
+@@ -1299,6 +_,7 @@
+             this.status = this.buildServerStatus();
+ 
+             this.server.spark.enableBeforePlugins(); // Paper - spark
++            this.server.internalPlugin.onEnable(); // KioCG - internal plugin
+             // Spigot start
+             // Paper start
+             LOGGER.info("Running delayed init tasks");
 @@ -1639,6 +_,17 @@
              }
          }

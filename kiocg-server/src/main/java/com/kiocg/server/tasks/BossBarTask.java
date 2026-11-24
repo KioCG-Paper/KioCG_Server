@@ -1,6 +1,6 @@
 package com.kiocg.server.tasks;
 
-import com.kiocg.server.utils.MinecraftInternalPlugin;
+import com.kiocg.bukkit.plugin.InternalPlugin;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -73,7 +73,7 @@ public abstract class BossBarTask extends BukkitRunnable {
 
     public void start() {
         stop();
-        this.runTaskTimer(new MinecraftInternalPlugin(), 1, 1);
+        this.runTaskTimer(InternalPlugin.getInstance(), 1, 1);
         started = true;
     }
 

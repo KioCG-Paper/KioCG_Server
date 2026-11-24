@@ -1,0 +1,18 @@
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -302,6 +_,7 @@
+     private final io.papermc.paper.logging.SysoutCatcher sysoutCatcher = new io.papermc.paper.logging.SysoutCatcher();
+     private final io.papermc.paper.potion.PaperPotionBrewer potionBrewer;
+     public final io.papermc.paper.SparksFly spark;
++    public final com.kiocg.bukkit.plugin.InternalPlugin internalPlugin; // KioCG - internal plugin
+     private final ServerConfiguration serverConfig = new PaperServerConfiguration();
+ 
+     // Paper start - Folia region threading API
+@@ -483,6 +_,7 @@
+         this.potionBrewer = new io.papermc.paper.potion.PaperPotionBrewer(console); // Paper - custom potion mixes
+         datapackManager = new io.papermc.paper.datapack.PaperDatapackManager(console.getPackRepository()); // Paper
+         this.spark = new io.papermc.paper.SparksFly(this); // Paper - spark
++        this.internalPlugin = new com.kiocg.bukkit.plugin.InternalPlugin(); // KioCG - internal plugin
+     }
+ 
+     public boolean getCommandBlockOverride(String command) {
