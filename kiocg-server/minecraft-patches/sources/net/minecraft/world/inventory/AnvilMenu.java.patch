@@ -22,7 +22,7 @@
              }
  
 -            int finalPrice = price <= 0 ? 0 : (int)Mth.clamp(tax + price, 0L, 2147483647L);
-+            int finalPrice = price <= 0 ? 0 : (int)Mth.clamp((tax + price) * 100, 0L, 2147483647L); // KioCG - EXP is money: 扣除100倍合成等级
++            int finalPrice = price <= 0 ? 0 : (int)Mth.clamp((tax + price) * 100L, 0L, 2147483647L); // KioCG - EXP is money: 扣除100倍合成等级
              this.cost.set(finalPrice);
              if (price <= 0) {
                  result = ItemStack.EMPTY;
