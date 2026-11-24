@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/level/saveddata/WeatherData.java
++++ b/net/minecraft/world/level/saveddata/WeatherData.java
+@@ -61,6 +_,11 @@
+         }
+ 
+         org.bukkit.World world = this.level == null ? null : this.level.getWorld();
++        // KioCG start - per world weather config
++        if (world == null && !io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.perWorldWeather) {
++            world = net.minecraft.server.MinecraftServer.getServer().overworld().getWorld();
++        }
++        // KioCG end - per world weather config
+         if (world != null) {
+             org.bukkit.event.weather.ThunderChangeEvent thunder = new org.bukkit.event.weather.ThunderChangeEvent(world, thundering, cause); // Paper - Add cause to Weather/ThunderChangeEvents
+             org.bukkit.Bukkit.getServer().getPluginManager().callEvent(thunder);
+@@ -99,6 +_,11 @@
+         }
+ 
+         org.bukkit.World world = this.level == null ? null : this.level.getWorld();
++        // KioCG start - per world weather config
++        if (world == null && !io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.perWorldWeather) {
++            world = net.minecraft.server.MinecraftServer.getServer().overworld().getWorld();
++        }
++        // KioCG end - per world weather config
+         if (world != null) {
+             org.bukkit.event.weather.WeatherChangeEvent weather = new org.bukkit.event.weather.WeatherChangeEvent(world, raining, cause); // Paper - Add cause to Weather/ThunderChangeEvents
+             org.bukkit.Bukkit.getServer().getPluginManager().callEvent(weather);

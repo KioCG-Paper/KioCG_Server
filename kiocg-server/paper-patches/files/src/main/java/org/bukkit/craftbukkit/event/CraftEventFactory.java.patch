@@ -19,7 +19,7 @@
  
      public static ClockTimeSkipEvent createTimeSkipEvent(final CommandSourceStack source, final long skipAmount) {
 -        if (io.papermc.paper.configuration.GlobalConfiguration.get().time.affectsAllWorlds) {
-+        if (!source.getLevel().paperConfig().kiocg.perWorldTime) { // KioCG - per world time config
++        if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.perWorldTime && source.getLevel().getGameRules().get(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME)) { // KioCG - per world time config
              return new ClockTimeSkipEvent(ClockTimeSkipEvent.SkipReason.COMMAND, skipAmount);
          }
          return new TimeSkipEvent(source.getLevel().getWorld(), ClockTimeSkipEvent.SkipReason.COMMAND, skipAmount);

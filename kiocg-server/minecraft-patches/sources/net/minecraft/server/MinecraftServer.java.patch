@@ -57,7 +57,7 @@
 +            // KioCG start - per world time config
 +            this.clockManager.tick();
 +            for (ServerLevel level : this.getAllLevels()) {
-+                if (level.paperConfig().kiocg.perWorldTime)
++                if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.perWorldTime || !level.getGameRules().get(GameRules.ADVANCE_TIME))
                      level.clockManager().tick();
 -                }
              }

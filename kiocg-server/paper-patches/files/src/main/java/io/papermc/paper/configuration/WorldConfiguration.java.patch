@@ -9,7 +9,7 @@
              public boolean perPlayerMobSpawns = true;
              public boolean scanForLegacyEnderDragon = true;
              @MergeMap
-@@ -593,4 +_,32 @@
+@@ -593,4 +_,30 @@
          	HORIZONTAL_FIRST_OUTWARD, HORIZONTAL_FIRST_INWARD, VERTICAL_FIRST_OUTWARD, VERTICAL_FIRST_INWARD
          }
      }
@@ -18,8 +18,6 @@
 +    public Kiocg kiocg;
 +
 +    public class Kiocg extends ConfigurationPart {
-+        public boolean perWorldTime = false;
-+        public boolean perWorldWeather = false;
 +        public int farmlandDryingTicks = 24_000;
 +        public double growFruitMediumChance = 0.125;
 +        public double growFruitLargeChance = 0.037037;

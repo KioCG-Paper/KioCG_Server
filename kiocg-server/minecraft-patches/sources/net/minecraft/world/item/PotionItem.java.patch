@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/PotionItem.java
 +++ b/net/minecraft/world/item/PotionItem.java
-@@ -75,6 +_,55 @@
+@@ -75,6 +_,61 @@
              level.setBlockAndUpdate(pos, Blocks.MUD.defaultBlockState());
              return InteractionResult.SUCCESS;
          } else {
@@ -48,7 +48,13 @@
 +
 +                    level.playSound(null, farmlandPos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
 +                    level.gameEvent(null, GameEvent.FLUID_PLACE, farmlandPos);
-+                    org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(level, farmlandPos, farmland.setValue(net.minecraft.world.level.block.FarmlandBlock.MOISTURE, 7), net.minecraft.world.level.block.Block.UPDATE_CLIENTS); // CraftBukkit
++                    if (org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(level, farmlandPos, farmland.setValue(net.minecraft.world.level.block.FarmlandBlock.MOISTURE, 7), net.minecraft.world.level.block.Block.UPDATE_CLIENTS)) { // CraftBukkit
++                        farmland = level.getBlockState(farmlandPos);
++                        if (farmland.is(Blocks.FARMLAND) && farmland.getValue(net.minecraft.world.level.block.FarmlandBlock.MOISTURE) == net.minecraft.world.level.block.FarmlandBlock.MAX_MOISTURE) {
++                            level.getBlockTicks().unschedule(farmlandPos, Blocks.FARMLAND);
++                            level.scheduleTick(farmlandPos, Blocks.FARMLAND, level.paperConfig().kiocg.farmlandDryingTicks);
++                        }
++                    }
 +                    return InteractionResult.SUCCESS;
 +                }
 +            }

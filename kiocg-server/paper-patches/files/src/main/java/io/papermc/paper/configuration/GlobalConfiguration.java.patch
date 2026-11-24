@@ -9,7 +9,7 @@
      }
  
      public Scoreboards scoreboards;
-@@ -394,4 +_,37 @@
+@@ -394,4 +_,40 @@
      public class UpdateChecker extends ConfigurationPart {
          public boolean enabled = true;
      }
@@ -18,6 +18,9 @@
 +    public Kiocg kiocg;
 +
 +    public class Kiocg extends ConfigurationPart {
++        public boolean perWorldTime = false;
++        public boolean perWorldWeather = false;
++
 +        public Player player;
 +
 +        public class Player extends ConfigurationPart {

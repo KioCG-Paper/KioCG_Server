@@ -27,12 +27,17 @@
          }
  
          this.raids = this.getDataStorage().computeIfAbsent(Raids.TYPE);
-@@ -764,7 +_,7 @@
+@@ -764,7 +_,12 @@
  
      @Override
      public ServerClockManager clockManager() {
 -        return io.papermc.paper.configuration.GlobalConfiguration.get().time.affectsAllWorlds ? this.server.clockManager() : this.clockManager; // Paper - per-world time
-+        return !this.paperConfig().kiocg.perWorldTime ? this.server.clockManager() : this.clockManager; // Paper - per-world time // KioCG - per world time config
++        // KioCG start - per world time config
++        if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.perWorldTime && this.getGameRules().get(GameRules.ADVANCE_TIME)) {
++            return this.server.clockManager();
++        }
++        return this.clockManager; // Paper - per-world time
++        // KioCG end - per world time config
      }
  
      @Override
@@ -207,12 +212,16 @@
      @Override
      public String toString() {
          return "ServerLevel[" + this.serverLevelData.getLevelName() + "]";
-@@ -2551,7 +_,7 @@
+@@ -2551,7 +_,12 @@
      }
  
      public WeatherData getWeatherData() {
--        return this.weatherData; // Paper - per-level WeatherData
-+        return !this.paperConfig().kiocg.perWorldWeather ? this.server.getWeatherData() : this.weatherData; // Paper - per-level WeatherData // KioCG - per world weather config
++        // KioCG start - per world weather config
++        if (!io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.perWorldWeather && this.getGameRules().get(GameRules.ADVANCE_WEATHER)) {
++            return this.server.getWeatherData();
++        }
+         return this.weatherData; // Paper - per-level WeatherData
++        // KioCG end - per world weather config
      }
  
      @Override
