@@ -1,0 +1,10 @@
+--- a/data/minecraft/recipe/netherite_scrap.json
++++ b/data/minecraft/recipe/netherite_scrap.json
+@@ -5,6 +_,6 @@
+   "experience": 2.0,
+   "ingredient": "minecraft:ancient_debris",
+   "result": {
+-    "id": "minecraft:netherite_scrap"
++    "id": "minecraft:netherite_ingot"
+   }
+ }
