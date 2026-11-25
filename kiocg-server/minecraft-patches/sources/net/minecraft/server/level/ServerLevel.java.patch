@@ -88,6 +88,24 @@
              }
  
              this.oThunderLevel = this.thunderLevel;
+@@ -1349,7 +_,17 @@
+     private void tickBlock(final BlockPos pos, final Block type) {
+         BlockState state = this.getBlockState(pos);
+         if (state.is(type)) {
++            // KioCG start - chunk load
++            LevelChunk levelChunk = this.getChunkIfLoaded(pos);
++            if (levelChunk != null) levelChunk.getChunkLoad().startTicking();
++            try {
++            // KioCG end - chunk load
+             state.tick(this, pos, this.random);
++            // KioCG start - chunk load
++            } finally {
++                if (levelChunk != null) levelChunk.getChunkLoad().endTickingAndCount();
++            }
++            // KioCG end - chunk load
+         }
+         // Paper start - rewrite chunk system
+         if ((++this.tickedBlocksOrFluids & 7L) != 0L) {
 @@ -1386,10 +_,20 @@
          profiler.push(entity.typeHolder()::getRegisteredName);
          profiler.incrementCounter("tickNonPassenger");

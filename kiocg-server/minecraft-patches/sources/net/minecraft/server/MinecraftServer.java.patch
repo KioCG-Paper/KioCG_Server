@@ -35,7 +35,7 @@
              // Spigot start
              // Paper start
              LOGGER.info("Running delayed init tasks");
-@@ -1639,6 +_,17 @@
+@@ -1639,6 +_,16 @@
              }
          }
  
@@ -46,7 +46,6 @@
 +                    chunk.getChunkLoad().newTick();
 +                }
 +            }
-+            com.kiocg.world.level.chunk.ChunkLoad.nextTick();
 +        }
 +        // KioCG end - chunk load
 +

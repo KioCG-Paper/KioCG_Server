@@ -13,7 +13,7 @@
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
-@@ -767,7 +_,59 @@
+@@ -767,7 +_,114 @@
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();
          this.advancements.flushDirty(this, true);
@@ -21,29 +21,84 @@
 +
 +        // KioCG start - chunk load
 +        if (this.server.getTickCount() % 20 == 1) {
-+            this.wasOverloaded = false;
 +            this.nearbyChunkLoad = this.refreshNearbyChunkLoad();
-+            if (this.nearbyChunkLoad >= this.level().paperConfig().kiocg.chunkLoad.mediumPhase) {
++            final var chunkLoad = this.level().paperConfig().kiocg.chunkLoad;
++
++            // 警告阶段：只提示，不惩罚
++            if (this.nearbyChunkLoad >= chunkLoad.mediumPhase) {
 +                if (!com.kiocg.server.tasks.TPSBarTask.instance().hasPlayer(this.uuid)) {
 +                    com.kiocg.server.tasks.TPSBarTask.instance().addPlayer(this.getBukkitEntity());
-+                    this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocg.chunkLoad.mediumMessage)), true);
++                    this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(chunkLoad.mediumMessage)), true);
 +                }
-+                if (this.nearbyChunkLoad >= this.level().paperConfig().kiocg.chunkLoad.lowPhase) {
-+                    this.wasOverloaded = !this.getAbilities().invulnerable;
-+                    if (this.wasOverloaded) {
-+                        if (!this.hasEffect(MobEffects.FIRE_RESISTANCE)) {
-+                            this.hurtServer(this.level(), this.damageSources().generic(), 2.0F);
-+                        }
-+                    }
-+                    this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.level().paperConfig().kiocg.chunkLoad.lowMessage)), true);
++            }
++
++            // 惩罚阶段：滞回 + 连续确认，避免单次尖峰扣血和阈值抖动
++            this.updateOverload(this.nearbyChunkLoad, chunkLoad.lowPhase);
++
++            this.wasOverloaded = this.overloaded && !this.getAbilities().invulnerable;
++            if (this.overloaded) {
++                if (this.wasOverloaded && !this.hasEffect(MobEffects.FIRE_RESISTANCE)) {
++                    this.hurtServer(this.level(), this.damageSources().generic(), 2.0F);
 +                }
++                this.sendSystemMessage(io.papermc.paper.adventure.PaperAdventure.asVanilla(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(chunkLoad.lowMessage)), true);
 +            }
 +        }
 +        // KioCG end - chunk load
 +    }
 +
 +    // KioCG start - chunk load
++    // 连续多少秒达到进入阈值才惩罚（防单次尖峰）
++    private static final int OVERLOAD_CONFIRM_SECONDS = 5;
++    // 连续多少秒低于退出阈值才解除惩罚（防抖动）
++    private static final int OVERLOAD_RELEASE_SECONDS = 5;
++    // 退出阈值 = 进入阈值 * 该比例，两者之间是滞回区间
++    private static final double OVERLOAD_RELEASE_RATIO = 0.8;
++
++    // 当前是否处于惩罚状态
++    private boolean overloaded = false;
++    // 连续达到进入阈值的秒数
++    private int overloadSeconds = 0;
++    // 连续低于退出阈值的秒数
++    private int relaxSeconds = 0;
++    // 用于假装着火的特效标记
 +    private boolean wasOverloaded = false;
++
++    /**
++     * 每 20 tick 调用一次，用滞回 + 连续确认更新惩罚状态。
++     *
++     * @param load     当前模拟区域负载
++     * @param lowPhase 进入惩罚的阈值
++     */
++    private void updateOverload(long load, long lowPhase) {
++        if (this.overloaded) {
++            // 惩罚中：必须连续多秒低于退出阈值才解除
++            if (load < (long) (lowPhase * OVERLOAD_RELEASE_RATIO)) {
++                if (++this.relaxSeconds >= OVERLOAD_RELEASE_SECONDS) {
++                    this.overloaded = false;
++                    this.relaxSeconds = 0;
++                }
++            } else {
++                this.relaxSeconds = 0;
++            }
++        } else {
++            // 正常中：必须连续多秒达到进入阈值才进入惩罚
++            if (load >= lowPhase) {
++                if (++this.overloadSeconds >= OVERLOAD_CONFIRM_SECONDS) {
++                    this.overloaded = true;
++                    this.overloadSeconds = 0;
++                }
++            } else {
++                this.overloadSeconds = 0;
++            }
++        }
++    }
++
++    /**
++     * @return 当前是否处于过载惩罚状态
++     */
++    public boolean isOverloaded() {
++        return this.overloaded;
++    }
 +
 +    @Override
 +    public void setSharedFlagOnFire(boolean isOnFire) {
