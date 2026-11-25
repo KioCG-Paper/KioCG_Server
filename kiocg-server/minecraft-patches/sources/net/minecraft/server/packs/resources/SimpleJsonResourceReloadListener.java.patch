@@ -1,0 +1,15 @@
+--- a/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
++++ b/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
+@@ -67,7 +_,11 @@
+             Identifier id = lister.fileToId(location);
+ 
+             try (Reader reader = entry.getValue().openAsReader()) {
+-                codec.parse(ops, StrictJsonParser.parse(reader)).ifSuccess(parsed -> {
++                // KioCG start - allow recipe removal
++                final JsonElement parse = StrictJsonParser.parse(reader);
++                if (parse.isJsonNull()) continue;
++                codec.parse(ops, parse).ifSuccess(parsed -> {
++                    // KioCG end - allow recipe removal
+                     if (result.putIfAbsent(id, (T)parsed) != null) {
+                         throw new IllegalStateException("Duplicate data file ignored with ID " + id);
+                     }
