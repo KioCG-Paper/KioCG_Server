@@ -1,0 +1,12 @@
+--- a/data/minecraft/recipe/popped_chorus_fruit.json
++++ b/data/minecraft/recipe/popped_chorus_fruit.json
+@@ -1,7 +_,7 @@
+ {
+-  "type": "minecraft:smelting",
++  "type": "minecraft:smoking",
+   "category": "misc",
+-  "cookingtime": 200,
++  "cookingtime": 100,
+   "experience": 0.1,
+   "ingredient": "minecraft:chorus_fruit",
+   "result": {

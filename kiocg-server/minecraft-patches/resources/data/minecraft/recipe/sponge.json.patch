@@ -1,0 +1,12 @@
+--- a/data/minecraft/recipe/sponge.json
++++ b/data/minecraft/recipe/sponge.json
+@@ -1,7 +_,7 @@
+ {
+-  "type": "minecraft:smelting",
++  "type": "minecraft:smoking",
+   "category": "blocks",
+-  "cookingtime": 200,
++  "cookingtime": 100,
+   "experience": 0.15,
+   "ingredient": "minecraft:wet_sponge",
+   "result": {

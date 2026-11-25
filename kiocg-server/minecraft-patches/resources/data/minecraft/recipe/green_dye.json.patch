@@ -1,0 +1,12 @@
+--- a/data/minecraft/recipe/green_dye.json
++++ b/data/minecraft/recipe/green_dye.json
+@@ -1,7 +_,7 @@
+ {
+-  "type": "minecraft:smelting",
++  "type": "minecraft:smoking",
+   "category": "misc",
+-  "cookingtime": 200,
++  "cookingtime": 100,
+   "experience": 1.0,
+   "ingredient": "minecraft:cactus",
+   "result": {

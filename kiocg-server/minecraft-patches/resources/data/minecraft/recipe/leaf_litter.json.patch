@@ -1,0 +1,12 @@
+--- a/data/minecraft/recipe/leaf_litter.json
++++ b/data/minecraft/recipe/leaf_litter.json
+@@ -1,7 +_,7 @@
+ {
+-  "type": "minecraft:smelting",
++  "type": "minecraft:smoking",
+   "category": "blocks",
+-  "cookingtime": 200,
++  "cookingtime": 100,
+   "experience": 0.1,
+   "ingredient": "#minecraft:leaves",
+   "result": {
