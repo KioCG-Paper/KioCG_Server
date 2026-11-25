@@ -1,0 +1,28 @@
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -1122,6 +_,12 @@
+         return server.addRecipe(recipe);
+     }
+ 
++    // KioCG start - more api: extended recipe
++    public static boolean addRecipe(@NotNull List<Recipe> recipes) {
++        return server.addRecipe(recipes);
++    }
++    // KioCG end - more api: extended recipe
++
+     /**
+      * Adds a recipe to the crafting manager.
+      *
+@@ -1325,6 +_,12 @@
+     public static boolean removeRecipe(@NotNull NamespacedKey key) {
+         return server.removeRecipe(key);
+     }
++
++    // KioCG start - more api: extended recipe
++    public static boolean removeRecipe(@NotNull List<NamespacedKey> keys) {
++        return server.removeRecipe(keys);
++    }
++    // KioCG end - more api: extended recipe
+ 
+     // Paper start - method to resend recipes
+     /**

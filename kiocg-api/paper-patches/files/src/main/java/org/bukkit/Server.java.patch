@@ -1,0 +1,46 @@
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1032,6 +_,12 @@
+         return this.addRecipe(recipe, false);
+     }
+ 
++    // KioCG start - more api: extended recipe
++    default boolean addRecipe(@NotNull List<Recipe> recipes) {
++        return this.addRecipe(recipes, false);
++    }
++    // KioCG end - more api: extended recipe
++
+     // Paper start - method to send recipes immediately
+     /**
+      * Adds a recipe to the crafting manager.
+@@ -1045,6 +_,8 @@
+     boolean addRecipe(@Nullable Recipe recipe, boolean resendRecipes);
+     // Paper end - method to send recipes immediately
+ 
++    boolean addRecipe(@NotNull List<Recipe> recipes, boolean resendRecipes); // KioCG - more api: extended recipe
++
+     /**
+      * Get a list of all recipes for a given item. The stack size is ignored
+      * in comparisons. If the durability is -1, it will match any data value.
+@@ -1219,6 +_,12 @@
+         return this.removeRecipe(key, false);
+     }
+ 
++    // KioCG start - more api: extended recipe
++    default boolean removeRecipe(@NotNull List<NamespacedKey> keys) {
++        return this.removeRecipe(keys, false);
++    }
++    // KioCG end - more api: extended recipe
++
+     // Paper start - method to resend recipes
+     /**
+      * Remove a recipe from the server.
+@@ -1234,6 +_,8 @@
+      */
+     boolean removeRecipe(@NotNull NamespacedKey key, boolean resendRecipes);
+     // Paper end - method to resend recipes
++
++    boolean removeRecipe(@NotNull List<NamespacedKey> keys, boolean resendRecipes); // KioCG end - more api: extended recipe
+ 
+     /**
+      * Gets a list of command aliases defined in the server properties.

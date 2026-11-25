@@ -16,3 +16,70 @@
      }
  
      public boolean getCommandBlockOverride(String command) {
+@@ -1473,12 +_,32 @@
+         toAdd.addToRecipeManager();
+         // Paper start - API for updating recipes on clients
+         if (true || resendRecipes) { // Always needs to be resent now... TODO
+-            this.playerList.reloadRecipes();
++            // this.playerList.reloadRecipes(); // KioCG - more api: extended recipe: 已在finalizeRecipeLoading()内执行
+         }
+         // Paper end - API for updating recipes on clients
+         return true;
+     }
+ 
++    // KioCG start - more api: extended recipe
++    @Override
++    public boolean addRecipe(List<Recipe> recipes, boolean resendRecipes) {
++        boolean added = false;
++        final net.minecraft.world.item.crafting.RecipeManager recipeManager = this.getServer().getRecipeManager();
++        recipeManager.skipFinalizeRecipeLoading = true;
++        try {
++            for (Recipe recipe : recipes) {
++                added |= addRecipe(recipe, resendRecipes);
++            }
++        } finally {
++            recipeManager.skipFinalizeRecipeLoading = false;
++            if (added) {
++                recipeManager.finalizeRecipeLoading();
++            }
++        }
++        return added;
++    }
++    // KioCG end - more api: extended recipe
++
+     @Override
+     public List<Recipe> getRecipesFor(ItemStack result) {
+         Preconditions.checkArgument(result != null, "ItemStack cannot be null");
+@@ -1655,11 +_,31 @@
+         final ResourceKey<net.minecraft.world.item.crafting.Recipe<?>> id = CraftNamespacedKey.toResourceKey(Registries.RECIPE, recipeKey);
+         final boolean removed = this.getServer().getRecipeManager().removeRecipe(id);
+         if (removed/* && resendRecipes*/) { // TODO Always need to resend them rn - deprecate this method?
+-            this.playerList.reloadRecipes();
++            // this.playerList.reloadRecipes(); // KioCG - more api: extended recipe: 已在finalizeRecipeLoading()内执行
+         }
+         return removed;
+         // Paper end - resend recipes on successful removal
+     }
++
++    // KioCG start - more api: extended recipe
++    @Override
++    public boolean removeRecipe(List<NamespacedKey> recipeKeys, boolean resendRecipes) {
++        boolean removed = false;
++        final net.minecraft.world.item.crafting.RecipeManager recipeManager = this.getServer().getRecipeManager();
++        recipeManager.skipFinalizeRecipeLoading = true;
++        try {
++            for (NamespacedKey recipeKey : recipeKeys) {
++                removed |= removeRecipe(recipeKey, resendRecipes);
++            }
++        } finally {
++            recipeManager.skipFinalizeRecipeLoading = false;
++            if (removed) {
++                recipeManager.finalizeRecipeLoading();
++            }
++        }
++        return removed;
++    }
++    // KioCG end - more api: extended recipe
+ 
+     @Override
+     public Map<String, String[]> getCommandAliases() {

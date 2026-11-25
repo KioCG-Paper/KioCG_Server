@@ -1,6 +1,7 @@
 package com.kiocg.bukkit.plugin;
 
 import com.kiocg.server.tasks.BossBarTask;
+import io.papermc.paper.event.server.ServerResourcesReloadedEvent;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.Bukkit;
@@ -8,6 +9,8 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
@@ -24,7 +27,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class InternalPlugin extends PluginBase {
+public class InternalPlugin extends PluginBase implements Listener {
     private static final String NAME = "InternalPlugin";
     private static final String VERSION = "1.0";
     private static final String MAIN_CLASS = "com.kiocg.bukkit.plugin.InternalPlugin";
@@ -53,6 +56,9 @@ public class InternalPlugin extends PluginBase {
         }
         this.enabled = true;
         try {
+            ModifyRecipes.apply(this);
+            Bukkit.getPluginManager().registerEvent(ServerResourcesReloadedEvent.class, this, EventPriority.NORMAL, (_, _) -> ModifyRecipes.apply(this), this);
+
             BossBarTask.startAll(); // KioCG - bossbar task
             this.logger.info("InternalPlugin Enabled.");
         } catch (Throwable t) {
@@ -151,22 +157,12 @@ public class InternalPlugin extends PluginBase {
     // ------------------------------------------------------------------
 
     @Override
-    public boolean onCommand(
-            final @NotNull CommandSender sender,
-            final @NotNull Command command,
-            final @NotNull String label,
-            final @NotNull String @NotNull [] args
-    ) {
+    public boolean onCommand(final @NotNull CommandSender sender, final @NotNull Command command, final @NotNull String label, final @NotNull String @NotNull [] args) {
         return false;
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(
-            final @NotNull CommandSender sender,
-            final @NotNull Command command,
-            final @NotNull String label,
-            final @NotNull String @NotNull [] args
-    ) {
+    public @Nullable List<String> onTabComplete(final @NotNull CommandSender sender, final @NotNull Command command, final @NotNull String label, final @NotNull String @NotNull [] args) {
         return Collections.emptyList();
     }
 
