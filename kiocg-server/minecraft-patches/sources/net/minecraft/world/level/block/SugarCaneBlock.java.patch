@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/SugarCaneBlock.java
++++ b/net/minecraft/world/level/block/SugarCaneBlock.java
+@@ -112,4 +_,16 @@
+     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+         builder.add(AGE);
+     }
++
++    // KioCG start - crops drop exp
++    @Override
++    public int getExpDrop(final BlockState state, final ServerLevel level, final BlockPos pos, final net.minecraft.world.item.ItemStack tool, final boolean dropExperience) {
++        if (dropExperience) {
++            if (state.getValue(AGE) == 15) {
++                return level.getRandom().nextInt(0, 4);
++            }
++        }
++        return 0;
++    }
++    // KioCG end - crops drop exp
+ }
