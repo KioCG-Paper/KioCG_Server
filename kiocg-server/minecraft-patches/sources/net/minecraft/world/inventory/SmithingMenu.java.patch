@@ -1,0 +1,74 @@
+--- a/net/minecraft/world/inventory/SmithingMenu.java
++++ b/net/minecraft/world/inventory/SmithingMenu.java
+@@ -73,11 +_,12 @@
+ 
+     @Override
+     protected void onTake(final Player player, final ItemStack carried) {
++        final int requiredCount = required(this.resultSlots.getRecipeUsed(), this.inputSlots.getItem(BASE_SLOT)); // KioCG - change container behavior: awardUsedRecipes()会清空配方
+         carried.onCraftedBy(player, carried.getCount());
+         this.resultSlots.awardUsedRecipes(player, this.getRelevantItems());
+-        this.shrinkStackInSlot(0);
++        // this.shrinkStackInSlot(0); // KioCG - change container behavior
+         this.shrinkStackInSlot(1);
+-        this.shrinkStackInSlot(2);
++        this.shrinkStackInSlot(2, requiredCount); // KioCG - change container behavior
+         this.access.execute((level, pos) -> level.levelEvent(LevelEvent.SOUND_SMITHING_TABLE_USED, pos, 0));
+     }
+ 
+@@ -90,9 +_,15 @@
+     }
+ 
+     private void shrinkStackInSlot(final int slot) {
++        // KioCG start - change container behavior
++        this.shrinkStackInSlot(slot, 1);
++    }
++
++    private void shrinkStackInSlot(final int slot, final int amount) {
++        // KioCG end - change container behavior
+         ItemStack stack = this.inputSlots.getItem(slot);
+         if (!stack.isEmpty()) {
+-            stack.shrink(1);
++            stack.shrink(amount); // KioCG - change container behavior
+             this.inputSlots.setItem(slot, stack);
+         }
+     }
+@@ -120,8 +_,21 @@
+             foundRecipe = Optional.empty();
+         }
+ 
++        // KioCG start - change container behavior
++        if (foundRecipe.isPresent()) {
++            if (input.addition().getCount() < required(foundRecipe.get(), input.base())) {
++                foundRecipe = Optional.empty();
++            }
++        }
++        // KioCG end - change container behavior
++
+         foundRecipe.ifPresentOrElse(recipe -> {
+             ItemStack result = recipe.value().assemble(input);
++            // KioCG start - change container behavior
++            int baseCost = result.getOrDefault(net.minecraft.core.component.DataComponents.REPAIR_COST, 0);
++            baseCost = AnvilMenu.calculateIncreasedRepairCost(baseCost);
++            result.set(net.minecraft.core.component.DataComponents.REPAIR_COST, baseCost);
++            // KioCG end - change container behavior
+             this.resultSlots.setRecipeUsed((RecipeHolder<?>)recipe);
+             // CraftBukkit start
+             org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareSmithingEvent(this.getBukkitView(), result);
+@@ -131,6 +_,17 @@
+             this.resultSlots.setItem(0, ItemStack.EMPTY);
+         });
+     }
++
++    // KioCG start - change container behavior
++    public static int required(final RecipeHolder<?> recipe, final ItemStack base) {
++        if (recipe == null) return 1;
++        final net.minecraft.resources.Identifier identifier = recipe.id().identifier();
++        if (identifier.getNamespace().equals(net.minecraft.resources.Identifier.KIOCG_NAMESPACE) && identifier.getPath().endsWith("_smithing")) {
++            return com.kiocg.bukkit.plugin.TemplateUtils.typeMaterialCount(base.asBukkitMirror().getType());
++        }
++        return 1;
++    }
++    // KioCG end - change container behavior
+ 
+     @Override
+     public boolean canTakeItemForPickAll(final ItemStack carried, final Slot target) {
