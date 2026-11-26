@@ -15,6 +15,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class TemplateUtils {
     private static final Map<Material, ItemStack> UPGRADE_TEMPLATES = new EnumMap<>(Material.class);
@@ -64,6 +65,10 @@ public final class TemplateUtils {
             throw new IllegalArgumentException("No upgrade template for " + result);
         }
         return template;
+    }
+
+    public static ItemStack getRandomTemplate() {
+        return List.copyOf(UPGRADE_TEMPLATES.values()).get(ThreadLocalRandom.current().nextInt(UPGRADE_TEMPLATES.size())).clone();
     }
 
     private static void register(final String baseTier, final String tier, final String type) {

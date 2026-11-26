@@ -1,5 +1,6 @@
 package com.kiocg.bukkit.plugin;
 
+import com.kiocg.bukkit.plugin.listeners.GenerateTemplate;
 import com.kiocg.server.tasks.BossBarTask;
 import io.papermc.paper.event.server.ServerResourcesReloadedEvent;
 import io.papermc.paper.plugin.configuration.PluginMeta;
@@ -13,10 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginBase;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
+import org.bukkit.plugin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,8 +54,11 @@ public class InternalPlugin extends PluginBase implements Listener {
         }
         this.enabled = true;
         try {
+            final PluginManager pluginManager = Bukkit.getPluginManager();
+
             ModifyRecipes.apply(this);
-            Bukkit.getPluginManager().registerEvent(ServerResourcesReloadedEvent.class, this, EventPriority.NORMAL, (_, _) -> ModifyRecipes.apply(this), this);
+            pluginManager.registerEvent(ServerResourcesReloadedEvent.class, this, EventPriority.NORMAL, (_, _) -> ModifyRecipes.apply(this), this);
+            pluginManager.registerEvents(new GenerateTemplate(), this);
 
             BossBarTask.startAll(); // KioCG - bossbar task
             this.logger.info("InternalPlugin Enabled.");
