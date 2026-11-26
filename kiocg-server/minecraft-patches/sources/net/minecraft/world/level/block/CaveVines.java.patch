@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/CaveVines.java
++++ b/net/minecraft/world/level/block/CaveVines.java
+@@ -49,6 +_,11 @@
+                     for (org.bukkit.inventory.ItemStack itemStack : event.getItemsHarvested()) {
+                         Block.popResource(level, pos, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(itemStack));
+                     }
++                    // KioCG start - crops drop exp
++                    org.bukkit.event.block.BlockExpEvent blockExpEvent = new org.bukkit.event.block.BlockExpEvent(org.bukkit.craftbukkit.block.CraftBlock.at(level, pos), level.getRandom().nextInt(0, 4));
++                    blockExpEvent.callEvent();
++                    net.minecraft.world.entity.ExperienceOrb.awardWithDirection(serverLevel, net.minecraft.world.phys.Vec3.atCenterOf(pos), net.minecraft.world.phys.Vec3.ZERO, blockExpEvent.getExpToDrop(), org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM, player, null);
++                    // KioCG end - crops drop exp
+                 } else {
+                     for (net.minecraft.world.item.ItemStack itemStack : drops) {
+                         Block.popResource(level, pos, itemStack);

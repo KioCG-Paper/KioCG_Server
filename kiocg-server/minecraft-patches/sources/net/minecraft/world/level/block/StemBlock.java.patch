@@ -33,7 +33,7 @@
      private final ResourceKey<Block> fruit;
      private final ResourceKey<Block> attachedStem;
      private final ResourceKey<Item> seed;
-@@ -103,12 +_,62 @@
+@@ -103,6 +_,17 @@
                              }
                              // CraftBukkit end
                              level.setBlockAndUpdate(pos, stem.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
@@ -51,10 +51,10 @@
                          }
                      }
                  }
-             }
+@@ -110,6 +_,45 @@
          }
      }
-+
+ 
 +    // KioCG start - large fruit
 +    private boolean growMedium(final ServerLevel level, final BlockPos pos, final RandomSource random, final Direction direction, final BlockState fruit) {
 +        return this.growCube(level, pos, random, direction, fruit, StemBlock.MEDIUM_OFFSETS, random.nextBoolean());
@@ -93,6 +93,24 @@
 +        return true;
 +    }
 +    // KioCG end - large fruit
- 
++
      @Override
      protected ItemStack getCloneItemStack(final LevelReader level, final BlockPos pos, final BlockState state, final boolean includeData) {
+         return new ItemStack(DataFixUtils.orElse(level.registryAccess().lookupOrThrow(Registries.ITEM).getOptional(this.seed), this));
+@@ -139,4 +_,16 @@
+     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+         builder.add(AGE);
+     }
++
++    // KioCG start - crops drop exp
++    @Override
++    public int getExpDrop(final BlockState state, final ServerLevel level, final BlockPos pos, final ItemStack tool, final boolean dropExperience) {
++        if (dropExperience) {
++            if (state.getValue(AGE) == MAX_AGE) {
++                return level.getRandom().nextInt(0, 4);
++            }
++        }
++        return 0;
++    }
++    // KioCG end - crops drop exp
+ }

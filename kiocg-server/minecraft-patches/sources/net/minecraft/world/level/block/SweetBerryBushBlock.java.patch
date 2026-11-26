@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/level/block/SweetBerryBushBlock.java
++++ b/net/minecraft/world/level/block/SweetBerryBushBlock.java
+@@ -143,6 +_,11 @@
+                     popResource(level, pos, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(itemStack));
+                 }
+                 // CraftBukkit end
++                // KioCG start - crops drop exp
++                org.bukkit.event.block.BlockExpEvent blockExpEvent = new org.bukkit.event.block.BlockExpEvent(org.bukkit.craftbukkit.block.CraftBlock.at(level, pos), level.getRandom().nextInt(0, 4));
++                blockExpEvent.callEvent();
++                net.minecraft.world.entity.ExperienceOrb.awardWithDirection(serverLevel, net.minecraft.world.phys.Vec3.atCenterOf(pos), net.minecraft.world.phys.Vec3.ZERO, blockExpEvent.getExpToDrop(), org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM, player, null);
++                // KioCG end - crops drop exp
+                 serverLevel.playSound(
+                     null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + serverLevel.getRandom().nextFloat() * 0.4F
+                 );
+@@ -177,4 +_,16 @@
+         int newAge = Math.min(3, state.getValue(AGE) + 1);
+         level.setBlock(pos, state.setValue(AGE, newAge), Block.UPDATE_CLIENTS);
+     }
++
++    // KioCG start - crops drop exp
++    @Override
++    public int getExpDrop(final BlockState state, final ServerLevel level, final BlockPos pos, final ItemStack tool, final boolean dropExperience) {
++        if (dropExperience) {
++            if (state.getValue(AGE) == MAX_AGE) {
++                return level.getRandom().nextInt(0, 4);
++            }
++        }
++        return 0;
++    }
++    // KioCG end - crops drop exp
+ }

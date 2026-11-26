@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/level/block/AttachedStemBlock.java
++++ b/net/minecraft/world/level/block/AttachedStemBlock.java
+@@ -112,4 +_,14 @@
+     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+         builder.add(FACING);
+     }
++
++    // KioCG start - crops drop exp
++    @Override
++    public int getExpDrop(final BlockState state, final net.minecraft.server.level.ServerLevel level, final BlockPos pos, final ItemStack tool, final boolean dropExperience) {
++        if (dropExperience) {
++            return level.getRandom().nextInt(0, 4);
++        }
++        return 0;
++    }
++    // KioCG end - crops drop exp
+ }

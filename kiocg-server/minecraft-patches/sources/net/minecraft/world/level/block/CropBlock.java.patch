@@ -18,3 +18,20 @@
              serverLevel.destroyBlock(pos, true, entity);
          }
  
+@@ -212,4 +_,16 @@
+     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+         builder.add(AGE);
+     }
++
++    // KioCG start - crops drop exp
++    @Override
++    public int getExpDrop(final BlockState state, final ServerLevel level, final BlockPos pos, final ItemStack tool, final boolean dropExperience) {
++        if (dropExperience) {
++            if (this.getAge(state) == this.getMaxAge()) {
++                return level.getRandom().nextInt(0, 4);
++            }
++        }
++        return 0;
++    }
++    // KioCG end - crops drop exp
+ }

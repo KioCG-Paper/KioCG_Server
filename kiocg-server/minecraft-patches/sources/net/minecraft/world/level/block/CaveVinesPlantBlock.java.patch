@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/CaveVinesPlantBlock.java
++++ b/net/minecraft/world/level/block/CaveVinesPlantBlock.java
+@@ -70,4 +_,16 @@
+     public void performBonemeal(final ServerLevel level, final RandomSource random, final BlockPos pos, final BlockState state) {
+         level.setBlock(pos, state.setValue(BERRIES, true), Block.UPDATE_CLIENTS);
+     }
++
++    // KioCG start - crops drop exp
++    @Override
++    public int getExpDrop(final BlockState state, final ServerLevel level, final BlockPos pos, final ItemStack tool, final boolean dropExperience) {
++        if (dropExperience) {
++            if (state.getValue(BERRIES)) {
++                return level.getRandom().nextInt(0, 4);
++            }
++        }
++        return 0;
++    }
++    // KioCG end - crops drop exp
+ }
