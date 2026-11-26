@@ -1,0 +1,10 @@
+--- a/data/minecraft/recipe/gold_ingot_from_smelting_nether_gold_ore.json
++++ b/data/minecraft/recipe/gold_ingot_from_smelting_nether_gold_ore.json
+@@ -6,6 +_,6 @@
+   "group": "gold_ingot",
+   "ingredient": "minecraft:nether_gold_ore",
+   "result": {
+-    "id": "minecraft:gold_ingot"
++    "id": "minecraft:gold_nugget"
+   }
+ }

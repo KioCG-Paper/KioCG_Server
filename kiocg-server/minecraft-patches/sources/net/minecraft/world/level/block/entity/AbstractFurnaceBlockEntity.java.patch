@@ -1,5 +1,40 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+@@ -107,6 +_,14 @@
+     public final RecipeType<? extends AbstractCookingRecipe> recipeType; // Paper - cook speed multiplier API
+     public double cookSpeedMultiplier = 1.0; // Paper - cook speed multiplier API
+ 
++    // KioCG start - fortune smelting
++    private final static ItemStack PICKAXE = new ItemStack(Items.DIAMOND_PICKAXE);
++
++    static {
++        PICKAXE.enchant(net.minecraft.server.MinecraftServer.getServer().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT).getOrThrow(net.minecraft.world.item.enchantment.Enchantments.FORTUNE), 3);
++    }
++    // KioCG end - fortune smelting
++
+     protected AbstractFurnaceBlockEntity(
+         final BlockEntityType<?> type, final BlockPos worldPosition, final BlockState blockState, final RecipeType<? extends AbstractCookingRecipe> recipeType
+     ) {
+@@ -240,6 +_,19 @@
+                             if (entity.cookingTimer >= entity.cookingTotalTime) { // Paper - cook speed multiplier API
+                                 entity.cookingTimer = 0;
+                                 entity.cookingTotalTime = getTotalCookTime(level, entity, entity.recipeType, entity.cookSpeedMultiplier); // Paper - cook speed multiplier API
++
++                                // KioCG start - fortune smelting
++                                if (ingredient.getItem() instanceof net.minecraft.world.item.BlockItem blockItem && com.destroystokyo.paper.MaterialTags.ORES.isTagged(ingredient.asBukkitMirror())) {
++                                    int total = 0;
++                                    for (final ItemStack drop : Block.getDrops(blockItem.getBlock().defaultBlockState(), level, pos, null, null, PICKAXE)) {
++                                        total += drop.getCount();
++                                    }
++                                    if (burnResult.getCount() < total) {
++                                        burnResult.setCount(total);
++                                    }
++                                }
++                                // KioCG end - fortune smelting
++
+                                 if (burn(entity.items, ingredient, burnResult, recipe, level, entity.worldPosition)) { // CraftBukkit - add level & pos // Paper - make burn return a boolean again, add recipe
+                                 entity.setRecipeUsed(recipe);
+                                 } // Paper
 @@ -418,7 +_,14 @@
      public void setRecipeUsed(final @Nullable RecipeHolder<?> recipeUsed) {
          if (recipeUsed != null) {
