@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
++++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
+@@ -273,4 +_,16 @@
+             level.destroyBlock(pos, true, projectile);
+         }
+     }
++
++    // KioCG start - crops drop exp
++    @Override
++    public int getExpDrop(final BlockState state, final ServerLevel level, final BlockPos pos, final net.minecraft.world.item.ItemStack tool, final boolean dropExperience) {
++        if (dropExperience) {
++            if (state.getValue(AGE) == DEAD_AGE) {
++                return level.getRandom().nextInt(0, 4);
++            }
++        }
++        return 0;
++    }
++    // KioCG end - crops drop exp
+ }

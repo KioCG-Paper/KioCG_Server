@@ -12,7 +12,7 @@
                  serverLevel.playSound(
                      null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + serverLevel.getRandom().nextFloat() * 0.4F
                  );
-@@ -177,4 +_,16 @@
+@@ -177,4 +_,17 @@
          int newAge = Math.min(3, state.getValue(AGE) + 1);
          level.setBlock(pos, state.setValue(AGE, newAge), Block.UPDATE_CLIENTS);
      }
@@ -21,8 +21,9 @@
 +    @Override
 +    public int getExpDrop(final BlockState state, final ServerLevel level, final BlockPos pos, final ItemStack tool, final boolean dropExperience) {
 +        if (dropExperience) {
-+            if (state.getValue(AGE) == MAX_AGE) {
-+                return level.getRandom().nextInt(0, 4);
++            int age = state.getValue(AGE);
++            if (age > 1) {
++                return level.getRandom().nextInt(0, age == MAX_AGE ? 4 : 3);
 +            }
 +        }
 +        return 0;
