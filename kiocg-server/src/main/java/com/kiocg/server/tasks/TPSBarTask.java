@@ -102,7 +102,7 @@ public class TPSBarTask extends BossBarTask {
         Predicate<Long> MEDIUM_LOAD = value -> value < loadCfg.lowPhase;
         long load = player.getNearbyChunkLoad();
         String color = getColor(load, GOOD_LOAD, MEDIUM_LOAD);
-        if (pct) {
+        if (pct && load > 0L) {
             load = load * 100 / loadCfg.mediumPhase;
         }
         return MiniMessage.miniMessage().deserialize(color, Placeholder.parsed("text", String.format("%s", load)));

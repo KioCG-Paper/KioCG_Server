@@ -13,14 +13,16 @@
  
      // Paper start - rewrite chunk system
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
-@@ -767,7 +_,114 @@
+@@ -767,7 +_,116 @@
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();
          this.advancements.flushDirty(this, true);
 -    }
 +
 +        // KioCG start - chunk load
-+        if (this.server.getTickCount() % 20 == 1) {
++        if (this.server.getTickCount() <= 20 * 60 * 3) {
++            this.nearbyChunkLoad = -1L;
++        } else if (this.server.getTickCount() % 20 == 1) {
 +            this.nearbyChunkLoad = this.refreshNearbyChunkLoad();
 +            final var chunkLoad = this.level().paperConfig().kiocg.chunkLoad;
 +
