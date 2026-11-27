@@ -10,6 +10,7 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.BiomeProvider;
@@ -19,7 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,10 +38,16 @@ public class InternalPlugin extends PluginBase implements Listener {
     private static final String VERSION = "1.0";
     private static final String MAIN_CLASS = "com.kiocg.bukkit.plugin.InternalPlugin";
 
+    private static final String CONFIG_FILE = "config.yml";
+    private static final String RESOURCE_ROOT = "com/kiocg/bukkit/plugin/";
+
     private final PluginDescriptionFile description = new PluginDescriptionFile(NAME, VERSION, MAIN_CLASS);
     private final Logger logger = Logger.getLogger(NAME);
+    private final File dataFolder = new File(Bukkit.getPluginsFolder(), NAME);
+    private final File configFile = new File(this.dataFolder, CONFIG_FILE);
 
     private boolean enabled = false;
+    private FileConfiguration config;
 
     public InternalPlugin() {
     }
@@ -54,6 +68,9 @@ public class InternalPlugin extends PluginBase implements Listener {
         }
         this.enabled = true;
         try {
+            this.saveDefaultConfig();
+            this.reloadConfig();
+
             final PluginManager pluginManager = Bukkit.getPluginManager();
 
             ModifyRecipes.apply(this);
@@ -93,7 +110,7 @@ public class InternalPlugin extends PluginBase implements Listener {
 
     @Override
     public @NotNull File getDataFolder() {
-        throw new UnsupportedOperationException("Not supported.");
+        return this.dataFolder;
     }
 
     @Override
@@ -127,32 +144,92 @@ public class InternalPlugin extends PluginBase implements Listener {
 
     @Override
     public @NotNull FileConfiguration getConfig() {
-        throw new UnsupportedOperationException("Not supported.");
+        if (this.config == null) {
+            this.reloadConfig();
+        }
+        return this.config;
     }
 
     @Override
     public void reloadConfig() {
-        throw new UnsupportedOperationException("Not supported.");
+        this.config = YamlConfiguration.loadConfiguration(this.configFile);
+
+        try (InputStream defaults = this.getResource(CONFIG_FILE)) {
+            if (defaults != null) {
+                this.config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(defaults, StandardCharsets.UTF_8)));
+            }
+        } catch (IOException ex) {
+            this.logger.log(Level.WARNING, "Could not read default config from resource '" + RESOURCE_ROOT + CONFIG_FILE + "'", ex);
+        }
     }
 
     @Override
     public void saveConfig() {
-        throw new UnsupportedOperationException("Not supported.");
+        try {
+            if (!this.dataFolder.exists()) {
+                this.dataFolder.mkdirs();
+            }
+            this.getConfig().save(this.configFile);
+        } catch (IOException ex) {
+            this.logger.log(Level.SEVERE, "Could not save config to " + this.configFile, ex);
+        }
     }
 
     @Override
     public void saveDefaultConfig() {
-        throw new UnsupportedOperationException("Not supported.");
+        if (!this.configFile.exists()) {
+            this.saveResource(CONFIG_FILE, false);
+        }
     }
 
     @Override
     public void saveResource(final @NotNull String resourcePath, final boolean replace) {
-        throw new UnsupportedOperationException("Not supported.");
+        if (resourcePath == null || resourcePath.isEmpty()) {
+            throw new IllegalArgumentException("ResourcePath cannot be null or empty");
+        }
+
+        final String path = resourcePath.replace('\\', '/');
+        final File outFile = new File(this.dataFolder, path);
+        if (outFile.exists() && !replace) {
+            this.logger.warning("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+            return;
+        }
+
+        final InputStream resource = this.getResource(path);
+        if (resource == null) {
+            throw new IllegalArgumentException("The embedded resource '" + RESOURCE_ROOT + path + "' cannot be found");
+        }
+
+        final File outDir = outFile.getParentFile();
+        if (outDir != null && !outDir.exists()) {
+            outDir.mkdirs();
+        }
+
+        try (InputStream in = resource; OutputStream out = new FileOutputStream(outFile)) {
+            in.transferTo(out);
+        } catch (IOException ex) {
+            this.logger.log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, ex);
+        }
     }
 
     @Override
     public @Nullable InputStream getResource(final @NotNull String filename) {
-        return null; // 服务端 jar 中未提供本插件的资源
+        if (filename == null) {
+            throw new IllegalArgumentException("Filename cannot be null");
+        }
+
+        final URL url = this.getClass().getClassLoader().getResource(RESOURCE_ROOT + filename.replace('\\', '/'));
+        if (url == null) {
+            return null;
+        }
+
+        try {
+            final URLConnection connection = url.openConnection();
+            connection.setUseCaches(false);
+            return connection.getInputStream();
+        } catch (IOException ex) {
+            return null;
+        }
     }
 
     // ------------------------------------------------------------------
