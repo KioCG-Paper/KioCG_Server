@@ -1,0 +1,66 @@
+--- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+@@ -62,6 +_,7 @@
+         boolean changed = false;
+ 
+         for (int slot = 0; slot < entity.items.size(); slot++) {
++            if (entity.cookingTime[slot] < 0) continue; // KioCG - change container behavior
+             ItemStack itemStack = entity.items.get(slot);
+             if (!itemStack.isEmpty()) {
+                 changed = true;
+@@ -93,6 +_,9 @@
+                         apiResult = blockCookEvent.getResult();
+                         result = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(apiResult);
+                         // CraftBukkit end
++
++                        // KioCG start - change container behavior
++                        /*
+                         // Paper start - Fix item locations dropped from campfires
+                         double deviation = 0.05F * RandomSource.GAUSSIAN_SPREAD_FACTOR;
+                         while (!result.isEmpty()) {
+@@ -101,7 +_,11 @@
+                             level.addFreshEntity(droppedItem);
+                         }
+                         // Paper end - Fix item locations dropped from campfires
++                         */
++                        // KioCG end - change container behavior
++
+                         entity.items.set(slot, ItemStack.EMPTY);
++                        entity.placeFood(level, null, result, slot); // KioCG - change container behavior
+                         level.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
+                         level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
+                     }
+@@ -214,16 +_,20 @@
+         }
+     }
+ 
+-    public boolean placeFood(final ServerLevel serverLevel, final @Nullable LivingEntity sourceEntity, final ItemStack placeItem) {
+-        for (int slot = 0; slot < this.items.size(); slot++) {
++    // KioCG start - change container behavior
++    public boolean placeFood(final ServerLevel serverLevel, final @Nullable LivingEntity sourceEntity, final ItemStack placeItem, final int slot) {
++        /* for (int slot = 0; slot < this.items.size(); slot++) */ {
++            // KioCG end - change container behavior
+             ItemStack item = this.items.get(slot);
+             if (item.isEmpty()) {
+                 Optional<RecipeHolder<CampfireCookingRecipe>> recipe = serverLevel.recipeAccess()
+                     .getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(placeItem), serverLevel);
+                 if (recipe.isEmpty()) {
+-                    return false;
+-                }
+-
++                    // KioCG start - change container behavior
++                    this.cookingTime[slot] = -1;
++                    this.cookingProgress[slot] = -1;
++                } else {
++                    // KioCG end - change container behavior
+                 // CraftBukkit start
+                 org.bukkit.event.block.CampfireStartEvent event = new org.bukkit.event.block.CampfireStartEvent(
+                     org.bukkit.craftbukkit.block.CraftBlock.at(this.level, this.worldPosition),
+@@ -234,6 +_,7 @@
+                 this.cookingTime[slot] = event.getTotalCookTime(); // recipe.get().value().cookingTime() -> event.getTotalCookTime()
+                 // CraftBukkit end
+                 this.cookingProgress[slot] = 0;
++                } // KioCG - change container behavior
+                 this.items.set(slot, placeItem.consumeAndReturn(1, sourceEntity));
+                 serverLevel.gameEvent(GameEvent.BLOCK_CHANGE, this.getBlockPos(), GameEvent.Context.of(sourceEntity, this.getBlockState()));
+                 this.markUpdated();

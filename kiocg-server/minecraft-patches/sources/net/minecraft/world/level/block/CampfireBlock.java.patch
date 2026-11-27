@@ -1,0 +1,86 @@
+--- a/net/minecraft/world/level/block/CampfireBlock.java
++++ b/net/minecraft/world/level/block/CampfireBlock.java
+@@ -98,8 +_,27 @@
+     ) {
+         if (level.getBlockEntity(pos) instanceof CampfireBlockEntity campfire) {
+             ItemStack itemInHand = player.getItemInHand(hand);
+-            if (level.recipeAccess().propertySet(RecipePropertySet.CAMPFIRE_INPUT).test(itemInHand)) {
+-                if (level instanceof ServerLevel serverLevel && campfire.placeFood(serverLevel, player, itemInHand)) {
++            // KioCG start - change container behavior
++            // 副手不参与营火放置，不然全是BUG！
++            if (hand != InteractionHand.MAIN_HAND) {
++                return InteractionResult.PASS;
++            }
++
++            // 所有物品都可以放入营火；但打火石、火焰弹、铲子保留原版点燃/熄灭行为。
++            net.minecraft.world.item.Item itemInHandItem = itemInHand.getItem();
++            if ((itemInHandItem instanceof net.minecraft.world.item.FlintAndSteelItem || itemInHandItem instanceof net.minecraft.world.item.FireChargeItem) && !state.getValue(LIT)
++                    || itemInHandItem instanceof net.minecraft.world.item.ShovelItem && state.getValue(LIT)) {
++                return InteractionResult.PASS;
++            }
++
++            int clickSlot = getClickSlot(state, pos, hitResult.getLocation());
++            if (!campfire.getItems().get(clickSlot).isEmpty()) {
++                return InteractionResult.TRY_WITH_EMPTY_HAND;
++            }
++
++            if (!itemInHand.isEmpty()) {
++                if (level instanceof ServerLevel serverLevel && campfire.placeFood(serverLevel, player, itemInHand, clickSlot)) {
++                    // KioCG end - change container behavior
+                     player.awardStat(Stats.INTERACT_WITH_CAMPFIRE);
+                     return InteractionResult.SUCCESS_SERVER;
+                 }
+@@ -110,6 +_,53 @@
+ 
+         return InteractionResult.TRY_WITH_EMPTY_HAND;
+     }
++
++    // KioCG start - change container behavior
++    @Override
++    protected InteractionResult useWithoutItem(
++            final BlockState state,
++            final Level level,
++            final BlockPos pos,
++            final Player player,
++            final BlockHitResult hitResult
++    ) {
++        if (level.getBlockEntity(pos) instanceof CampfireBlockEntity campfire) {
++            int clickSlot = getClickSlot(state, pos, hitResult.getLocation());
++            ItemStack stack = campfire.getItems().get(clickSlot);
++            if (stack.isEmpty()) {
++                return InteractionResult.PASS;
++            }
++
++            if (!player.addItem(stack)) {
++                player.drop(stack, false);
++            }
++            campfire.getItems().set(clickSlot, ItemStack.EMPTY);
++
++            level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, state));
++            campfire.setChanged();
++            level.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
++            player.awardStat(Stats.INTERACT_WITH_CAMPFIRE);
++            return InteractionResult.SUCCESS_SERVER;
++        }
++
++        return InteractionResult.PASS;
++    }
++
++    private static int getClickSlot(final BlockState state, final BlockPos pos, final net.minecraft.world.phys.Vec3 hitLocation) {
++        final int[] slotByQuadrant = switch (state.getValue(FACING)) {
++            case NORTH -> new int[]{2, 3, 1, 0};
++            case EAST -> new int[]{1, 2, 0, 3};
++            case SOUTH -> new int[]{0, 1, 3, 2};
++            case WEST -> new int[]{3, 0, 2, 1};
++            default -> throw new IllegalStateException("Unexpected campfire facing: " + state.getValue(FACING));
++        };
++
++        final double localX = hitLocation.x - pos.getX();
++        final double localZ = hitLocation.z - pos.getZ();
++        final int quadrant = (localX > 0.5 ? 1 : 0) | (localZ > 0.5 ? 2 : 0);
++        return slotByQuadrant[quadrant];
++    }
++    // KioCG end - change container behavior
+ 
+     @Override
+     protected void entityInside(
