@@ -15,7 +15,7 @@
      protected AbstractFurnaceBlockEntity(
          final BlockEntityType<?> type, final BlockPos worldPosition, final BlockState blockState, final RecipeType<? extends AbstractCookingRecipe> recipeType
      ) {
-@@ -240,6 +_,19 @@
+@@ -240,6 +_,32 @@
                              if (entity.cookingTimer >= entity.cookingTotalTime) { // Paper - cook speed multiplier API
                                  entity.cookingTimer = 0;
                                  entity.cookingTotalTime = getTotalCookTime(level, entity, entity.recipeType, entity.cookSpeedMultiplier); // Paper - cook speed multiplier API
@@ -31,6 +31,19 @@
 +                                    }
 +                                }
 +                                // KioCG end - fortune smelting
++                                // KioCG start - change container behavior
++                                if (burnResult.is(Items.IRON_NUGGET) || burnResult.is(Items.GOLD_NUGGET) || burnResult.is(Items.COPPER_NUGGET)) {
++                                    final net.minecraft.resources.Identifier identifier = recipe.id().identifier();
++                                    if (identifier.getNamespace().equals(net.minecraft.resources.Identifier.DEFAULT_NAMESPACE)) {
++                                        if (identifier.getPath().startsWith("iron_nugget_from_") || identifier.getPath().startsWith("gold_nugget_from_") || identifier.getPath().startsWith("copper_nugget_from_")) {
++                                            int count = com.kiocg.bukkit.plugin.TemplateUtils.typeMaterialCount(ingredient.asBukkitMirror().getType());
++                                            if (burnResult.getCount() < count) {
++                                                burnResult.setCount(count);
++                                            }
++                                        }
++                                    }
++                                }
++                                // KioCG end - change container behavior
 +
                                  if (burn(entity.items, ingredient, burnResult, recipe, level, entity.worldPosition)) { // CraftBukkit - add level & pos // Paper - make burn return a boolean again, add recipe
                                  entity.setRecipeUsed(recipe);
