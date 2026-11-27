@@ -14,7 +14,7 @@
 +                if (silkTouchLevel <= 0) {
 +                    final int fortuneLevel = enchantments.getLevel(enchantmentRegistry.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.FORTUNE));
 +                    final int count = net.minecraft.world.level.storage.loot.functions.ApplyBonusCount.OreDrops.INSTANCE.calculateNewCount(level.getRandom(), 1, fortuneLevel);
-+                    expDrop += net.minecraft.util.valueproviders.UniformInt.of(this.xpRange.minInclusive() * 10 * count, this.xpRange.maxInclusive() * 10 * count).sample(level.getRandom());
++                    expDrop += net.minecraft.util.valueproviders.UniformInt.of(4 * 10 * count, 5 * 10 * count).sample(level.getRandom()) + 1;
 +                }
 +            }
 +            return expDrop;
