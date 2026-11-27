@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/item/EggItem.java
++++ b/net/minecraft/world/item/EggItem.java
+@@ -22,6 +_,12 @@
+ 
+     @Override
+     public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
++        // KioCG start - more food
++        if (true) {
++            player.containerMenu.forceHeldSlot(hand);
++            return super.use(level, player, hand);
++        }
++        // KioCG end - more food
+         ItemStack itemStack = player.getItemInHand(hand);
+         // Paper start
+         final Projectile.Delayed<ThrownEgg> thrownEgg = Projectile.spawnProjectileFromRotationDelayed(ThrownEgg::new, (ServerLevel) level, itemStack, player, 0.0F, EggItem.PROJECTILE_SHOOT_POWER, 1.0F);

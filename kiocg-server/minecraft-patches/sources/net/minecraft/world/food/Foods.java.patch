@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/food/Foods.java
++++ b/net/minecraft/world/food/Foods.java
+@@ -76,6 +_,13 @@
+     public static final FoodProperties GLOW_BERRIES = new FoodProperties.Builder().nutrition(2).saturationModifier(FoodConstants.FOOD_SATURATION_POOR).build();
+     public static final FoodProperties TROPICAL_FISH = new FoodProperties.Builder().nutrition(1).saturationModifier(FoodConstants.FOOD_SATURATION_POOR).build();
+ 
++    // KioCG start - more food
++    public static final FoodProperties MILK_BUCKET = new FoodProperties.Builder().nutrition(4).saturationModifier(1.5F).alwaysEdible().build();
++    public static final FoodProperties SUGAR_CANE = new FoodProperties.Builder().nutrition(1).saturationModifier(FoodConstants.FOOD_SATURATION_NORMAL).build();
++    public static final FoodProperties EGG = new FoodProperties.Builder().nutrition(3).saturationModifier(FoodConstants.FOOD_SATURATION_GOOD).alwaysEdible().build();
++    public static final FoodProperties MUSHROOM = new FoodProperties.Builder().nutrition(1).saturationModifier(FoodConstants.FOOD_SATURATION_POOR).build();
++    // KioCG end - more food
++
+     private static FoodProperties.Builder stew(final int nutrition) {
+         return new FoodProperties.Builder().nutrition(nutrition).saturationModifier(FoodConstants.FOOD_SATURATION_NORMAL);
+     }

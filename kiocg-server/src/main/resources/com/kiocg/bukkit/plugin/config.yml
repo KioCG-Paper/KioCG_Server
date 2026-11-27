@@ -1,3 +1,71 @@
 # InternalPlugin 配置文件
 #
 # 本文件由服务端内置插件读取，修改后执行 /paper reload 或重启服务器生效。
+
+thirst:
+  # 水瓶（PotionType.WATER）单独取值，因为水瓶的物品 ID 同样是 potion
+  water_bottle: 20
+
+  # 食用或饮用后补充的水分值，负数表示扣除
+  # 键为物品 ID（不带 minecraft: 前缀），potion 表示水瓶之外的药水
+  items:
+    # 果蔬类
+    carrot: 3
+    golden_carrot: 3
+    potato: 2
+    baked_potato: 0
+    poisonous_potato: 2
+    beetroot: 3
+    melon_slice: 6
+    apple: 4
+    golden_apple: 4
+    enchanted_golden_apple: 4
+    sweet_berries: 3
+    glow_berries: 3
+    chorus_fruit: 5
+    brown_mushroom: 1
+    red_mushroom: 1
+    crimson_fungus: 1
+    warped_fungus: 1
+    sugar_cane: 6
+
+    # 肉蛋类
+    porkchop: 3
+    beef: 3
+    mutton: 3
+    chicken: 2
+    rabbit: 2
+    cooked_porkchop: 1
+    cooked_beef: 1
+    cooked_mutton: 1
+    cooked_chicken: 1
+    cooked_rabbit: 1
+    rotten_flesh: 2
+    spider_eye: 2
+    egg: 2
+    blue_egg: 2
+    brown_egg: 2
+
+    # 水产类
+    cod: 2
+    salmon: 2
+    tropical_fish: 2
+    pufferfish: 2
+    cooked_cod: 1
+    cooked_salmon: 1
+    dried_kelp: 0
+
+    # 烘焙类
+    bread: 0
+    cookie: 0
+    pumpkin_pie: 0
+
+    # 汤羹类
+    potion: 10
+    mushroom_stew: 8
+    beetroot_soup: 8
+    rabbit_stew: 8
+    suspicious_stew: 8
+    milk_bucket: 8
+    honey_bottle: -5
+    ominous_bottle: -13

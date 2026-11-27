@@ -1,5 +1,6 @@
 package com.kiocg.bukkit.plugin;
 
+import com.kiocg.bukkit.plugin.listeners.FoodThirst;
 import com.kiocg.bukkit.plugin.listeners.GenerateTemplate;
 import com.kiocg.server.tasks.BossBarTask;
 import io.papermc.paper.event.server.ServerResourcesReloadedEvent;
@@ -19,12 +20,7 @@ import org.bukkit.plugin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -76,6 +72,8 @@ public class InternalPlugin extends PluginBase implements Listener {
             ModifyRecipes.apply(this);
             pluginManager.registerEvent(ServerResourcesReloadedEvent.class, this, EventPriority.NORMAL, (_, _) -> ModifyRecipes.apply(this), this);
             pluginManager.registerEvents(new GenerateTemplate(), this);
+
+            pluginManager.registerEvents(new FoodThirst(), this);
 
             BossBarTask.startAll(); // KioCG - bossbar task
             this.logger.info("InternalPlugin Enabled.");

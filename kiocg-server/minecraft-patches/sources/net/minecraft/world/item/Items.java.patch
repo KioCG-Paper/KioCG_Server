@@ -12,7 +12,7 @@
  public class Items {
      public static final Item AIR = registerBlock(Blocks.AIR, AirItem::new);
      public static final Item STONE = registerBlock(Blocks.STONE);
-@@ -2407,4 +_,16 @@
+@@ -2407,4 +_,27 @@
  
          return Registry.register(BuiltInRegistries.ITEM, key, item);
      }
@@ -26,6 +26,17 @@
 +        DEEPSLATE_EMERALD_ORE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("深层电荷矿石")).build());
 +        SMOKER.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("柴火灶")).build());
 +        BLAST_FURNACE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("精炼炉")).build());
++
++        MILK_BUCKET.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.MILK_BUCKET).build());
++        SUGAR_CANE.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.SUGAR_CANE).set(DataComponents.CONSUMABLE, Consumables.DEFAULT_FOOD).build());
++        EGG.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.EGG).set(DataComponents.CONSUMABLE, Consumables.DEFAULT_FOOD).build());
++        BLUE_EGG.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.EGG).set(DataComponents.CONSUMABLE, Consumables.DEFAULT_FOOD).build());
++        BROWN_EGG.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.EGG).set(DataComponents.CONSUMABLE, Consumables.DEFAULT_FOOD).build());
++        BROWN_MUSHROOM.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.MUSHROOM).set(DataComponents.CONSUMABLE, Consumables.DEFAULT_FOOD).build());
++        RED_MUSHROOM.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.MUSHROOM).set(DataComponents.CONSUMABLE, Consumables.DEFAULT_FOOD).build());
++        CRIMSON_FUNGUS.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.MUSHROOM).set(DataComponents.CONSUMABLE, Consumables.POISONOUS_MUSHROOM).build());
++        WARPED_FUNGUS.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.MUSHROOM).set(DataComponents.CONSUMABLE, Consumables.POISONOUS_MUSHROOM).build());
++        SLIME_BALL.overrideComponents(DataComponentPatch.builder().set(DataComponents.CONSUMABLE, Consumables.SLIME_BALL).build());
 +    }
 +    // KioCG end - customize default components
  }
