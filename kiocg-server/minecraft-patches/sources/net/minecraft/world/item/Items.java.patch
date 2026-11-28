@@ -1,18 +1,21 @@
 --- a/net/minecraft/world/item/Items.java
 +++ b/net/minecraft/world/item/Items.java
-@@ -60,6 +_,11 @@
+@@ -60,6 +_,14 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.waypoints.Waypoint;
  
 +// KioCG start - customize default components
-+import net.minecraft.world.item.component.*;
++import net.minecraft.core.HolderSet;
 +import net.minecraft.core.component.DataComponentPatch;
++import net.minecraft.network.chat.Component;
++import net.minecraft.world.item.component.*;
++import net.minecraft.world.item.enchantment.Repairable;
 +// KioCG end - customize default components
 +
  public class Items {
      public static final Item AIR = registerBlock(Blocks.AIR, AirItem::new);
      public static final Item STONE = registerBlock(Blocks.STONE);
-@@ -2407,4 +_,27 @@
+@@ -2407,4 +_,37 @@
  
          return Registry.register(BuiltInRegistries.ITEM, key, item);
      }
@@ -22,10 +25,10 @@
 +        POTION.overrideComponents(DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 16).build());
 +        SPLASH_POTION.overrideComponents(DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 16).build());
 +        LINGERING_POTION.overrideComponents(DataComponentPatch.builder().set(DataComponents.MAX_STACK_SIZE, 16).build());
-+        EMERALD_ORE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("电荷矿石")).build());
-+        DEEPSLATE_EMERALD_ORE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("深层电荷矿石")).build());
-+        SMOKER.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("柴火灶")).build());
-+        BLAST_FURNACE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.literal("精炼炉")).build());
++        EMERALD_ORE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, Component.literal("电荷矿石")).build());
++        DEEPSLATE_EMERALD_ORE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, Component.literal("深层电荷矿石")).build());
++        SMOKER.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, Component.literal("柴火灶")).build());
++        BLAST_FURNACE.overrideComponents(DataComponentPatch.builder().set(DataComponents.ITEM_NAME, Component.literal("精炼炉")).build());
 +
 +        MILK_BUCKET.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.MILK_BUCKET).build());
 +        SUGAR_CANE.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.SUGAR_CANE).set(DataComponents.CONSUMABLE, Consumables.DEFAULT_FOOD).build());
@@ -37,6 +40,16 @@
 +        CRIMSON_FUNGUS.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.MUSHROOM).set(DataComponents.CONSUMABLE, Consumables.POISONOUS_MUSHROOM).build());
 +        WARPED_FUNGUS.overrideComponents(DataComponentPatch.builder().set(DataComponents.FOOD, Foods.MUSHROOM).set(DataComponents.CONSUMABLE, Consumables.POISONOUS_MUSHROOM).build());
 +        SLIME_BALL.overrideComponents(DataComponentPatch.builder().set(DataComponents.CONSUMABLE, Consumables.SLIME_BALL).build());
++
++        CARROT_ON_A_STICK.overrideComponents(DataComponentPatch.builder().set(DataComponents.REPAIRABLE, new Repairable(HolderSet.direct(CARROT.builtInRegistryHolder()))).build());
++        WARPED_FUNGUS_ON_A_STICK.overrideComponents(DataComponentPatch.builder().set(DataComponents.REPAIRABLE, new Repairable(HolderSet.direct(WARPED_FUNGUS.builtInRegistryHolder()))).build());
++        FLINT_AND_STEEL.overrideComponents(DataComponentPatch.builder().set(DataComponents.REPAIRABLE, new Repairable(HolderSet.direct(FLINT.builtInRegistryHolder()))).build());
++        BOW.overrideComponents(DataComponentPatch.builder().set(DataComponents.REPAIRABLE, new Repairable(HolderSet.direct(STRING.builtInRegistryHolder()))).build());
++        FISHING_ROD.overrideComponents(DataComponentPatch.builder().set(DataComponents.REPAIRABLE, new Repairable(HolderSet.direct(STRING.builtInRegistryHolder()))).build());
++        SHEARS.overrideComponents(DataComponentPatch.builder().set(DataComponents.REPAIRABLE, new Repairable(HolderSet.direct(IRON_INGOT.builtInRegistryHolder()))).build());
++        TRIDENT.overrideComponents(DataComponentPatch.builder().set(DataComponents.REPAIRABLE, new Repairable(HolderSet.direct(PRISMARINE_SHARD.builtInRegistryHolder()))).build());
++        CROSSBOW.overrideComponents(DataComponentPatch.builder().set(DataComponents.REPAIRABLE, new Repairable(HolderSet.direct(TRIPWIRE_HOOK.builtInRegistryHolder()))).build());
++        BRUSH.overrideComponents(DataComponentPatch.builder().set(DataComponents.REPAIRABLE, new Repairable(HolderSet.direct(FEATHER.builtInRegistryHolder()))).build());
 +    }
 +    // KioCG end - customize default components
  }
