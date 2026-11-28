@@ -17,11 +17,56 @@
          ItemStack input = this.inputSlots.getItem(0);
          this.onlyRenaming = false;
          this.cost.set(1);
-@@ -251,7 +_,7 @@
+@@ -143,10 +_,11 @@
+         if (!input.isEmpty() && EnchantmentHelper.canStoreEnchantments(input)) {
+             ItemStack result = input.copy();
+             ItemStack addition = this.inputSlots.getItem(1);
++            net.minecraft.world.item.DyeColor dyeColor = addition.get(DataComponents.DYE); // KioCG - dyed name
+             ItemEnchantments.Mutable enchantments = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(result));
+             tax += (long)input.getOrDefault(DataComponents.REPAIR_COST, 0).intValue() + addition.getOrDefault(DataComponents.REPAIR_COST, 0).intValue();
+             this.repairItemCountCost = 0;
+-            if (!addition.isEmpty()) {
++            if (!addition.isEmpty() && dyeColor == null) { // KioCG - dyed name
+                 boolean usingBook = addition.has(DataComponents.STORED_ENCHANTMENTS);
+                 if (result.isDamageableItem() && input.isValidRepairItem(addition)) {
+                     int repairAmount = Math.min(result.getDamageValue(), result.getMaxDamage() / 4);
+@@ -239,10 +_,22 @@
+                 }
+             }
+ 
++            boolean dyed = false; // KioCG - dyed name
+             if (this.itemName != null && !StringUtil.isBlank(this.itemName)) {
+-                if (!this.itemName.equals(input.getHoverName().getString())) {
++                // KioCG start - dyed name
++                net.minecraft.network.chat.TextColor currentColor = input.getHoverName().getStyle().getColor();
++                boolean colorChanged = dyeColor != null && (currentColor == null || currentColor.getValue() != (dyeColor.getTextColor() & 0xFFFFFF));
++                if (!this.itemName.equals(input.getHoverName().getString()) || colorChanged) {
++                    // KioCG end - dyed name
+                     namingCost = 1;
+                     price += namingCost;
++                    // KioCG start - dyed name
++                    if (dyeColor != null) {
++                        result.set(DataComponents.CUSTOM_NAME, Component.literal(this.itemName).withColor(dyeColor.getTextColor()));
++                        this.repairItemCountCost = 1;
++                        dyed = true;
++                    } else
++                    // KioCG end - dyed name
+                     result.set(DataComponents.CUSTOM_NAME, Component.literal(this.itemName));
+                 }
+             } else if (input.has(DataComponents.CUSTOM_NAME)) {
+@@ -251,7 +_,15 @@
                  result.remove(DataComponents.CUSTOM_NAME);
              }
  
 -            int finalPrice = price <= 0 ? 0 : (int)Mth.clamp(tax + price, 0L, 2147483647L);
++            // KioCG start - dyed name
++            if (dyeColor != null && !dyed) {
++                org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(this.getBukkitView(), ItemStack.EMPTY); // CraftBukkit
++                this.cost.set(AnvilMenu.DEFAULT_DENIED_COST); // CraftBukkit - use a variable for set a cost for denied item
++                return;
++            }
++            // KioCG end - dyed name
++
 +            int finalPrice = price <= 0 ? 0 : (int)Mth.clamp((tax + price) * 100L, 0L, 2147483647L); // KioCG - EXP is money: 扣除100倍合成等级
              this.cost.set(finalPrice);
              if (price <= 0) {
@@ -35,6 +80,24 @@
              }
  
              org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(this.getBukkitView(), result); // CraftBukkit
+@@ -302,6 +_,8 @@
+         String validatedName = validateName(name);
+         if (validatedName != null && !validatedName.equals(this.itemName)) {
+             this.itemName = validatedName;
++            // KioCG start - change container behavior: 不需要设置物品名, 因为将在createResult()中设置
++            /*
+             if (this.getSlot(2).hasItem()) {
+                 ItemStack itemStack = this.getSlot(2).getItem();
+                 if (StringUtil.isBlank(validatedName)) {
+@@ -310,6 +_,8 @@
+                     itemStack.set(DataComponents.CUSTOM_NAME, Component.literal(validatedName));
+                 }
+             }
++             */
++            // KioCG end - change container behavior: 不需要设置物品名, 因为将在createResult()中设置
+ 
+             this.createResult();
+             org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareResultEvent(this, RESULT_SLOT); // Paper - Add PrepareResultEvent
 @@ -327,6 +_,38 @@
      public int getCost() {
          return this.cost.get();
