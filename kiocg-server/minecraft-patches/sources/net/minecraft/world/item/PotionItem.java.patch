@@ -52,7 +52,7 @@
 +                        farmland = level.getBlockState(farmlandPos);
 +                        if (farmland.is(Blocks.FARMLAND) && farmland.getValue(net.minecraft.world.level.block.FarmlandBlock.MOISTURE) == net.minecraft.world.level.block.FarmlandBlock.MAX_MOISTURE) {
 +                            level.getBlockTicks().unschedule(farmlandPos, Blocks.FARMLAND);
-+                            level.scheduleTick(farmlandPos, Blocks.FARMLAND, level.paperConfig().kiocg.farmlandDryingTicks);
++                            level.scheduleTick(farmlandPos, Blocks.FARMLAND, level.paperConfig().kiocg.agriculture.farmlandDryingTicks);
 +                        }
 +                    }
 +                    return InteractionResult.SUCCESS;

@@ -40,11 +40,11 @@
 +
 +                            // KioCG start - large fruit
 +                            double chance = random.nextDouble();
-+                            if (chance < level.paperConfig().kiocg.growFruitLargeChance) {
++                            if (chance < level.paperConfig().kiocg.agriculture.growFruitLargeChance) {
 +                                if (!this.growLarge(level, relative, random, direction, fruit.get().defaultBlockState())) {
 +                                    this.growMedium(level, relative, random, direction, fruit.get().defaultBlockState());
 +                                }
-+                            } else if (chance < (level.paperConfig().kiocg.growFruitLargeChance + level.paperConfig().kiocg.growFruitMediumChance)) {
++                            } else if (chance < (level.paperConfig().kiocg.agriculture.growFruitLargeChance + level.paperConfig().kiocg.agriculture.growFruitMediumChance)) {
 +                                this.growMedium(level, relative, random, direction, fruit.get().defaultBlockState());
 +                            }
 +                            // KioCG end - large fruit

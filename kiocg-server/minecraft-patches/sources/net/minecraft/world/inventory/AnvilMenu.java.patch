@@ -65,7 +65,7 @@
                      result.set(DataComponents.CUSTOM_NAME, Component.literal(this.itemName));
                  }
              } else if (input.has(DataComponents.CUSTOM_NAME)) {
-@@ -251,7 +_,24 @@
+@@ -251,7 +_,18 @@
                  result.remove(DataComponents.CUSTOM_NAME);
              }
  
@@ -79,13 +79,7 @@
 +            // KioCG end - dyed name
 +
 +            // KioCG start - change container behavior
-+            int paidPrice = price;
-+            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.anvil.renameNoLevelCost) {
-+                paidPrice -= namingCost;
-+            }
-+            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.anvil.repairNoLevelCost) {
-+                paidPrice -= repairCost;
-+            }
++            int paidPrice = price - namingCost - repairCost;
 +            int finalPrice = paidPrice <= 0 ? 0 : (int)Mth.clamp((tax + paidPrice) * 100L, 0L, 2147483647L); // KioCG - EXP is money: 扣除100倍合成等级
 +            // KioCG end - change container behavior
              this.cost.set(finalPrice);

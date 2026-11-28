@@ -9,7 +9,7 @@
      }
  
      public Scoreboards scoreboards;
-@@ -394,4 +_,47 @@
+@@ -394,4 +_,41 @@
      public class UpdateChecker extends ConfigurationPart {
          public boolean enabled = true;
      }
@@ -25,6 +25,7 @@
 +
 +        public class Player extends ConfigurationPart {
 +            public int initialLevel = 60 * 30;
++
 +            public Component permadeath = Component.text("因电荷消耗殆尽被系统抹除数据", NamedTextColor.RED);
 +            public Component permadeathWarningTitle = Component.text("电荷已消耗殆尽", NamedTextColor.GRAY);
 +            public Component permadeathWarningSubtitle = Component.text("你的下一次死亡将是永久的", NamedTextColor.RED);
@@ -46,13 +47,6 @@
 +            public String textColorGood = "<green><text>";
 +            public String textColorMedium = "<yellow><text>";
 +            public String textColorLow = "<red><text>";
-+        }
-+
-+        public Anvil anvil;
-+
-+        public class Anvil extends ConfigurationPart {
-+            public boolean repairNoLevelCost = true;
-+            public boolean renameNoLevelCost = true;
 +        }
 +    }
 +    // KioCG end - kiocg config
