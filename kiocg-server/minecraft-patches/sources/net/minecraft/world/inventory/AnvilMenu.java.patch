@@ -9,7 +9,7 @@
      private org.bukkit.craftbukkit.inventory.view.CraftAnvilView bukkitEntity;
      // CraftBukkit end
      public boolean bypassEnchantmentLevelRestriction = false; // Paper - bypass anvil level restrictions
-@@ -134,6 +_,7 @@
+@@ -134,19 +_,22 @@
  
      @Override
      public void createResult() {
@@ -17,7 +17,10 @@
          ItemStack input = this.inputSlots.getItem(0);
          this.onlyRenaming = false;
          this.cost.set(1);
-@@ -143,10 +_,11 @@
+         int price = 0;
+         long tax = 0L;
+         int namingCost = 0;
++        int repairCost = 0; // KioCG - change container behavior
          if (!input.isEmpty() && EnchantmentHelper.canStoreEnchantments(input)) {
              ItemStack result = input.copy();
              ItemStack addition = this.inputSlots.getItem(1);
@@ -30,6 +33,14 @@
                  boolean usingBook = addition.has(DataComponents.STORED_ENCHANTMENTS);
                  if (result.isDamageableItem() && input.isValidRepairItem(addition)) {
                      int repairAmount = Math.min(result.getDamageValue(), result.getMaxDamage() / 4);
+@@ -161,6 +_,7 @@
+                         int resultDamage = result.getDamageValue() - repairAmount;
+                         result.setDamageValue(resultDamage);
+                         price++;
++                        repairCost++; // KioCG - change container behavior
+                         repairAmount = Math.min(result.getDamageValue(), result.getMaxDamage() / 4);
+                     }
+ 
 @@ -239,10 +_,22 @@
                  }
              }
@@ -54,7 +65,7 @@
                      result.set(DataComponents.CUSTOM_NAME, Component.literal(this.itemName));
                  }
              } else if (input.has(DataComponents.CUSTOM_NAME)) {
-@@ -251,7 +_,15 @@
+@@ -251,7 +_,24 @@
                  result.remove(DataComponents.CUSTOM_NAME);
              }
  
@@ -67,11 +78,26 @@
 +            }
 +            // KioCG end - dyed name
 +
-+            int finalPrice = price <= 0 ? 0 : (int)Mth.clamp((tax + price) * 100L, 0L, 2147483647L); // KioCG - EXP is money: 扣除100倍合成等级
++            // KioCG start - change container behavior
++            int paidPrice = price;
++            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.anvil.renameNoLevelCost) {
++                paidPrice -= namingCost;
++            }
++            if (io.papermc.paper.configuration.GlobalConfiguration.get().kiocg.anvil.repairNoLevelCost) {
++                paidPrice -= repairCost;
++            }
++            int finalPrice = paidPrice <= 0 ? 0 : (int)Mth.clamp((tax + paidPrice) * 100L, 0L, 2147483647L); // KioCG - EXP is money: 扣除100倍合成等级
++            // KioCG end - change container behavior
              this.cost.set(finalPrice);
              if (price <= 0) {
                  result = ItemStack.EMPTY;
-@@ -283,6 +_,8 @@
+@@ -278,11 +_,14 @@
+                 }
+ 
+                 if (namingCost != price || namingCost == 0) {
++                    if (paidPrice > 0) // KioCG - change container behavior
+                     baseCost = calculateIncreasedRepairCost(baseCost);
+                 }
  
                  result.set(DataComponents.REPAIR_COST, baseCost);
                  EnchantmentHelper.setEnchantments(result, enchantments.toImmutable());

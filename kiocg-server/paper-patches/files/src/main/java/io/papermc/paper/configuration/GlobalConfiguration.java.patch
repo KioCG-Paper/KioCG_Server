@@ -9,7 +9,7 @@
      }
  
      public Scoreboards scoreboards;
-@@ -394,4 +_,40 @@
+@@ -394,4 +_,47 @@
      public class UpdateChecker extends ConfigurationPart {
          public boolean enabled = true;
      }
@@ -46,6 +46,13 @@
 +            public String textColorGood = "<green><text>";
 +            public String textColorMedium = "<yellow><text>";
 +            public String textColorLow = "<red><text>";
++        }
++
++        public Anvil anvil;
++
++        public class Anvil extends ConfigurationPart {
++            public boolean repairNoLevelCost = true;
++            public boolean renameNoLevelCost = true;
 +        }
 +    }
 +    // KioCG end - kiocg config
