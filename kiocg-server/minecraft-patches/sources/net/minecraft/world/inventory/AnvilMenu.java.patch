@@ -9,7 +9,7 @@
      private org.bukkit.craftbukkit.inventory.view.CraftAnvilView bukkitEntity;
      // CraftBukkit end
      public boolean bypassEnchantmentLevelRestriction = false; // Paper - bypass anvil level restrictions
-@@ -134,19 +_,22 @@
+@@ -134,19 +_,25 @@
  
      @Override
      public void createResult() {
@@ -24,12 +24,15 @@
          if (!input.isEmpty() && EnchantmentHelper.canStoreEnchantments(input)) {
              ItemStack result = input.copy();
              ItemStack addition = this.inputSlots.getItem(1);
-+            net.minecraft.world.item.DyeColor dyeColor = addition.get(DataComponents.DYE); // KioCG - dyed name
++            // KioCG start - dyed or upright name
++            boolean dye = addition.has(DataComponents.DYE);
++            boolean resin = addition.is(Items.RESIN_CLUMP);
++            // KioCG end - dyed or upright name
              ItemEnchantments.Mutable enchantments = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(result));
              tax += (long)input.getOrDefault(DataComponents.REPAIR_COST, 0).intValue() + addition.getOrDefault(DataComponents.REPAIR_COST, 0).intValue();
              this.repairItemCountCost = 0;
 -            if (!addition.isEmpty()) {
-+            if (!addition.isEmpty() && dyeColor == null) { // KioCG - dyed name
++            if (!addition.isEmpty() && !dye && !resin) { // KioCG - dyed or upright name
                  boolean usingBook = addition.has(DataComponents.STORED_ENCHANTMENTS);
                  if (result.isDamageableItem() && input.isValidRepairItem(addition)) {
                      int repairAmount = Math.min(result.getDamageValue(), result.getMaxDamage() / 4);
@@ -41,42 +44,59 @@
                          repairAmount = Math.min(result.getDamageValue(), result.getMaxDamage() / 4);
                      }
  
-@@ -239,10 +_,22 @@
+@@ -239,19 +_,58 @@
                  }
              }
  
-+            boolean dyed = false; // KioCG - dyed name
++            // KioCG start - dyed or upright name
++            boolean dyed = false;
++            boolean resined = false;
++            boolean alreadyUprighted = false;
++            Component hoverName = input.getHoverName();
++            boolean uprightName = io.papermc.paper.adventure.PaperAdventure.asAdventure(hoverName).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC) == net.kyori.adventure.text.format.TextDecoration.State.FALSE;
++            // KioCG end - dyed or upright name
              if (this.itemName != null && !StringUtil.isBlank(this.itemName)) {
 -                if (!this.itemName.equals(input.getHoverName().getString())) {
-+                // KioCG start - dyed name
-+                net.minecraft.network.chat.TextColor currentColor = input.getHoverName().getStyle().getColor();
-+                boolean colorChanged = dyeColor != null && (currentColor == null || currentColor.getValue() != (dyeColor.getTextColor() & 0xFFFFFF));
-+                if (!this.itemName.equals(input.getHoverName().getString()) || colorChanged) {
-+                    // KioCG end - dyed name
++                // KioCG start - dyed or upright name
++                boolean nameChanged = !this.itemName.equals(hoverName.getString());
++                net.minecraft.network.chat.TextColor currentColor = hoverName.getStyle().getColor();
++                boolean colorChanged = dye && (currentColor == null || currentColor.getValue() != (addition.get(DataComponents.DYE).getTextColor() & 0xFFFFFF));
++                boolean uprightChanged = resin && !uprightName;
++                if (nameChanged || colorChanged || uprightChanged) {
++                    if (uprightName) alreadyUprighted = true;
++                    // KioCG end - dyed or upright name
                      namingCost = 1;
                      price += namingCost;
-+                    // KioCG start - dyed name
-+                    if (dyeColor != null) {
-+                        result.set(DataComponents.CUSTOM_NAME, Component.literal(this.itemName).withColor(dyeColor.getTextColor()));
++                    if (nameChanged) // KioCG - dyed or upright name
+                     result.set(DataComponents.CUSTOM_NAME, Component.literal(this.itemName));
++                    // KioCG start - dyed or upright name
++                    if (dye) {
++                        result.set(DataComponents.CUSTOM_NAME, Component.literal(this.itemName).withColor(addition.get(DataComponents.DYE).getTextColor()));
 +                        this.repairItemCountCost = 1;
 +                        dyed = true;
-+                    } else
-+                    // KioCG end - dyed name
-                     result.set(DataComponents.CUSTOM_NAME, Component.literal(this.itemName));
++                    } else if (resin && (input.isDamageableItem() || input.has(DataComponents.EQUIPPABLE)) && result.has(DataComponents.CUSTOM_NAME)) {
++                        result.set(DataComponents.CUSTOM_NAME, result.get(DataComponents.CUSTOM_NAME).copy().withStyle(style -> style.withItalic(false)));
++                        this.repairItemCountCost = 1;
++                        resined = true;
++                    }
++                    // KioCG end - dyed or upright name
                  }
              } else if (input.has(DataComponents.CUSTOM_NAME)) {
-@@ -251,7 +_,18 @@
++                if (uprightName) alreadyUprighted = true; // KioCG - dyed or upright name
+                 namingCost = 1;
+                 price += namingCost;
                  result.remove(DataComponents.CUSTOM_NAME);
              }
  
 -            int finalPrice = price <= 0 ? 0 : (int)Mth.clamp(tax + price, 0L, 2147483647L);
-+            // KioCG start - dyed name
-+            if (dyeColor != null && !dyed) {
++            // KioCG start - dyed or upright name
++            if (dye && !dyed || resin && !resined || alreadyUprighted) {
 +                org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(this.getBukkitView(), ItemStack.EMPTY); // CraftBukkit
 +                this.cost.set(AnvilMenu.DEFAULT_DENIED_COST); // CraftBukkit - use a variable for set a cost for denied item
++                this.sendAllDataToRemote();
 +                return;
 +            }
-+            // KioCG end - dyed name
++            // KioCG end - dyed or upright name
 +
 +            // KioCG start - change container behavior
 +            int paidPrice = price - namingCost - repairCost;
@@ -100,8 +120,16 @@
              }
  
              org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(this.getBukkitView(), result); // CraftBukkit
-@@ -302,6 +_,8 @@
+@@ -300,8 +_,16 @@
+ 
+     public boolean setItemName(final String name) {
          String validatedName = validateName(name);
++        // KioCG start - change container behavior
++        if (validatedName != null && validatedName.length() > 16) {
++            validatedName = validatedName.substring(0, 16);
++            this.sendAllDataToRemote();
++        }
++        // KioCG end - change container behavior
          if (validatedName != null && !validatedName.equals(this.itemName)) {
              this.itemName = validatedName;
 +            // KioCG start - change container behavior: 不需要设置物品名, 因为将在createResult()中设置
